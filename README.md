@@ -231,6 +231,58 @@ wrapped_tools = adapter.wrap_tools(crewai_tools)
 
 ---
 
+## Evaluation Runners
+
+AgentDisruptBench provides **self-contained evaluation runners** (inspired by [REALM-Bench](https://github.com/REALM-Bench) and [τ-bench](https://github.com/sierra-research/tau2-bench)) that run full LLM agent loops out of the box.
+
+### Available Runners
+
+| Runner | Framework | LLM Required | Install |
+|--------|-----------|:------------:|---------|
+| `simple` | Rule-based baseline | ❌ | Built-in |
+| `openai` | OpenAI function calling | ✅ | `pip install openai` |
+| `langchain` | LangChain ReAct agent | ✅ | `pip install langchain-openai langgraph` |
+| `autogen` | AutoGen two-agent pattern | ✅ | `pip install pyautogen` |
+| `crewai` | CrewAI Crew + Agent | ✅ | `pip install crewai` |
+
+### CLI Usage
+
+```bash
+# Simple baseline (no API key needed)
+python -m evaluation.run_benchmark --runner simple --profiles clean mild_production
+
+# OpenAI GPT-4o on retail tasks only
+python -m evaluation.run_benchmark --runner openai --model gpt-4o --domains retail
+
+# LangChain with hostile environment
+python -m evaluation.run_benchmark --runner langchain --profiles clean hostile_environment --max-difficulty 3
+
+# AutoGen on finance domain
+python -m evaluation.run_benchmark --runner autogen --model gpt-4o --domains finance --seeds 42 123
+
+# See all options
+python -m evaluation.run_benchmark --help
+```
+
+### Writing Your Own Runner
+
+Extend `BaseAgentRunner` and implement `run_task()`:
+
+```python
+from evaluation.base_runner import BaseAgentRunner, RunnerConfig
+
+class MyRunner(BaseAgentRunner):
+    def run_task(self, task, tools):
+        # Your agent logic here
+        # task.description has the task text
+        # tools is a dict of name → callable (may be disrupted)
+        for name, fn in tools.items():
+            result = fn(**my_args)  # Call tools
+        return "Final answer from my agent"
+```
+
+---
+
 ## Project Structure
 
 ```
@@ -261,6 +313,15 @@ AgentDisruptBench/
 │       ├── evaluator.py         # Single-run evaluator
 │       ├── runner.py            # BenchmarkRunner
 │       └── reporter.py          # Markdown + JSON reports
+├── evaluation/                  # Self-contained evaluation runners
+│   ├── base_runner.py           # BaseAgentRunner ABC
+│   ├── run_benchmark.py         # CLI entry point
+│   └── runners/
+│       ├── simple_runner.py     # No-LLM baseline
+│       ├── openai_runner.py     # OpenAI function calling
+│       ├── langchain_runner.py  # LangChain ReAct agent
+│       ├── autogen_runner.py    # AutoGen two-agent
+│       └── crewai_runner.py     # CrewAI Crew + Agent
 ├── network/                     # Track B: Go + Envoy (coming soon)
 ├── examples/
 │   └── quickstart.py            # Getting started example
