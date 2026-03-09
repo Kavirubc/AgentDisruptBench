@@ -1,0 +1,85 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "agentdisruptbench"
+version = "0.1.0"
+description = "Benchmark for evaluating AI agent resilience under runtime tool-call disruptions"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10"
+authors = [
+    { name = "AgentDisruptBench Contributors" },
+]
+keywords = [
+    "AI", "agents", "benchmarks", "resilience", "tool-calling",
+    "disruptions", "evaluation", "LLM", "fault-injection",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
+dependencies = [
+    "pydantic>=2.0",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+langchain = ["langchain-core>=0.1"]
+openai = ["openai>=1.0"]
+autogen = ["pyautogen>=0.2"]
+crewai = ["crewai>=0.1"]
+all = [
+    "langchain-core>=0.1",
+    "openai>=1.0",
+    "pyautogen>=0.2",
+    "crewai>=0.1",
+    "litellm>=1.0",
+]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+    "pytest-asyncio>=0.21",
+    "ruff>=0.1",
+    "mypy>=1.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/AgentDisruptBench/AgentDisruptBench"
+Documentation = "https://github.com/AgentDisruptBench/AgentDisruptBench"
+Repository = "https://github.com/AgentDisruptBench/AgentDisruptBench"
+Issues = "https://github.com/AgentDisruptBench/AgentDisruptBench/issues"
+
+[project.scripts]
+agentdisruptbench = "agentdisruptbench.cli:main"
+
+[tool.hatch.build.targets.sdist]
+include = ["/python/agentdisruptbench"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["python/agentdisruptbench"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v --tb=short"
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W"]
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+warn_return_any = true
+warn_unused_configs = true

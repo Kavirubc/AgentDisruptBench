@@ -1,0 +1,50 @@
+# ==============================================================
+# AgentDisruptBench — .gitignore
+# ==============================================================
+
+# ----- Python -----
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+*.egg
+dist/
+build/
+*.whl
+.eggs/
+
+# ----- IDE -----
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# ----- Testing -----
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+
+# ----- Results / Outputs -----
+results/
+*.jsonl
+*.log
+
+# ----- Environment -----
+.env
+.env.local
+.env.*.local
+
+# ----- Docker (Track B) -----
+network/certs/*.pem
+network/certs/*.key
+
+# ----- OS -----
+Thumbs.db
+.DS_Store
