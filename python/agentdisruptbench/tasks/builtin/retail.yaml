@@ -1,0 +1,420 @@
+# AgentDisruptBench — Built-in Retail Tasks
+# Domain: retail | Version: 1.0
+# 20 tasks across difficulty levels 1-5
+# Distribution: D1=2, D2=4, D3=6, D4=5, D5=3
+
+domain: retail
+version: "1.0"
+tasks:
+  # --- Difficulty 1 (2 tasks) ---
+  - task_id: retail_001
+    title: "Search for a product"
+    description: |
+      You are an assistant for an online retail platform.
+      A customer asks: "Find me blue widgets". Search for blue widgets
+      and report the available products with their prices.
+    difficulty: 1
+    required_tools: [search_products]
+    expected_tool_call_depth: 1
+    ground_truth:
+      expected_outcome: "List of blue widget products with prices"
+      required_tool_calls: [search_products]
+      evaluation_rubric:
+        searched_for_products: 0.50
+        reported_prices: 0.50
+      disruption_sensitive_tools: [search_products]
+      recovery_actions: [retry_search]
+
+  - task_id: retail_002
+    title: "Check inventory for a known product"
+    description: |
+      You are an assistant for an online retail platform.
+      Check the inventory levels for product PRD-abc123 in the default warehouse.
+      Report how many units are available.
+    difficulty: 1
+    required_tools: [check_inventory]
+    expected_tool_call_depth: 1
+    ground_truth:
+      expected_outcome: "Inventory count for PRD-abc123 reported"
+      required_tool_calls: [check_inventory]
+      evaluation_rubric:
+        checked_inventory: 0.60
+        reported_quantity: 0.40
+      disruption_sensitive_tools: [check_inventory]
+      recovery_actions: [retry_check]
+
+  # --- Difficulty 2 (4 tasks) ---
+  - task_id: retail_003
+    title: "Search and check inventory"
+    description: |
+      You are an assistant for an online retail platform.
+      A customer wants to buy a red gadget. Search for available red gadgets,
+      then check inventory for the first result. Report availability.
+    difficulty: 2
+    required_tools: [search_products, check_inventory]
+    expected_tool_call_depth: 2
+    ground_truth:
+      expected_outcome: "Red gadget found and inventory checked"
+      required_tool_calls: [search_products, check_inventory]
+      evaluation_rubric:
+        searched_products: 0.40
+        checked_inventory: 0.40
+        reported_availability: 0.20
+      disruption_sensitive_tools: [check_inventory]
+      recovery_actions: [retry_check_inventory]
+
+  - task_id: retail_004
+    title: "Search and order product with inventory check"
+    description: |
+      You are an assistant for an online retail platform.
+      A customer wants to buy 2 units of a blue widget. Search for available
+      blue widgets, verify at least 2 units are in stock, and place an order
+      for customer C-8821. Confirm the order ID in your response.
+    difficulty: 2
+    required_tools: [search_products, check_inventory, place_order]
+    expected_tool_call_depth: 3
+    ground_truth:
+      expected_outcome: "Order placed for 2x blue widget with confirmed order ID"
+      required_tool_calls: [search_products, check_inventory, place_order]
+      evaluation_rubric:
+        searched_for_blue_widget: 0.25
+        checked_inventory: 0.25
+        confirmed_stock_available: 0.20
+        placed_order_correct_quantity: 0.30
+      disruption_sensitive_tools: [place_order]
+      recovery_actions: [retry_place_order, check_alternative_inventory]
+
+  - task_id: retail_005
+    title: "Get customer profile and order history"
+    description: |
+      Look up the customer profile for customer C-5510.
+      Report their name, membership tier, and total orders.
+    difficulty: 2
+    required_tools: [get_customer_profile]
+    expected_tool_call_depth: 1
+    ground_truth:
+      expected_outcome: "Customer profile details reported"
+      required_tool_calls: [get_customer_profile]
+      evaluation_rubric:
+        retrieved_profile: 0.50
+        reported_tier: 0.25
+        reported_orders: 0.25
+      disruption_sensitive_tools: [get_customer_profile]
+      recovery_actions: [retry_profile_lookup]
+
+  - task_id: retail_006
+    title: "Check order status"
+    description: |
+      A customer wants to know the status of order ORD-778899.
+      Look up the order and provide the current status and tracking number.
+    difficulty: 2
+    required_tools: [get_order_status]
+    expected_tool_call_depth: 1
+    ground_truth:
+      expected_outcome: "Order status and tracking number provided"
+      required_tool_calls: [get_order_status]
+      evaluation_rubric:
+        retrieved_status: 0.50
+        provided_tracking: 0.50
+      disruption_sensitive_tools: [get_order_status]
+      recovery_actions: [retry_status_check]
+
+  # --- Difficulty 3 (6 tasks) ---
+  - task_id: retail_007
+    title: "Full purchase flow with coupon"
+    description: |
+      A customer wants to buy a green sprocket. Search for it, check inventory,
+      apply coupon code SAVE20 to cart CART-001, and place the order for
+      customer C-3344. Report the final order details including any discount.
+    difficulty: 3
+    required_tools: [search_products, check_inventory, apply_coupon, place_order]
+    expected_tool_call_depth: 4
+    ground_truth:
+      expected_outcome: "Order placed with coupon applied"
+      required_tool_calls: [search_products, check_inventory, apply_coupon, place_order]
+      evaluation_rubric:
+        searched_products: 0.20
+        checked_inventory: 0.20
+        applied_coupon: 0.30
+        placed_order: 0.30
+      disruption_sensitive_tools: [place_order, apply_coupon]
+      recovery_actions: [retry_coupon, retry_order]
+
+  - task_id: retail_008
+    title: "Process a refund for a returned item"
+    description: |
+      Customer C-1122 wants a refund for order ORD-556677 because the item
+      was defective. Look up the order status first, then process the refund.
+      Confirm the refund amount and estimated credit date.
+    difficulty: 3
+    required_tools: [get_order_status, process_refund]
+    expected_tool_call_depth: 2
+    ground_truth:
+      expected_outcome: "Refund processed with amount and credit date confirmed"
+      required_tool_calls: [get_order_status, process_refund]
+      evaluation_rubric:
+        checked_order: 0.30
+        processed_refund: 0.40
+        confirmed_amount: 0.30
+      disruption_sensitive_tools: [process_refund]
+      recovery_actions: [retry_refund, escalate_to_support]
+
+  - task_id: retail_009
+    title: "Cart management with multiple items"
+    description: |
+      Add product PRD-aaa111 (qty 3) and product PRD-bbb222 (qty 1) to cart
+      CART-002. Then apply coupon WELCOME10. Report the final cart total.
+    difficulty: 3
+    required_tools: [update_cart, apply_coupon]
+    expected_tool_call_depth: 3
+    ground_truth:
+      expected_outcome: "Cart updated with both items and coupon applied"
+      required_tool_calls: [update_cart, apply_coupon]
+      evaluation_rubric:
+        added_first_item: 0.25
+        added_second_item: 0.25
+        applied_coupon: 0.25
+        reported_total: 0.25
+      disruption_sensitive_tools: [update_cart]
+      recovery_actions: [retry_add_item]
+
+  - task_id: retail_010
+    title: "Customer service: order lookup and status"
+    description: |
+      A customer calls asking about their recent orders. Look up customer
+      C-7788's profile, then check the status of their most recent order
+      ORD-991100. Provide a comprehensive summary.
+    difficulty: 3
+    required_tools: [get_customer_profile, get_order_status]
+    expected_tool_call_depth: 2
+    ground_truth:
+      expected_outcome: "Customer profile and order status provided"
+      required_tool_calls: [get_customer_profile, get_order_status]
+      evaluation_rubric:
+        retrieved_profile: 0.30
+        checked_order: 0.30
+        provided_summary: 0.40
+      disruption_sensitive_tools: [get_order_status]
+      recovery_actions: [retry_order_status]
+
+  - task_id: retail_011
+    title: "Search, compare, and purchase"
+    description: |
+      A customer wants the cheapest option for a "sensor kit". Search for
+      sensor kits, compare prices, check inventory for the cheapest option,
+      and place the order for customer C-4455 if in stock.
+    difficulty: 3
+    required_tools: [search_products, check_inventory, place_order]
+    expected_tool_call_depth: 3
+    ground_truth:
+      expected_outcome: "Cheapest sensor kit found and ordered"
+      required_tool_calls: [search_products, check_inventory, place_order]
+      evaluation_rubric:
+        searched_products: 0.25
+        compared_prices: 0.25
+        checked_stock: 0.25
+        placed_order: 0.25
+      disruption_sensitive_tools: [place_order]
+      recovery_actions: [try_next_cheapest]
+
+  - task_id: retail_012
+    title: "Inventory check across warehouses"
+    description: |
+      Check inventory for product PRD-ccc333 in three warehouses: "east",
+      "west", and "central". Report which warehouse has the most stock.
+    difficulty: 3
+    required_tools: [check_inventory]
+    expected_tool_call_depth: 3
+    ground_truth:
+      expected_outcome: "Inventory levels across warehouses compared"
+      required_tool_calls: [check_inventory]
+      evaluation_rubric:
+        checked_east: 0.25
+        checked_west: 0.25
+        checked_central: 0.25
+        identified_best: 0.25
+      disruption_sensitive_tools: [check_inventory]
+      recovery_actions: [retry_warehouse_check]
+
+  # --- Difficulty 4 (5 tasks) ---
+  - task_id: retail_013
+    title: "End-to-end purchase with profile lookup and coupon"
+    description: |
+      Customer C-9900 wants to buy a "precision caliper". Look up their profile
+      to check their tier, search for the product, check inventory, apply the
+      loyalty coupon LOYAL15 to cart CART-003, place the order, and confirm.
+    difficulty: 4
+    required_tools: [get_customer_profile, search_products, check_inventory, apply_coupon, place_order]
+    expected_tool_call_depth: 5
+    ground_truth:
+      expected_outcome: "Complete purchase flow with loyalty discount applied"
+      required_tool_calls: [get_customer_profile, search_products, check_inventory, apply_coupon, place_order]
+      evaluation_rubric:
+        checked_profile: 0.15
+        searched_product: 0.15
+        checked_inventory: 0.15
+        applied_coupon: 0.25
+        placed_order: 0.30
+      disruption_sensitive_tools: [place_order, apply_coupon]
+      recovery_actions: [retry_order, skip_coupon_and_order]
+
+  - task_id: retail_014
+    title: "Handle out-of-stock scenario"
+    description: |
+      A customer wants to order 50 units of product PRD-ddd444. Search for it,
+      check inventory, and if insufficient stock, inform the customer of the
+      restock date and suggest checking back later.
+    difficulty: 4
+    required_tools: [search_products, check_inventory]
+    expected_tool_call_depth: 2
+    ground_truth:
+      expected_outcome: "Customer informed about stock status and restock date"
+      required_tool_calls: [search_products, check_inventory]
+      evaluation_rubric:
+        searched_product: 0.25
+        checked_inventory: 0.25
+        assessed_stock: 0.25
+        communicated_restock: 0.25
+      disruption_sensitive_tools: [check_inventory]
+      recovery_actions: [retry_inventory_check]
+
+  - task_id: retail_015
+    title: "Order modification workflow"
+    description: |
+      Customer C-2233 wants to modify order ORD-334455. Check the order status.
+      If it's still in "processing", process a refund for the original order,
+      then place a new order for product PRD-eee555 (qty 2).
+    difficulty: 4
+    required_tools: [get_order_status, process_refund, place_order]
+    expected_tool_call_depth: 3
+    ground_truth:
+      expected_outcome: "Original order refunded and new order placed"
+      required_tool_calls: [get_order_status, process_refund, place_order]
+      evaluation_rubric:
+        checked_status: 0.20
+        processed_refund: 0.30
+        placed_new_order: 0.30
+        confirmed_details: 0.20
+      disruption_sensitive_tools: [process_refund, place_order]
+      recovery_actions: [retry_refund, retry_new_order]
+
+  - task_id: retail_016
+    title: "Multi-product cart and checkout"
+    description: |
+      Add these items to cart CART-004: product PRD-fff666 (qty 2), product
+      PRD-ggg777 (qty 1), product PRD-hhh888 (qty 3). Apply coupon BUNDLE25.
+      Place the order for customer C-6677.
+    difficulty: 4
+    required_tools: [update_cart, apply_coupon, place_order]
+    expected_tool_call_depth: 5
+    ground_truth:
+      expected_outcome: "Multi-item cart checked out with bundle coupon"
+      required_tool_calls: [update_cart, apply_coupon, place_order]
+      evaluation_rubric:
+        added_all_items: 0.30
+        applied_coupon: 0.25
+        placed_order: 0.30
+        confirmed_total: 0.15
+      disruption_sensitive_tools: [place_order]
+      recovery_actions: [retry_checkout]
+
+  - task_id: retail_017
+    title: "Customer service escalation"
+    description: |
+      Customer C-8899 is unhappy with order ORD-112233. Look up their profile,
+      check the order status, process a refund if the order is delivered,
+      and apply a 20% goodwill coupon SORRY20 to their cart CART-005 for
+      their next purchase.
+    difficulty: 4
+    required_tools: [get_customer_profile, get_order_status, process_refund, apply_coupon]
+    expected_tool_call_depth: 4
+    ground_truth:
+      expected_outcome: "Refund processed and goodwill coupon applied"
+      required_tool_calls: [get_customer_profile, get_order_status, process_refund, apply_coupon]
+      evaluation_rubric:
+        checked_profile: 0.15
+        checked_order: 0.20
+        processed_refund: 0.35
+        applied_goodwill: 0.30
+      disruption_sensitive_tools: [process_refund]
+      recovery_actions: [retry_refund, manual_escalation]
+
+  # --- Difficulty 5 (3 tasks) ---
+  - task_id: retail_018
+    title: "Complete customer lifecycle management"
+    description: |
+      Handle a complete customer interaction for C-1010:
+      1. Look up their profile and tier
+      2. Search for "wireless sensor kit" products
+      3. Check inventory for the best-rated option
+      4. Add to cart CART-006 (qty 2)
+      5. Apply coupon VIP30 if customer is gold/platinum tier
+      6. Place the order
+      7. Confirm the order status
+      Report all steps and the final order confirmation.
+    difficulty: 5
+    required_tools: [get_customer_profile, search_products, check_inventory, update_cart, apply_coupon, place_order, get_order_status]
+    expected_tool_call_depth: 7
+    ground_truth:
+      expected_outcome: "Full lifecycle: profile check, search, inventory, cart, coupon, order, confirmation"
+      required_tool_calls: [get_customer_profile, search_products, check_inventory, update_cart, apply_coupon, place_order, get_order_status]
+      evaluation_rubric:
+        profile_lookup: 0.10
+        product_search: 0.10
+        inventory_check: 0.10
+        cart_update: 0.15
+        coupon_applied: 0.15
+        order_placed: 0.25
+        status_confirmed: 0.15
+      disruption_sensitive_tools: [place_order, apply_coupon]
+      recovery_actions: [retry_order, skip_coupon, check_alternative_product]
+
+  - task_id: retail_019
+    title: "Bulk order with multi-warehouse optimization"
+    description: |
+      Customer C-2020 needs 25 units of product PRD-iii999. Check inventory
+      across warehouses "east", "west", and "central". If no single warehouse
+      has enough, combine from multiple warehouses. Place orders from the
+      warehouses with available stock. Report the split.
+    difficulty: 5
+    required_tools: [check_inventory, place_order]
+    expected_tool_call_depth: 6
+    ground_truth:
+      expected_outcome: "Bulk order split across warehouses based on availability"
+      required_tool_calls: [check_inventory, place_order]
+      evaluation_rubric:
+        checked_all_warehouses: 0.25
+        calculated_split: 0.25
+        placed_orders: 0.30
+        reported_split: 0.20
+      disruption_sensitive_tools: [place_order, check_inventory]
+      recovery_actions: [retry_inventory, partial_order]
+
+  - task_id: retail_020
+    title: "Complex return and reorder workflow"
+    description: |
+      Customer C-3030 received a damaged product from order ORD-445566.
+      1. Verify the order status
+      2. Look up the customer profile
+      3. Process a refund for the damaged order
+      4. Search for the same product (use get_order_status to find product info)
+      5. Check inventory for the replacement
+      6. Place a new replacement order at no additional cost
+      7. Apply coupon DAMAGED10 for their inconvenience
+      Apologize and provide complete details of the resolution.
+    difficulty: 5
+    required_tools: [get_order_status, get_customer_profile, process_refund, search_products, check_inventory, place_order, apply_coupon]
+    expected_tool_call_depth: 7
+    ground_truth:
+      expected_outcome: "Damaged item refunded, replacement ordered, and compensation coupon applied"
+      required_tool_calls: [get_order_status, get_customer_profile, process_refund, search_products, check_inventory, place_order, apply_coupon]
+      evaluation_rubric:
+        verified_order: 0.10
+        checked_profile: 0.10
+        processed_refund: 0.20
+        found_replacement: 0.10
+        checked_stock: 0.10
+        placed_replacement: 0.25
+        applied_compensation: 0.15
+      disruption_sensitive_tools: [process_refund, place_order]
+      recovery_actions: [retry_refund, retry_order, escalate_to_manager]

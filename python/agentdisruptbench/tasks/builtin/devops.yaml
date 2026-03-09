@@ -1,0 +1,273 @@
+# AgentDisruptBench — Built-in DevOps Tasks
+# Domain: devops | Version: 1.0 | 20 tasks D1-D5
+domain: devops
+version: "1.0"
+tasks:
+  - task_id: devops_001
+    title: "Check service health"
+    description: "Check the health status of api-gateway. Report uptime and response time."
+    difficulty: 1
+    required_tools: [get_service_health]
+    expected_tool_call_depth: 1
+    ground_truth:
+      expected_outcome: "Service health reported"
+      required_tool_calls: [get_service_health]
+      evaluation_rubric: { checked: 0.60, reported: 0.40 }
+      disruption_sensitive_tools: [get_service_health]
+      recovery_actions: [retry_health]
+
+  - task_id: devops_002
+    title: "Get service logs"
+    description: "Get the last 5 error logs for auth-service."
+    difficulty: 1
+    required_tools: [get_logs]
+    expected_tool_call_depth: 1
+    ground_truth:
+      expected_outcome: "Error logs listed"
+      required_tool_calls: [get_logs]
+      evaluation_rubric: { got_logs: 0.60, reported: 0.40 }
+      disruption_sensitive_tools: [get_logs]
+      recovery_actions: [retry_logs]
+
+  - task_id: devops_003
+    title: "Deploy new version"
+    description: "Deploy version v2.1.0 of payment-service to staging. Confirm deployment."
+    difficulty: 2
+    required_tools: [deploy_service]
+    expected_tool_call_depth: 1
+    ground_truth:
+      expected_outcome: "Deployment confirmed"
+      required_tool_calls: [deploy_service]
+      evaluation_rubric: { deployed: 0.60, confirmed: 0.40 }
+      disruption_sensitive_tools: [deploy_service]
+      recovery_actions: [retry_deploy]
+
+  - task_id: devops_004
+    title: "Get performance metrics"
+    description: "Get CPU metrics for user-service over the last 60 minutes. Report average and peak."
+    difficulty: 2
+    required_tools: [get_metrics]
+    expected_tool_call_depth: 1
+    ground_truth:
+      expected_outcome: "CPU metrics reported"
+      required_tool_calls: [get_metrics]
+      evaluation_rubric: { got_metrics: 0.40, average: 0.30, peak: 0.30 }
+      disruption_sensitive_tools: [get_metrics]
+      recovery_actions: [retry_metrics]
+
+  - task_id: devops_005
+    title: "Run test suite"
+    description: "Run the unit test suite for api-gateway. Report pass/fail counts and coverage."
+    difficulty: 2
+    required_tools: [run_tests]
+    expected_tool_call_depth: 1
+    ground_truth:
+      expected_outcome: "Test results reported"
+      required_tool_calls: [run_tests]
+      evaluation_rubric: { ran_tests: 0.40, reported_results: 0.30, coverage: 0.30 }
+      disruption_sensitive_tools: [run_tests]
+      recovery_actions: [retry_tests]
+
+  - task_id: devops_006
+    title: "Create an incident"
+    description: "Create a P1 incident for payment-service: 'Payment processing timeout'. Report incident ID."
+    difficulty: 2
+    required_tools: [create_incident]
+    expected_tool_call_depth: 1
+    ground_truth:
+      expected_outcome: "Incident created and ID reported"
+      required_tool_calls: [create_incident]
+      evaluation_rubric: { created: 0.60, reported_id: 0.40 }
+      disruption_sensitive_tools: [create_incident]
+      recovery_actions: [retry_create]
+
+  - task_id: devops_007
+    title: "Health check and deployment"
+    description: "Check api-gateway health. If healthy, deploy v2.2.0 to staging. If degraded, report and skip."
+    difficulty: 3
+    required_tools: [get_service_health, deploy_service]
+    expected_tool_call_depth: 2
+    ground_truth:
+      expected_outcome: "Health-conditional deployment"
+      required_tool_calls: [get_service_health, deploy_service]
+      evaluation_rubric: { checked: 0.30, decided: 0.30, executed: 0.40 }
+      disruption_sensitive_tools: [deploy_service]
+      recovery_actions: [retry_deploy, skip_deploy]
+
+  - task_id: devops_008
+    title: "Deploy and run tests"
+    description: "Deploy v3.0.0 of user-service to staging, then run the integration test suite. Report results."
+    difficulty: 3
+    required_tools: [deploy_service, run_tests]
+    expected_tool_call_depth: 2
+    ground_truth:
+      expected_outcome: "Deployment with test verification"
+      required_tool_calls: [deploy_service, run_tests]
+      evaluation_rubric: { deployed: 0.35, tested: 0.35, reported: 0.30 }
+      disruption_sensitive_tools: [deploy_service, run_tests]
+      recovery_actions: [retry_deploy, rollback]
+
+  - task_id: devops_009
+    title: "Incident response with logs"
+    description: "Get error logs for payment-service, then get metrics. Create a P2 incident if errors are present."
+    difficulty: 3
+    required_tools: [get_logs, get_metrics, create_incident]
+    expected_tool_call_depth: 3
+    ground_truth:
+      expected_outcome: "Log-informed incident creation"
+      required_tool_calls: [get_logs, get_metrics, create_incident]
+      evaluation_rubric: { got_logs: 0.25, got_metrics: 0.25, created_incident: 0.30, summarized: 0.20 }
+      disruption_sensitive_tools: [create_incident]
+      recovery_actions: [retry_create]
+
+  - task_id: devops_010
+    title: "Multi-service health dashboard"
+    description: "Check health of api-gateway, auth-service, and payment-service. Generate a dashboard summary."
+    difficulty: 3
+    required_tools: [get_service_health]
+    expected_tool_call_depth: 3
+    ground_truth:
+      expected_outcome: "Multi-service health dashboard"
+      required_tool_calls: [get_service_health]
+      evaluation_rubric: { checked_api: 0.20, checked_auth: 0.20, checked_payment: 0.20, dashboard: 0.40 }
+      disruption_sensitive_tools: [get_service_health]
+      recovery_actions: [retry_health]
+
+  - task_id: devops_011
+    title: "Rollback after failed deployment"
+    description: "Deploy v4.0.0-beta of auth-service. Run tests. If any tests fail, rollback the deployment."
+    difficulty: 3
+    required_tools: [deploy_service, run_tests, rollback_deployment]
+    expected_tool_call_depth: 3
+    ground_truth:
+      expected_outcome: "Deploy-test-rollback workflow"
+      required_tool_calls: [deploy_service, run_tests, rollback_deployment]
+      evaluation_rubric: { deployed: 0.25, tested: 0.25, rollback_decision: 0.25, executed_rollback: 0.25 }
+      disruption_sensitive_tools: [rollback_deployment]
+      recovery_actions: [retry_rollback]
+
+  - task_id: devops_012
+    title: "Performance investigation"
+    description: "Get CPU and memory metrics for user-service. Get recent error logs. Determine if there's a performance issue."
+    difficulty: 3
+    required_tools: [get_metrics, get_logs]
+    expected_tool_call_depth: 3
+    ground_truth:
+      expected_outcome: "Performance investigation report"
+      required_tool_calls: [get_metrics, get_logs]
+      evaluation_rubric: { cpu_metrics: 0.25, memory_metrics: 0.25, logs: 0.25, diagnosis: 0.25 }
+      disruption_sensitive_tools: [get_metrics]
+      recovery_actions: [retry_metrics]
+
+  - task_id: devops_013
+    title: "Full deploy pipeline"
+    description: "Run unit tests for payment-service. If pass rate >95%, deploy v2.5.0 to staging. Check health after deploy. Report status."
+    difficulty: 4
+    required_tools: [run_tests, deploy_service, get_service_health]
+    expected_tool_call_depth: 3
+    ground_truth:
+      expected_outcome: "CI/CD pipeline execution"
+      required_tool_calls: [run_tests, deploy_service, get_service_health]
+      evaluation_rubric: { ran_tests: 0.20, deploy_decision: 0.20, deployed: 0.25, health_verified: 0.20, report: 0.15 }
+      disruption_sensitive_tools: [deploy_service]
+      recovery_actions: [retry_deploy, rollback]
+
+  - task_id: devops_014
+    title: "Incident management lifecycle"
+    description: "Get error logs for api-gateway. Create P1 incident. Deploy hotfix v1.9.1. Verify health. Resolve the incident."
+    difficulty: 4
+    required_tools: [get_logs, create_incident, deploy_service, get_service_health, resolve_incident]
+    expected_tool_call_depth: 5
+    ground_truth:
+      expected_outcome: "Full incident lifecycle handled"
+      required_tool_calls: [get_logs, create_incident, deploy_service, get_service_health, resolve_incident]
+      evaluation_rubric: { logs: 0.10, incident: 0.15, deployed_fix: 0.25, verified: 0.20, resolved: 0.20, report: 0.10 }
+      disruption_sensitive_tools: [deploy_service, resolve_incident]
+      recovery_actions: [retry_deploy, retry_resolve]
+
+  - task_id: devops_015
+    title: "Multi-service deployment"
+    description: "Deploy updates to auth-service (v3.1.0), user-service (v2.8.0), and notification-service (v1.5.0). Run tests for each. Report outcomes."
+    difficulty: 4
+    required_tools: [deploy_service, run_tests]
+    expected_tool_call_depth: 6
+    ground_truth:
+      expected_outcome: "Multi-service deployments with test results"
+      required_tool_calls: [deploy_service, run_tests]
+      evaluation_rubric: { deployed_auth: 0.15, tested_auth: 0.10, deployed_user: 0.15, tested_user: 0.10, deployed_notif: 0.15, tested_notif: 0.10, summary: 0.25 }
+      disruption_sensitive_tools: [deploy_service]
+      recovery_actions: [retry_deploy, rollback_specific]
+
+  - task_id: devops_016
+    title: "Performance-driven scaling decision"
+    description: "Get CPU, memory, and latency metrics for api-gateway. Get health status. Get recent logs. Recommend if scaling is needed."
+    difficulty: 4
+    required_tools: [get_metrics, get_service_health, get_logs]
+    expected_tool_call_depth: 5
+    ground_truth:
+      expected_outcome: "Scaling recommendation with evidence"
+      required_tool_calls: [get_metrics, get_service_health, get_logs]
+      evaluation_rubric: { cpu: 0.15, memory: 0.15, health: 0.15, logs: 0.15, recommendation: 0.40 }
+      disruption_sensitive_tools: [get_metrics]
+      recovery_actions: [retry_metrics]
+
+  - task_id: devops_017
+    title: "Deployment with canary validation"
+    description: "Deploy v5.0.0 of payment-service. Run tests. Get metrics before and after. Compare performance. Rollback if degraded."
+    difficulty: 4
+    required_tools: [get_metrics, deploy_service, run_tests, rollback_deployment]
+    expected_tool_call_depth: 5
+    ground_truth:
+      expected_outcome: "Canary deployment with performance validation"
+      required_tool_calls: [get_metrics, deploy_service, run_tests]
+      evaluation_rubric: { pre_metrics: 0.15, deployed: 0.20, tested: 0.15, post_metrics: 0.15, compared: 0.15, decision: 0.20 }
+      disruption_sensitive_tools: [deploy_service, rollback_deployment]
+      recovery_actions: [retry_deploy, immediate_rollback]
+
+  - task_id: devops_018
+    title: "Full site reliability engineering review"
+    description: |
+      Perform SRE review: Check health of all 5 services (api-gateway, auth-service, payment-service,
+      user-service, notification-service). Get CPU metrics for any unhealthy services. Get error logs.
+      Create incidents for any critical issues. Generate SRE dashboard report.
+    difficulty: 5
+    required_tools: [get_service_health, get_metrics, get_logs, create_incident]
+    expected_tool_call_depth: 10
+    ground_truth:
+      expected_outcome: "Comprehensive SRE review with dashboard"
+      required_tool_calls: [get_service_health, get_metrics, get_logs, create_incident]
+      evaluation_rubric: { all_health_checks: 0.20, metrics_unhealthy: 0.15, logs_reviewed: 0.15, incidents_created: 0.15, dashboard: 0.35 }
+      disruption_sensitive_tools: [get_service_health, create_incident]
+      recovery_actions: [retry_health, retry_create, partial_dashboard]
+
+  - task_id: devops_019
+    title: "Blue-green deployment with full validation"
+    description: |
+      Blue-green deploy for payment-service: Get current health. Deploy v6.0.0 to staging. Run full test
+      suite. Get metrics. If tests pass and metrics OK, report success. If not, rollback. Create incident
+      if rollback needed. Generate deployment report.
+    difficulty: 5
+    required_tools: [get_service_health, deploy_service, run_tests, get_metrics, rollback_deployment, create_incident]
+    expected_tool_call_depth: 7
+    ground_truth:
+      expected_outcome: "Blue-green deployment with full validation"
+      required_tool_calls: [get_service_health, deploy_service, run_tests, get_metrics]
+      evaluation_rubric: { health_check: 0.08, deployment: 0.15, tests: 0.15, metrics: 0.12, decision: 0.15, execution: 0.15, report: 0.20 }
+      disruption_sensitive_tools: [deploy_service, rollback_deployment]
+      recovery_actions: [immediate_rollback, create_incident]
+
+  - task_id: devops_020
+    title: "Disaster recovery drill"
+    description: |
+      Simulate a disaster recovery drill: Check all service health. Get logs for all services. Create a
+      DR incident. Rollback payment-service to last known good. Deploy emergency versions of auth-service
+      and user-service. Run smoke tests. Verify health post-recovery. Resolve the incident. Generate DR report.
+    difficulty: 5
+    required_tools: [get_service_health, get_logs, create_incident, rollback_deployment, deploy_service, run_tests, resolve_incident]
+    expected_tool_call_depth: 12
+    ground_truth:
+      expected_outcome: "DR drill completed with full report"
+      required_tool_calls: [get_service_health, get_logs, create_incident, rollback_deployment, deploy_service, run_tests, resolve_incident]
+      evaluation_rubric: { health_checked: 0.08, logs_reviewed: 0.08, incident_created: 0.08, rollback: 0.12, deployed_emergency: 0.12, tests_run: 0.10, health_verified: 0.10, incident_resolved: 0.10, dr_report: 0.22 }
+      disruption_sensitive_tools: [rollback_deployment, deploy_service]
+      recovery_actions: [retry_rollback, retry_deploy, manual_intervention]

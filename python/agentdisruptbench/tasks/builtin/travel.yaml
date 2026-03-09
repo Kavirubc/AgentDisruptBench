@@ -1,0 +1,330 @@
+# AgentDisruptBench — Built-in Travel Tasks
+# Domain: travel | Version: 1.0
+# 20 tasks across difficulty levels 1-5
+
+domain: travel
+version: "1.0"
+tasks:
+  - task_id: travel_001
+    title: "Search for flights"
+    description: |
+      Search for flights from SFO to JFK on 2026-04-15 for 1 passenger.
+      Report the available options with prices.
+    difficulty: 1
+    required_tools: [search_flights]
+    expected_tool_call_depth: 1
+    ground_truth:
+      expected_outcome: "Flight options listed with prices"
+      required_tool_calls: [search_flights]
+      evaluation_rubric: { searched_flights: 0.60, reported_prices: 0.40 }
+      disruption_sensitive_tools: [search_flights]
+      recovery_actions: [retry_search]
+
+  - task_id: travel_002
+    title: "Check weather at destination"
+    description: |
+      Check the weather forecast for London on 2026-04-20.
+      Report temperature and conditions.
+    difficulty: 1
+    required_tools: [get_weather]
+    expected_tool_call_depth: 1
+    ground_truth:
+      expected_outcome: "Weather forecast provided"
+      required_tool_calls: [get_weather]
+      evaluation_rubric: { checked_weather: 0.60, reported_conditions: 0.40 }
+      disruption_sensitive_tools: [get_weather]
+      recovery_actions: [retry_weather]
+
+  - task_id: travel_003
+    title: "Search flights and get details"
+    description: |
+      Search for flights from LAX to ORD on 2026-05-01. Get detailed info
+      for the first result including aircraft type and baggage allowance.
+    difficulty: 2
+    required_tools: [search_flights, get_flight_details]
+    expected_tool_call_depth: 2
+    ground_truth:
+      expected_outcome: "Flight details including aircraft and baggage"
+      required_tool_calls: [search_flights, get_flight_details]
+      evaluation_rubric: { searched: 0.40, got_details: 0.40, reported_info: 0.20 }
+      disruption_sensitive_tools: [get_flight_details]
+      recovery_actions: [retry_details]
+
+  - task_id: travel_004
+    title: "Currency conversion for trip budget"
+    description: |
+      Convert 5000 USD to EUR and 5000 USD to GBP. Report both converted
+      amounts and exchange rates.
+    difficulty: 2
+    required_tools: [currency_convert]
+    expected_tool_call_depth: 2
+    ground_truth:
+      expected_outcome: "Both currency conversions reported"
+      required_tool_calls: [currency_convert]
+      evaluation_rubric: { converted_eur: 0.40, converted_gbp: 0.40, reported_rates: 0.20 }
+      disruption_sensitive_tools: [currency_convert]
+      recovery_actions: [retry_conversion]
+
+  - task_id: travel_005
+    title: "Search and book a flight"
+    description: |
+      Search flights from BOS to MIA on 2026-04-10. Book the first available
+      flight for passenger "John Smith". Confirm the booking.
+    difficulty: 2
+    required_tools: [search_flights, book_flight]
+    expected_tool_call_depth: 2
+    ground_truth:
+      expected_outcome: "Flight booked with confirmation code"
+      required_tool_calls: [search_flights, book_flight]
+      evaluation_rubric: { searched: 0.30, booked: 0.50, confirmed: 0.20 }
+      disruption_sensitive_tools: [book_flight]
+      recovery_actions: [retry_booking, try_next_flight]
+
+  - task_id: travel_006
+    title: "Hotel search at destination"
+    description: |
+      Search for hotels in Paris for check-in 2026-05-15 and check-out
+      2026-05-20 for 2 guests. Report the top options with ratings.
+    difficulty: 2
+    required_tools: [search_hotels]
+    expected_tool_call_depth: 1
+    ground_truth:
+      expected_outcome: "Hotel options with ratings listed"
+      required_tool_calls: [search_hotels]
+      evaluation_rubric: { searched_hotels: 0.60, reported_ratings: 0.40 }
+      disruption_sensitive_tools: [search_hotels]
+      recovery_actions: [retry_search]
+
+  - task_id: travel_007
+    title: "Flight booking with weather check"
+    description: |
+      Search flights from SEA to DEN on 2026-06-01. Check weather at Denver
+      for that date. Book the cheapest flight for "Alice Johnson" if the
+      weather is favorable (not stormy).
+    difficulty: 3
+    required_tools: [search_flights, get_weather, book_flight]
+    expected_tool_call_depth: 3
+    ground_truth:
+      expected_outcome: "Weather-informed flight booking decision"
+      required_tool_calls: [search_flights, get_weather, book_flight]
+      evaluation_rubric: { searched: 0.25, checked_weather: 0.25, booked_conditionally: 0.50 }
+      disruption_sensitive_tools: [book_flight]
+      recovery_actions: [retry_booking]
+
+  - task_id: travel_008
+    title: "Hotel availability and booking flow"
+    description: |
+      Search hotels in Tokyo for 2026-07-01 to 2026-07-07. Check availability
+      for a standard room at the highest-rated hotel. Report the price and
+      amenities.
+    difficulty: 3
+    required_tools: [search_hotels, check_hotel_availability]
+    expected_tool_call_depth: 2
+    ground_truth:
+      expected_outcome: "Hotel availability and amenities reported"
+      required_tool_calls: [search_hotels, check_hotel_availability]
+      evaluation_rubric: { searched: 0.30, checked_availability: 0.40, reported_amenities: 0.30 }
+      disruption_sensitive_tools: [check_hotel_availability]
+      recovery_actions: [try_different_room_type]
+
+  - task_id: travel_009
+    title: "Cancel and rebook flight"
+    description: |
+      Cancel booking BKG-existing123 due to schedule change. Then search for
+      new flights from SFO to LAX on 2026-04-20 and book the best option
+      for "Bob Wilson".
+    difficulty: 3
+    required_tools: [cancel_booking, search_flights, book_flight]
+    expected_tool_call_depth: 3
+    ground_truth:
+      expected_outcome: "Original booking cancelled and new flight booked"
+      required_tool_calls: [cancel_booking, search_flights, book_flight]
+      evaluation_rubric: { cancelled: 0.30, searched_new: 0.30, rebooked: 0.40 }
+      disruption_sensitive_tools: [book_flight, cancel_booking]
+      recovery_actions: [retry_cancel, retry_rebook]
+
+  - task_id: travel_010
+    title: "Multi-city flight search with currency"
+    description: |
+      Search flights from NYC to London and London to Paris for 2026-08-01
+      and 2026-08-05. Convert the total cost from USD to EUR.
+    difficulty: 3
+    required_tools: [search_flights, currency_convert]
+    expected_tool_call_depth: 3
+    ground_truth:
+      expected_outcome: "Multi-city flight costs converted to EUR"
+      required_tool_calls: [search_flights, currency_convert]
+      evaluation_rubric: { searched_first_leg: 0.25, searched_second_leg: 0.25, converted_cost: 0.30, reported_total: 0.20 }
+      disruption_sensitive_tools: [search_flights]
+      recovery_actions: [retry_search]
+
+  - task_id: travel_011
+    title: "Trip planning with weather comparison"
+    description: |
+      Compare weather at three destinations (Barcelona, Rome, Athens) on
+      2026-06-15. Recommend the best destination based on weather conditions.
+    difficulty: 3
+    required_tools: [get_weather]
+    expected_tool_call_depth: 3
+    ground_truth:
+      expected_outcome: "Weather compared and best destination recommended"
+      required_tool_calls: [get_weather]
+      evaluation_rubric: { checked_barcelona: 0.20, checked_rome: 0.20, checked_athens: 0.20, made_recommendation: 0.40 }
+      disruption_sensitive_tools: [get_weather]
+      recovery_actions: [retry_weather_check]
+
+  - task_id: travel_012
+    title: "Hotel search with room type comparison"
+    description: |
+      Search hotels in Sydney. For the top result, check availability for
+      both "standard" and "suite" room types. Compare prices and recommend.
+    difficulty: 3
+    required_tools: [search_hotels, check_hotel_availability]
+    expected_tool_call_depth: 3
+    ground_truth:
+      expected_outcome: "Room types compared with recommendation"
+      required_tool_calls: [search_hotels, check_hotel_availability]
+      evaluation_rubric: { searched: 0.20, checked_standard: 0.25, checked_suite: 0.25, recommended: 0.30 }
+      disruption_sensitive_tools: [check_hotel_availability]
+      recovery_actions: [retry_availability]
+
+  - task_id: travel_013
+    title: "Complete flight + hotel booking"
+    description: |
+      Plan a trip from SFO to London. Search flights for 2026-09-01, book the
+      best option for "Carol Davis". Search hotels in London for Sep 1-7,
+      check availability for the top hotel. Report the complete itinerary.
+    difficulty: 4
+    required_tools: [search_flights, book_flight, search_hotels, check_hotel_availability]
+    expected_tool_call_depth: 4
+    ground_truth:
+      expected_outcome: "Flight booked and hotel availability confirmed"
+      required_tool_calls: [search_flights, book_flight, search_hotels, check_hotel_availability]
+      evaluation_rubric: { flight_searched: 0.15, flight_booked: 0.25, hotel_searched: 0.15, hotel_checked: 0.25, itinerary_reported: 0.20 }
+      disruption_sensitive_tools: [book_flight]
+      recovery_actions: [retry_booking, try_alternative_hotel]
+
+  - task_id: travel_014
+    title: "Budget-optimized trip planning"
+    description: |
+      A traveller has a budget of 3000 USD for a trip from Chicago to Amsterdam.
+      Search flights and hotels, convert costs to EUR, determine if the trip
+      fits within budget. Include weather check for the travel dates (Oct 10-17).
+    difficulty: 4
+    required_tools: [search_flights, search_hotels, currency_convert, get_weather]
+    expected_tool_call_depth: 4
+    ground_truth:
+      expected_outcome: "Budget analysis with flight, hotel, and weather"
+      required_tool_calls: [search_flights, search_hotels, currency_convert, get_weather]
+      evaluation_rubric: { flight_cost: 0.20, hotel_cost: 0.20, currency_conversion: 0.20, weather_check: 0.15, budget_analysis: 0.25 }
+      disruption_sensitive_tools: [search_flights, currency_convert]
+      recovery_actions: [retry_search, use_cached_rate]
+
+  - task_id: travel_015
+    title: "Group travel coordination"
+    description: |
+      Book flights from BOS to Miami on 2026-11-01 for 4 passengers:
+      "Alice", "Bob", "Carol", "Dave". Search flights, get details on the
+      best option, and book for the group.
+    difficulty: 4
+    required_tools: [search_flights, get_flight_details, book_flight]
+    expected_tool_call_depth: 3
+    ground_truth:
+      expected_outcome: "Group flight booked for 4 passengers"
+      required_tool_calls: [search_flights, get_flight_details, book_flight]
+      evaluation_rubric: { searched: 0.20, got_details: 0.20, booked_group: 0.40, confirmed_all: 0.20 }
+      disruption_sensitive_tools: [book_flight]
+      recovery_actions: [retry_booking, split_bookings]
+
+  - task_id: travel_016
+    title: "Rebooking with refund analysis"
+    description: |
+      Cancel booking BKG-old456 and check the refund amount. Search for
+      alternative flights from LAX to SEA on 2026-04-25. If the refund
+      covers the new flight, book it for "Eve Frank". Report savings or
+      additional cost.
+    difficulty: 4
+    required_tools: [cancel_booking, search_flights, book_flight, currency_convert]
+    expected_tool_call_depth: 4
+    ground_truth:
+      expected_outcome: "Rebooking with cost analysis completed"
+      required_tool_calls: [cancel_booking, search_flights, book_flight]
+      evaluation_rubric: { cancelled: 0.20, searched_new: 0.20, cost_analysis: 0.30, rebooked: 0.30 }
+      disruption_sensitive_tools: [cancel_booking, book_flight]
+      recovery_actions: [retry_cancel, try_different_date]
+
+  - task_id: travel_017
+    title: "Multi-city vacation with budget tracking"
+    description: |
+      A traveller wants to visit Tokyo, Seoul, and Bangkok in 2026-10.
+      Check weather in all three cities, then budget the total cost:
+      convert 8000 USD to JPY, KRW, and THB. Provide a detailed report.
+    difficulty: 4
+    required_tools: [get_weather, currency_convert]
+    expected_tool_call_depth: 6
+    ground_truth:
+      expected_outcome: "Weather and budget for 3-city Asian trip"
+      required_tool_calls: [get_weather, currency_convert]
+      evaluation_rubric: { weather_tokyo: 0.10, weather_seoul: 0.10, weather_bangkok: 0.10, convert_jpy: 0.15, convert_krw: 0.15, convert_thb: 0.15, budget_report: 0.25 }
+      disruption_sensitive_tools: [currency_convert, get_weather]
+      recovery_actions: [retry_conversion, use_estimate]
+
+  - task_id: travel_018
+    title: "Complete international trip planning"
+    description: |
+      Plan a complete trip from NYC to Tokyo (Apr 10-20, 2026):
+      1. Check weather in Tokyo for Apr 10
+      2. Search flights NYC to Tokyo
+      3. Get details on the best flight
+      4. Book the flight for "Grace Hall" (2 passengers)
+      5. Search hotels in Tokyo (Apr 10-20)
+      6. Check availability for the top hotel (suite room)
+      7. Convert total estimated cost from USD to JPY
+      Provide a complete trip summary.
+    difficulty: 5
+    required_tools: [get_weather, search_flights, get_flight_details, book_flight, search_hotels, check_hotel_availability, currency_convert]
+    expected_tool_call_depth: 7
+    ground_truth:
+      expected_outcome: "Complete international trip planned and booked"
+      required_tool_calls: [get_weather, search_flights, get_flight_details, book_flight, search_hotels, check_hotel_availability, currency_convert]
+      evaluation_rubric: { weather: 0.08, flight_search: 0.10, flight_details: 0.08, flight_booked: 0.20, hotel_search: 0.10, hotel_availability: 0.12, cost_conversion: 0.12, full_summary: 0.20 }
+      disruption_sensitive_tools: [book_flight, check_hotel_availability]
+      recovery_actions: [retry_booking, try_alternate_hotel, retry_conversion]
+
+  - task_id: travel_019
+    title: "Emergency rebooking with multi-option comparison"
+    description: |
+      A passenger's flight was cancelled. Cancel booking BKG-emergency789.
+      Search for alternative flights from ORD to DFW, ORD to IAH, and ORD to
+      ATL — all for tomorrow. Compare all options, pick the best, and rebook
+      for "Ivan Kim". Include weather at each destination.
+    difficulty: 5
+    required_tools: [cancel_booking, search_flights, get_weather, book_flight]
+    expected_tool_call_depth: 8
+    ground_truth:
+      expected_outcome: "Emergency rebooking with multi-destination comparison"
+      required_tool_calls: [cancel_booking, search_flights, get_weather, book_flight]
+      evaluation_rubric: { cancelled_original: 0.10, searched_dfw: 0.10, searched_iah: 0.10, searched_atl: 0.10, checked_weather: 0.15, compared_options: 0.15, rebooked: 0.20, provided_summary: 0.10 }
+      disruption_sensitive_tools: [book_flight, cancel_booking]
+      recovery_actions: [retry_cancel, retry_booking, try_next_destination]
+
+  - task_id: travel_020
+    title: "Corporate travel package with approvals"
+    description: |
+      Organize corporate travel for a team of 3 from SFO to London:
+      1. Search flights for 2026-11-05
+      2. Get details on top 2 options
+      3. Search hotels in London (Nov 5-10)
+      4. Check availability for standard and suite rooms at best hotel
+      5. Convert total budget from USD to GBP
+      6. Book the most cost-effective flight for "Team Lead"
+      Provide executive summary with cost breakdown.
+    difficulty: 5
+    required_tools: [search_flights, get_flight_details, search_hotels, check_hotel_availability, currency_convert, book_flight]
+    expected_tool_call_depth: 8
+    ground_truth:
+      expected_outcome: "Corporate travel package with cost breakdown"
+      required_tool_calls: [search_flights, get_flight_details, search_hotels, check_hotel_availability, currency_convert, book_flight]
+      evaluation_rubric: { flights_searched: 0.10, details_compared: 0.10, hotels_found: 0.10, rooms_compared: 0.10, costs_converted: 0.15, booked: 0.20, executive_summary: 0.25 }
+      disruption_sensitive_tools: [book_flight, currency_convert]
+      recovery_actions: [retry_booking, use_cached_rates, try_alternative_hotel]

@@ -1,0 +1,264 @@
+# AgentDisruptBench — Built-in Finance Tasks
+# Domain: finance | Version: 1.0 | 20 tasks D1-D5
+domain: finance
+version: "1.0"
+tasks:
+  - task_id: finance_001
+    title: "Check account balance"
+    description: "Check balance for ACC-001122. Report available balance and pending transactions."
+    difficulty: 1
+    required_tools: [get_account_balance]
+    expected_tool_call_depth: 1
+    ground_truth:
+      expected_outcome: "Account balance reported"
+      required_tool_calls: [get_account_balance]
+      evaluation_rubric: { checked_balance: 0.60, reported_details: 0.40 }
+      disruption_sensitive_tools: [get_account_balance]
+      recovery_actions: [retry_balance_check]
+
+  - task_id: finance_002
+    title: "Get exchange rate"
+    description: "Get the current USD to EUR exchange rate. Report rate and inverse."
+    difficulty: 1
+    required_tools: [get_exchange_rate]
+    expected_tool_call_depth: 1
+    ground_truth:
+      expected_outcome: "Exchange rate provided"
+      required_tool_calls: [get_exchange_rate]
+      evaluation_rubric: { got_rate: 0.60, reported_inverse: 0.40 }
+      disruption_sensitive_tools: [get_exchange_rate]
+      recovery_actions: [retry_rate]
+
+  - task_id: finance_003
+    title: "Transfer between accounts"
+    description: "Transfer 500 USD from ACC-001122 to ACC-003344. Check balance first, confirm fees."
+    difficulty: 2
+    required_tools: [get_account_balance, transfer_funds]
+    expected_tool_call_depth: 2
+    ground_truth:
+      expected_outcome: "Transfer completed with fee disclosed"
+      required_tool_calls: [get_account_balance, transfer_funds]
+      evaluation_rubric: { checked_balance: 0.30, transferred: 0.50, reported_fee: 0.20 }
+      disruption_sensitive_tools: [transfer_funds]
+      recovery_actions: [retry_transfer]
+
+  - task_id: finance_004
+    title: "View transaction history"
+    description: "Show last 10 transactions for ACC-001122. Summarize types and amounts."
+    difficulty: 2
+    required_tools: [get_transaction_history]
+    expected_tool_call_depth: 1
+    ground_truth:
+      expected_outcome: "Transaction history summarized"
+      required_tool_calls: [get_transaction_history]
+      evaluation_rubric: { retrieved_history: 0.50, summarized: 0.50 }
+      disruption_sensitive_tools: [get_transaction_history]
+      recovery_actions: [retry_history]
+
+  - task_id: finance_005
+    title: "Validate payment card"
+    description: "Validate card 4111111111111234, exp 12/27, CVV 123. Report validity and type."
+    difficulty: 2
+    required_tools: [validate_card]
+    expected_tool_call_depth: 1
+    ground_truth:
+      expected_outcome: "Card validation result"
+      required_tool_calls: [validate_card]
+      evaluation_rubric: { validated: 0.60, reported_type: 0.40 }
+      disruption_sensitive_tools: [validate_card]
+      recovery_actions: [retry_validation]
+
+  - task_id: finance_006
+    title: "Check credit limit"
+    description: "Check credit limit for ACC-005566. Report limit, used, and utilization%."
+    difficulty: 2
+    required_tools: [check_credit_limit]
+    expected_tool_call_depth: 1
+    ground_truth:
+      expected_outcome: "Credit limit details"
+      required_tool_calls: [check_credit_limit]
+      evaluation_rubric: { checked_limit: 0.40, reported_used: 0.30, reported_pct: 0.30 }
+      disruption_sensitive_tools: [check_credit_limit]
+      recovery_actions: [retry_credit_check]
+
+  - task_id: finance_007
+    title: "International transfer with FX"
+    description: "Transfer 1000 USD from ACC-001122 to ACC-007788. Check balance, get USD→EUR rate, confirm EUR equivalent."
+    difficulty: 3
+    required_tools: [get_account_balance, get_exchange_rate, transfer_funds]
+    expected_tool_call_depth: 3
+    ground_truth:
+      expected_outcome: "International transfer with FX confirmed"
+      required_tool_calls: [get_account_balance, get_exchange_rate, transfer_funds]
+      evaluation_rubric: { checked_balance: 0.20, got_rate: 0.25, transferred: 0.35, reported_equiv: 0.20 }
+      disruption_sensitive_tools: [transfer_funds]
+      recovery_actions: [retry_transfer]
+
+  - task_id: finance_008
+    title: "Cross-account transaction comparison"
+    description: "Get last 10 transactions for ACC-001122 and ACC-003344. Compare spending and flag items over 1000 USD."
+    difficulty: 3
+    required_tools: [get_transaction_history]
+    expected_tool_call_depth: 2
+    ground_truth:
+      expected_outcome: "Transaction comparison with anomalies"
+      required_tool_calls: [get_transaction_history]
+      evaluation_rubric: { got_first: 0.25, got_second: 0.25, compared: 0.25, flagged: 0.25 }
+      disruption_sensitive_tools: [get_transaction_history]
+      recovery_actions: [retry_history]
+
+  - task_id: finance_009
+    title: "Card validation and credit assessment"
+    description: "Validate card 5500000000000004 (06/28, CVV 456) and check credit for ACC-009900. Can a 2000 USD purchase go through?"
+    difficulty: 3
+    required_tools: [validate_card, check_credit_limit]
+    expected_tool_call_depth: 2
+    ground_truth:
+      expected_outcome: "Purchase feasibility assessed"
+      required_tool_calls: [validate_card, check_credit_limit]
+      evaluation_rubric: { validated: 0.30, checked_credit: 0.30, assessed: 0.40 }
+      disruption_sensitive_tools: [validate_card]
+      recovery_actions: [retry_validation]
+
+  - task_id: finance_010
+    title: "Multi-currency balance report"
+    description: "Check ACC-001122 balance, convert to EUR, GBP, JPY. Multi-currency report."
+    difficulty: 3
+    required_tools: [get_account_balance, get_exchange_rate]
+    expected_tool_call_depth: 4
+    ground_truth:
+      expected_outcome: "Multi-currency report"
+      required_tool_calls: [get_account_balance, get_exchange_rate]
+      evaluation_rubric: { balance: 0.20, eur: 0.20, gbp: 0.20, jpy: 0.20, report: 0.20 }
+      disruption_sensitive_tools: [get_exchange_rate]
+      recovery_actions: [retry_rate]
+
+  - task_id: finance_011
+    title: "Spending categorization"
+    description: "Get 30-day history for ACC-001122. Categorize spending and identify top category."
+    difficulty: 3
+    required_tools: [get_transaction_history]
+    expected_tool_call_depth: 1
+    ground_truth:
+      expected_outcome: "Spending by category"
+      required_tool_calls: [get_transaction_history]
+      evaluation_rubric: { got_history: 0.30, categorized: 0.35, top_category: 0.35 }
+      disruption_sensitive_tools: [get_transaction_history]
+      recovery_actions: [retry_history]
+
+  - task_id: finance_012
+    title: "FX rate comparison"
+    description: "Compare USD to EUR, GBP, JPY, CHF rates. Which gives best value for 10000 USD?"
+    difficulty: 3
+    required_tools: [get_exchange_rate]
+    expected_tool_call_depth: 4
+    ground_truth:
+      expected_outcome: "FX comparison with recommendation"
+      required_tool_calls: [get_exchange_rate]
+      evaluation_rubric: { got_eur: 0.15, got_gbp: 0.15, got_jpy: 0.15, got_chf: 0.15, compared: 0.20, recommended: 0.20 }
+      disruption_sensitive_tools: [get_exchange_rate]
+      recovery_actions: [retry_rate]
+
+  - task_id: finance_013
+    title: "Pre-validated transfer"
+    description: "Validate card 4222222222222345 (09/27, 789), check ACC-001122 balance and credit, transfer 2500 to ACC-005566."
+    difficulty: 4
+    required_tools: [validate_card, get_account_balance, check_credit_limit, transfer_funds]
+    expected_tool_call_depth: 4
+    ground_truth:
+      expected_outcome: "Validated transfer completed"
+      required_tool_calls: [validate_card, get_account_balance, check_credit_limit, transfer_funds]
+      evaluation_rubric: { validated: 0.15, balance: 0.20, credit: 0.20, transfer: 0.30, confirmed: 0.15 }
+      disruption_sensitive_tools: [transfer_funds]
+      recovery_actions: [retry_transfer]
+
+  - task_id: finance_014
+    title: "Cross-account reconciliation"
+    description: "Get history and balances for ACC-001122 and ACC-003344. Match transfers and reconcile."
+    difficulty: 4
+    required_tools: [get_transaction_history, get_account_balance]
+    expected_tool_call_depth: 4
+    ground_truth:
+      expected_outcome: "Reconciliation completed"
+      required_tool_calls: [get_transaction_history, get_account_balance]
+      evaluation_rubric: { hist_1: 0.15, hist_2: 0.15, bal_1: 0.15, bal_2: 0.15, matched: 0.20, reconciled: 0.20 }
+      disruption_sensitive_tools: [get_transaction_history]
+      recovery_actions: [retry_history]
+
+  - task_id: finance_015
+    title: "FX-optimized international transfer"
+    description: "Transfer 5000 from ACC-001122 internationally. Compare USD→EUR and USD→GBP rates. Execute in optimal currency."
+    difficulty: 4
+    required_tools: [get_account_balance, get_exchange_rate, transfer_funds]
+    expected_tool_call_depth: 4
+    ground_truth:
+      expected_outcome: "FX-optimized transfer"
+      required_tool_calls: [get_account_balance, get_exchange_rate, transfer_funds]
+      evaluation_rubric: { balance: 0.15, eur_rate: 0.15, gbp_rate: 0.15, chose_optimal: 0.25, transferred: 0.30 }
+      disruption_sensitive_tools: [transfer_funds]
+      recovery_actions: [retry_transfer]
+
+  - task_id: finance_016
+    title: "Credit utilization optimization"
+    description: "Check credit for ACC-001122, ACC-003344, ACC-005566. Get balances. Recommend transfers to keep utilization under 30%."
+    difficulty: 4
+    required_tools: [check_credit_limit, get_account_balance, transfer_funds]
+    expected_tool_call_depth: 7
+    ground_truth:
+      expected_outcome: "Credit optimization plan"
+      required_tool_calls: [check_credit_limit, get_account_balance]
+      evaluation_rubric: { credits: 0.20, balances: 0.20, analysis: 0.25, recommendations: 0.35 }
+      disruption_sensitive_tools: [check_credit_limit]
+      recovery_actions: [retry_credit_check]
+
+  - task_id: finance_017
+    title: "Fraud investigation"
+    description: "Check credit, balance, validate card 5500000000000004 (12/27, 321), get history for ACC-005566. Flag transactions above 50% of credit limit."
+    difficulty: 4
+    required_tools: [check_credit_limit, get_account_balance, validate_card, get_transaction_history]
+    expected_tool_call_depth: 4
+    ground_truth:
+      expected_outcome: "Fraud investigation with flags"
+      required_tool_calls: [check_credit_limit, get_account_balance, validate_card, get_transaction_history]
+      evaluation_rubric: { credit: 0.15, balance: 0.15, card: 0.15, history: 0.20, flagged: 0.35 }
+      disruption_sensitive_tools: [get_transaction_history]
+      recovery_actions: [retry_history]
+
+  - task_id: finance_018
+    title: "Financial health assessment"
+    description: "Full check for ACC-001122: balance, 30-day history, credit limit, USD→EUR/GBP/JPY rates, validate card 4111111111111234 (12/28, 555). Generate health report."
+    difficulty: 5
+    required_tools: [get_account_balance, get_transaction_history, check_credit_limit, get_exchange_rate, validate_card]
+    expected_tool_call_depth: 7
+    ground_truth:
+      expected_outcome: "Comprehensive financial health report"
+      required_tool_calls: [get_account_balance, get_transaction_history, check_credit_limit, get_exchange_rate, validate_card]
+      evaluation_rubric: { balance: 0.12, transactions: 0.15, credit: 0.15, rates: 0.15, card: 0.13, report: 0.30 }
+      disruption_sensitive_tools: [get_account_balance, get_transaction_history]
+      recovery_actions: [retry_any, partial_report]
+
+  - task_id: finance_019
+    title: "Portfolio rebalancing"
+    description: "Rebalance ACC-001122, ACC-003344, ACC-005566 to equal distribution. Check all balances, calculate and execute transfers, verify."
+    difficulty: 5
+    required_tools: [get_account_balance, transfer_funds]
+    expected_tool_call_depth: 9
+    ground_truth:
+      expected_outcome: "Portfolio rebalanced equally"
+      required_tool_calls: [get_account_balance, transfer_funds]
+      evaluation_rubric: { balances: 0.15, calculated: 0.20, transferred: 0.35, verified: 0.15, report: 0.15 }
+      disruption_sensitive_tools: [transfer_funds]
+      recovery_actions: [retry_transfer, rollback]
+
+  - task_id: finance_020
+    title: "End-of-month close"
+    description: "Monthly close for ACC-001122: balance, history, credit, validate card, FX rates (EUR/GBP/JPY/CHF), transfer excess over 10000 to ACC-SAVE01. Generate closing statement."
+    difficulty: 5
+    required_tools: [get_account_balance, get_transaction_history, check_credit_limit, validate_card, get_exchange_rate, transfer_funds]
+    expected_tool_call_depth: 9
+    ground_truth:
+      expected_outcome: "Monthly close with transfer and FX positions"
+      required_tool_calls: [get_account_balance, get_transaction_history, check_credit_limit, validate_card, get_exchange_rate, transfer_funds]
+      evaluation_rubric: { balance: 0.08, history: 0.12, credit: 0.10, card: 0.08, rates: 0.12, transfer: 0.20, statement: 0.30 }
+      disruption_sensitive_tools: [transfer_funds, get_transaction_history]
+      recovery_actions: [retry_transfer, partial_close]
