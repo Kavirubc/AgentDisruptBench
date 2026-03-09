@@ -1,0 +1,186 @@
+"""
+AgentDisruptBench — Reporter
+==============================
+
+File:        reporter.py
+Purpose:     Generates Markdown and JSON reports from BenchmarkResult lists.
+             Outputs per-task, per-profile, and aggregate summaries with
+             tables, statistics, and scoring breakdowns.
+
+Author:      AgentDisruptBench Contributors
+License:     MIT
+Created:     2026-03-09
+Modified:    2026-03-09
+
+Key Classes:
+    Reporter : Generates Markdown and JSON report files from results.
+
+Convention:
+    Every source file MUST include a header block like this one.
+"""
+
+from __future__ import annotations
+
+import json
+import logging
+from dataclasses import asdict
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import Any
+
+from agentdisruptbench.core.metrics import BenchmarkResult
+
+logger = logging.getLogger("agentdisruptbench.reporter")
+
+
+class Reporter:
+    """Generates benchmark reports from a list of BenchmarkResult.
+
+    Produces:
+    - ``report.md``  : Markdown report with tables and summaries.
+    - ``results.json``: Machine-readable JSON with all metrics.
+    - ``summary.json``: Aggregate statistics per profile.
+    """
+
+    def __init__(self, output_dir: str = "results") -> None:
+        self._output_dir = Path(output_dir)
+        self._output_dir.mkdir(parents=True, exist_ok=True)
+
+    def generate(self, results: list[BenchmarkResult]) -> dict[str, str]:
+        """Generate all report files.
+
+        Args:
+            results: List of BenchmarkResult from a benchmark run.
+
+        Returns:
+            Dict mapping filename → absolute path of generated files.
+        """
+        paths: dict[str, str] = {}
+
+        paths["report.md"] = self._write_markdown(results)
+        paths["results.json"] = self._write_json(results)
+        paths["summary.json"] = self._write_summary(results)
+
+        logger.info("reports_generated output_dir=%s", self._output_dir)
+        return paths
+
+    # -- Markdown report ---------------------------------------------------
+
+    def _write_markdown(self, results: list[BenchmarkResult]) -> str:
+        """Generate the Markdown report."""
+        path = self._output_dir / "report.md"
+        lines: list[str] = []
+        ts = datetime.now(timezone.utc).isoformat()
+
+        lines.append("# AgentDisruptBench — Benchmark Report")
+        lines.append(f"\nGenerated: {ts}\n")
+
+        # Aggregate stats
+        profiles = sorted({r.profile_name for r in results})
+        lines.append("## Summary by Profile\n")
+        lines.append("| Profile | Tasks | Success Rate | Avg Partial | Recovery Rate | Avg Extra Calls |")
+        lines.append("|---------|-------|-------------|-------------|---------------|-----------------|")
+
+        for profile in profiles:
+            pr = [r for r in results if r.profile_name == profile]
+            n = len(pr)
+            success_pct = sum(1 for r in pr if r.success) / max(n, 1) * 100
+            avg_partial = sum(r.partial_score for r in pr) / max(n, 1)
+            avg_recovery = sum(r.recovery_rate for r in pr) / max(n, 1)
+            avg_extra = sum((r.extra_tool_calls or 0) for r in pr) / max(n, 1)
+            lines.append(
+                f"| {profile} | {n} | {success_pct:.1f}% | {avg_partial:.3f} | "
+                f"{avg_recovery:.3f} | {avg_extra:.1f} |"
+            )
+
+        # Per-domain breakdown
+        domains = sorted({r.task_id.split("_")[0] for r in results})
+        lines.append("\n## Results by Domain\n")
+        for domain in domains:
+            dr = [r for r in results if r.task_id.startswith(domain)]
+            lines.append(f"### {domain.title()}\n")
+            lines.append("| Task | Profile | Success | Partial | Recovery | Disruptions | Extra Calls |")
+            lines.append("|------|---------|---------|---------|----------|-------------|-------------|")
+            for r in sorted(dr, key=lambda x: (x.task_id, x.profile_name)):
+                lines.append(
+                    f"| {r.task_id} | {r.profile_name} | "
+                    f"{'✅' if r.success else '❌'} | {r.partial_score:.2f} | "
+                    f"{r.recovery_rate:.2f} | {r.disruptions_encountered} | "
+                    f"{r.extra_tool_calls or 'N/A'} |"
+                )
+
+        # Disruption type distribution
+        lines.append("\n## Disruption Types Encountered\n")
+        type_counts: dict[str, int] = {}
+        for r in results:
+            for dt in r.disruption_types_seen:
+                type_counts[dt] = type_counts.get(dt, 0) + 1
+        if type_counts:
+            lines.append("| Type | Count |")
+            lines.append("|------|-------|")
+            for dt, count in sorted(type_counts.items(), key=lambda x: -x[1]):
+                lines.append(f"| {dt} | {count} |")
+        else:
+            lines.append("No disruptions encountered.\n")
+
+        # Footer
+        lines.append("\n---")
+        lines.append("*Report generated by [AgentDisruptBench](https://github.com/AgentDisruptBench)*")
+
+        content = "\n".join(lines)
+        path.write_text(content, encoding="utf-8")
+        logger.info("markdown_report_written path=%s", path)
+        return str(path)
+
+    # -- JSON results ------------------------------------------------------
+
+    def _write_json(self, results: list[BenchmarkResult]) -> str:
+        """Write full results as JSON."""
+        path = self._output_dir / "results.json"
+
+        data = []
+        for r in results:
+            d = asdict(r)
+            # Remove raw traces from JSON output (too large)
+            d.pop("traces", None)
+            data.append(d)
+
+        path.write_text(
+            json.dumps(data, indent=2, default=str), encoding="utf-8"
+        )
+        logger.info("json_results_written path=%s count=%d", path, len(data))
+        return str(path)
+
+    # -- Summary JSON ------------------------------------------------------
+
+    def _write_summary(self, results: list[BenchmarkResult]) -> str:
+        """Write aggregate summary statistics."""
+        path = self._output_dir / "summary.json"
+
+        profiles = sorted({r.profile_name for r in results})
+        summary: dict[str, Any] = {
+            "generated": datetime.now(timezone.utc).isoformat(),
+            "total_runs": len(results),
+            "profiles": {},
+        }
+
+        for profile in profiles:
+            pr = [r for r in results if r.profile_name == profile]
+            n = len(pr)
+            summary["profiles"][profile] = {
+                "tasks_evaluated": n,
+                "success_rate": sum(1 for r in pr if r.success) / max(n, 1),
+                "avg_partial_score": sum(r.partial_score for r in pr) / max(n, 1),
+                "avg_recovery_rate": sum(r.recovery_rate for r in pr) / max(n, 1),
+                "avg_retry_efficiency": sum(r.retry_efficiency for r in pr) / max(n, 1),
+                "total_disruptions": sum(r.disruptions_encountered for r in pr),
+                "total_recovered": sum(r.disruptions_recovered for r in pr),
+                "avg_extra_tool_calls": sum((r.extra_tool_calls or 0) for r in pr) / max(n, 1),
+                "avg_duration_seconds": sum(r.duration_seconds for r in pr) / max(n, 1),
+            }
+
+        path.write_text(
+            json.dumps(summary, indent=2, default=str), encoding="utf-8"
+        )
+        logger.info("summary_written path=%s", path)
+        return str(path)
