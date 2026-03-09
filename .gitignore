@@ -33,6 +33,7 @@ htmlcov/
 
 # ----- Results / Outputs -----
 results/
+evaluation_results/
 *.jsonl
 *.log
 
