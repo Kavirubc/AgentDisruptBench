@@ -60,6 +60,7 @@ class Reporter:
         paths["report.md"] = self._write_markdown(results)
         paths["results.json"] = self._write_json(results)
         paths["summary.json"] = self._write_summary(results)
+        paths["task_logs"] = self._write_task_logs(results)
 
         logger.info("reports_generated output_dir=%s", self._output_dir)
         return paths
@@ -184,3 +185,66 @@ class Reporter:
         )
         logger.info("summary_written path=%s", path)
         return str(path)
+
+    # -- Per-task log files ------------------------------------------------
+
+    def _write_task_logs(self, results: list[BenchmarkResult]) -> str:
+        """Write per-task detailed log files with traces and agent output.
+
+        Creates a ``task_logs/`` subdirectory with one JSON file per run.
+        Each file contains the full traces, agent output, and all metrics.
+        """
+        log_dir = self._output_dir / "task_logs"
+        log_dir.mkdir(parents=True, exist_ok=True)
+
+        for r in results:
+            filename = f"{r.task_id}_{r.profile_name}_{r.seed}.json"
+            log_path = log_dir / filename
+
+            # Build trace dicts
+            trace_dicts = []
+            for t in r.traces:
+                trace_dicts.append({
+                    "call_id": t.call_id,
+                    "call_number": t.call_number,
+                    "tool_name": t.tool_name,
+                    "inputs": t.inputs,
+                    "real_result": str(t.real_result)[:500],
+                    "observed_result": str(t.observed_result)[:500],
+                    "real_success": t.real_success,
+                    "observed_success": t.observed_success,
+                    "disruption_fired": t.disruption_fired,
+                    "real_latency_ms": t.real_latency_ms,
+                    "observed_latency_ms": t.observed_latency_ms,
+                    "error": t.error,
+                    "timestamp": t.timestamp,
+                })
+
+            log_data = {
+                "task_id": r.task_id,
+                "agent_id": r.agent_id,
+                "profile_name": r.profile_name,
+                "seed": r.seed,
+                "success": r.success,
+                "partial_score": r.partial_score,
+                "agent_output": r.agent_output,
+                "recovery_rate": r.recovery_rate,
+                "mean_steps_to_recovery": r.mean_steps_to_recovery,
+                "retry_efficiency": r.retry_efficiency,
+                "disruptions_encountered": r.disruptions_encountered,
+                "disruptions_recovered": r.disruptions_recovered,
+                "disruption_types_seen": r.disruption_types_seen,
+                "total_tool_calls": r.total_tool_calls,
+                "extra_tool_calls": r.extra_tool_calls,
+                "duration_seconds": r.duration_seconds,
+                "acknowledged_failure": r.acknowledged_failure,
+                "attempted_alternative": r.attempted_alternative,
+                "traces": trace_dicts,
+            }
+
+            log_path.write_text(
+                json.dumps(log_data, indent=2, default=str), encoding="utf-8"
+            )
+
+        logger.info("task_logs_written dir=%s count=%d", log_dir, len(results))
+        return str(log_dir)

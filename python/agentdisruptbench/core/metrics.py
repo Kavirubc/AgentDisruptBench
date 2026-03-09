@@ -125,6 +125,25 @@ class MetricsCalculator:
     benchmark metrics as defined in §9 of the AgentDisruptBench spec.
     """
 
+    @staticmethod
+    def _normalize_output(agent_output: Any) -> str:
+        """Coerce agent_output to str.
+
+        Some LLMs (e.g. Gemini) may return structured content as a list
+        of parts or dicts. We join them into a single string.
+        """
+        if isinstance(agent_output, str):
+            return agent_output
+        if isinstance(agent_output, list):
+            parts = []
+            for item in agent_output:
+                if isinstance(item, dict):
+                    parts.append(str(item.get("text", item)))
+                else:
+                    parts.append(str(item))
+            return " ".join(parts)
+        return str(agent_output) if agent_output is not None else ""
+
     def compute(
         self,
         task: Task,
@@ -152,6 +171,9 @@ class MetricsCalculator:
         Returns:
             Fully populated :class:`BenchmarkResult`.
         """
+
+        # -- Normalize output (Gemini may return list content) ----------------
+        agent_output = self._normalize_output(agent_output)
 
         # -- Partial score (rubric evaluation) --------------------------------
         partial_score = self._evaluate_rubric(task, traces, agent_output)
