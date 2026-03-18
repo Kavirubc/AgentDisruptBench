@@ -20,14 +20,10 @@ from __future__ import annotations
 
 from typing import Any
 
-import pytest
-
-from agentdisruptbench.core.engine import DisruptionConfig, DisruptionEngine, DisruptionType
-from agentdisruptbench.core.metrics import BenchmarkResult, MetricsCalculator
-from agentdisruptbench.core.proxy import ToolProxy
-from agentdisruptbench.core.state import COMPENSATION_PAIRS, StateManager
-from agentdisruptbench.core.trace import ToolCallTrace, TraceCollector
-from agentdisruptbench.tools.mock_tools import RetailTools, TravelTools
+from agentdisruptbench.core.metrics import MetricsCalculator
+from agentdisruptbench.core.state import StateManager
+from agentdisruptbench.core.trace import ToolCallTrace
+from agentdisruptbench.tools.mock_tools import RetailTools
 from agentdisruptbench.tools.stateful import SIDE_EFFECT_TOOLS, wrap_tool_with_state
 
 
@@ -247,7 +243,7 @@ class TestCompensationDetection:
             self._make_trace("book_flight"),
             self._make_trace("cancel_booking"),
         ]
-        count, rate = calc._compute_compensation(traces, [])
+        count, rate = calc._compute_compensation(traces)
         assert count == 1
         assert rate == 1.0
 
@@ -258,7 +254,7 @@ class TestCompensationDetection:
             self._make_trace("book_flight"),
             self._make_trace("search_flights"),
         ]
-        count, rate = calc._compute_compensation(traces, [])
+        count, rate = calc._compute_compensation(traces)
         assert count == 0
         assert rate == 0.0
 
@@ -271,7 +267,7 @@ class TestCompensationDetection:
             self._make_trace("cancel_booking"),
             # place_order NOT compensated (no process_refund)
         ]
-        count, rate = calc._compute_compensation(traces, [])
+        count, rate = calc._compute_compensation(traces)
         assert count == 1
         assert rate == 0.5  # 1 out of 2 compensated
 
@@ -376,13 +372,14 @@ class TestEvaluatorWithState:
 
     def test_stateful_evaluation_pipeline(self):
         """Run evaluator with side-effect tools, verify new metrics are populated."""
-        from agentdisruptbench import TaskRegistry, ToolRegistry
+        from agentdisruptbench import ToolRegistry
         from agentdisruptbench.harness.evaluator import Evaluator
         from agentdisruptbench.tasks.schemas import GroundTruth, Task
 
         def booking_agent(task: Task, tools: dict[str, Any]) -> str:
             """Agent that books a flight and then cancels it."""
             results = []
+            booking_id = None
             if "search_flights" in tools:
                 try:
                     r = tools["search_flights"](origin="SFO", destination="JFK", date="2026-04-15")
@@ -393,14 +390,15 @@ class TestEvaluatorWithState:
             if "book_flight" in tools:
                 try:
                     r = tools["book_flight"](flight_id="FLT-abc", passenger_name="Test User")
-                    results.append(f"Booked: {r.get('booking_id', 'unknown')}")
+                    booking_id = r.get("booking_id")
+                    results.append(f"Booked: {booking_id or 'unknown'}")
                 except Exception as e:
                     results.append(f"Booking failed: {e}")
 
             if "cancel_booking" in tools:
                 try:
-                    r = tools["cancel_booking"](booking_id="BK-001")
-                    results.append(f"Cancelled: {r.get('booking_id', 'BK-001')}")
+                    r = tools["cancel_booking"](booking_id=booking_id or "BK-fallback")
+                    results.append(f"Cancelled: {r.get('booking_id', booking_id)}")
                 except Exception as e:
                     results.append(f"Cancel failed: {e}")
 

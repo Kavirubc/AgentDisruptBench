@@ -26,7 +26,9 @@ from __future__ import annotations
 import copy
 import logging
 import threading
-from dataclasses import dataclass, field
+import time
+import uuid
+from dataclasses import dataclass
 from typing import Any
 
 logger = logging.getLogger("agentdisruptbench.state")
@@ -37,17 +39,19 @@ logger = logging.getLogger("agentdisruptbench.state")
 # ---------------------------------------------------------------------------
 
 #: Maps side-effect tool → its compensating tool name.
+#: Self-compensation pairs (e.g. transfer_funds → transfer_funds) are excluded
+#: to avoid overcounting; those require input-level analysis.
 COMPENSATION_PAIRS: dict[str, str | None] = {
     "book_flight": "cancel_booking",
     "cancel_booking": None,
     "place_order": "process_refund",
     "process_refund": None,
-    "transfer_funds": "transfer_funds",  # reverse transfer
+    "transfer_funds": None,  # self-compensation requires input analysis
     "deploy_service": "rollback_deployment",
     "rollback_deployment": None,
     "create_incident": "resolve_incident",
     "resolve_incident": None,
-    "update_cart": "update_cart",  # action=remove
+    "update_cart": None,  # self-compensation requires input analysis
     "apply_coupon": None,
 }
 
@@ -131,6 +135,11 @@ class StateManager:
     ) -> StateAction:
         """Record a state mutation.
 
+        Idempotency behaviour is **detection-only**: duplicate ``create``
+        operations are logged as violations via
+        :meth:`get_idempotency_violations` but the write still proceeds
+        so that the benchmark can observe the agent's behaviour.
+
         Args:
             tool_name:   Name of the tool performing the write.
             collection:  Target collection (e.g. 'bookings', 'orders').
@@ -142,8 +151,6 @@ class StateManager:
         Returns:
             The StateAction record that was created.
         """
-        import time
-        import uuid
 
         with self._lock:
             # Idempotency check

@@ -36,7 +36,7 @@ import logging
 from dataclasses import dataclass, field
 from typing import Any
 
-from agentdisruptbench.core.state import COMPENSATION_PAIRS, StateAction
+from agentdisruptbench.core.state import COMPENSATION_PAIRS
 from agentdisruptbench.core.trace import ToolCallTrace
 from agentdisruptbench.tasks.schemas import Task
 
@@ -162,7 +162,6 @@ class MetricsCalculator:
         profile_name: str,
         seed: int,
         duration_seconds: float,
-        state_actions: list[StateAction] | None = None,
         state_diff: dict | None = None,
         idempotency_violations: int = 0,
     ) -> BenchmarkResult:
@@ -225,9 +224,7 @@ class MetricsCalculator:
         attempted_alternative = self._check_alternative(traces, task)
 
         # -- Compensation & state metrics (P0) ---------------------------------
-        comp_count, comp_success = self._compute_compensation(
-            traces, state_actions or []
-        )
+        comp_count, comp_success = self._compute_compensation(traces)
         side_effect_score = self._compute_side_effect_score(state_diff or {})
         loop_count = self._compute_loops(traces)
 
@@ -434,7 +431,6 @@ class MetricsCalculator:
     def _compute_compensation(
         self,
         traces: list[ToolCallTrace],
-        state_actions: list[StateAction],
     ) -> tuple[int, float]:
         """Detect compensation patterns in traces.
 
@@ -456,10 +452,10 @@ class MetricsCalculator:
             return 0, 0.0
 
         compensated = 0
-        for _idx, tool_name in side_effect_calls:
+        for idx, tool_name in side_effect_calls:
             comp_tool = COMPENSATION_PAIRS[tool_name]
             # Check if compensating tool was called after the side-effect
-            for t in traces[_idx + 1:]:
+            for t in traces[idx + 1:]:
                 if t.tool_name == comp_tool and t.observed_success:
                     compensated += 1
                     break
@@ -478,15 +474,15 @@ class MetricsCalculator:
         0.0 = no unresolved state changes (clean run or all compensated).
         1.0 = maximum unresolved side effects.
 
-        Score = num_unresolved_changes / max(num_unresolved_changes, 1).
-        Currently a simple count; can be refined with severity weighting.
+        Normalization: ``min(1.0, total_changes / 5.0)`` — 5+ unresolved
+        changes saturate at 1.0.  Can be refined with severity weighting.
         """
         if not state_diff:
             return 0.0
 
         total_changes = 0
-        for _coll, changes in state_diff.items():
-            total_changes += len(changes)
+        for coll_changes in state_diff.values():
+            total_changes += len(coll_changes)
 
         # Normalize: 0 changes = 0.0, 5+ changes = 1.0
         return min(1.0, total_changes / 5.0)

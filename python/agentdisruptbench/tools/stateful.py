@@ -33,13 +33,7 @@ logger = logging.getLogger("agentdisruptbench.stateful")
 
 
 #: Tools that mutate state (must be tracked).
-SIDE_EFFECT_TOOLS: set[str] = {
-    name for name, comp in COMPENSATION_PAIRS.items()
-    if comp is not None or name in {
-        "cancel_booking", "process_refund", "rollback_deployment",
-        "resolve_incident", "apply_coupon",
-    }
-}
+SIDE_EFFECT_TOOLS: set[str] = set(COMPENSATION_PAIRS)
 
 #: Mapping of tool_name → (collection, id_field) for state tracking.
 _TOOL_STATE_MAP: dict[str, tuple[str, str]] = {
@@ -54,6 +48,17 @@ _TOOL_STATE_MAP: dict[str, tuple[str, str]] = {
     "resolve_incident": ("incidents", "incident_id"),
     "update_cart": ("carts", "cart_id"),
     "apply_coupon": ("carts", "cart_id"),
+}
+
+#: Per-tool operation semantics for state tracking.
+#: Tools not in this map default to "create".
+_TOOL_OPERATION: dict[str, str] = {
+    "cancel_booking": "update",       # status change on existing entity
+    "process_refund": "create",       # new entity in refunds collection
+    "rollback_deployment": "update",  # status change on existing entity
+    "resolve_incident": "update",     # status change on existing entity
+    "update_cart": "update",          # modifies existing cart
+    "apply_coupon": "update",         # modifies existing cart
 }
 
 
@@ -79,13 +84,7 @@ def wrap_tool_with_state(
         return fn
 
     collection, id_field = _TOOL_STATE_MAP[tool_name]
-
-    # Determine operation type
-    _COMPENSATION_OPS = {
-        "cancel_booking", "process_refund", "rollback_deployment",
-        "resolve_incident",
-    }
-    is_compensation = tool_name in _COMPENSATION_OPS
+    operation = _TOOL_OPERATION.get(tool_name, "create")
 
     def stateful_wrapper(**kwargs: Any) -> Any:
         # Call the original tool
@@ -95,9 +94,6 @@ def wrap_tool_with_state(
         entity_id = "unknown"
         if isinstance(result, dict):
             entity_id = str(result.get(id_field, result.get("id", "unknown")))
-
-        # Determine operation
-        operation = "update" if is_compensation else "create"
 
         # Record in state
         state_manager.write(

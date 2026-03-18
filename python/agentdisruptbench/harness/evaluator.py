@@ -134,14 +134,13 @@ class Evaluator:
             profile_name=profile_name,
             seed=seed,
             duration_seconds=duration,
-            state_actions=state_manager.get_actions(),
             state_diff=state_diff,
             idempotency_violations=len(state_manager.get_idempotency_violations()),
         )
 
         logger.info(
             "run_complete task=%s profile=%s success=%s partial=%.2f "
-            "side_effects=%d compensations=%d loops=%d duration=%.1fs",
+            "idempotency_violations=%d compensations=%d loops=%d duration=%.1fs",
             task.task_id, profile_name, result.success,
             result.partial_score, result.idempotency_violations,
             result.compensation_count, result.loop_count, duration,

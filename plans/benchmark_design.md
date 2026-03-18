@@ -92,7 +92,7 @@ Drawing from distributed systems fault taxonomy (infrastructure, network, depend
 | `idempotency_violations` | Duplicate actions from retries (double-booking, etc.) | Distributed systems |
 | `planning_time_ratio` | Time on initial planning vs inter-step reasoning | User requirement |
 | `recovery_strategy_classification` | Was recovery smart or lucky? (categorize: retry, alternative, escalate, give-up) | User requirement |
-| [R(k,ε,λ)](file:///Users/kaviru/Downloads/agent-disrupt-bench/AgentDisruptBench/python/agentdisruptbench/tools/mock_tools.py#84-208) reliability surface | Consistency × Robustness × Fault tolerance | ReliabilityBench |
+| R(k,ε,λ) reliability surface | Consistency × Robustness × Fault tolerance | ReliabilityBench |
 | `tool_hallucination_rate` | Phantom actions, phantom outputs, reality drift | Tool hallucination research |
 
 ---
@@ -153,7 +153,7 @@ Every other benchmark has **static, deterministic disruptions**:
 
 ### The Key Gap We Fill
 
-```
+```text
 WorkBench  →  Shows agents CAUSE side effects (55% in analytics domain)
 Finance-Agent  →  Shows agents NEED error handling (but harness hides it)
 ReliabilityBench  →  Shows agents BREAK under chaos (but no side-effect recovery)
@@ -199,9 +199,9 @@ From distributed systems and production AI patterns — retries must not cause d
 
 | Scenario | Expected Behavior | Test Method |
 |---|---|---|
-| [book_flight](file:///Users/kaviru/Downloads/agent-disrupt-bench/AgentDisruptBench/python/agentdisruptbench/tools/mock_tools.py#257-272) fails, agent retries, first call actually succeeded | Agent should check before re-booking | Needs stateful sandbox |
-| [transfer_funds](file:///Users/kaviru/Downloads/agent-disrupt-bench/AgentDisruptBench/python/agentdisruptbench/tools/mock_tools.py#370-386) times out (actually executed), agent retries | Agent should check balance first | Needs idempotency keys |
-| [place_order](file:///Users/kaviru/Downloads/agent-disrupt-bench/AgentDisruptBench/python/agentdisruptbench/tools/mock_tools.py#120-138) + retry → double order | Agent should detect duplicate | Needs order state tracking |
+| `book_flight` fails, agent retries, first call actually succeeded | Agent should check before re-booking | Needs stateful sandbox |
+| `transfer_funds` times out (actually executed), agent retries | Agent should check balance first | Needs idempotency keys |
+| `place_order` + retry → double order | Agent should detect duplicate | Needs order state tracking |
 
 ### 4.4 Circuit Breaker & Bulkhead Patterns
 
@@ -259,10 +259,10 @@ From ReliabilityBench — define correctness by **end-state equivalence** rather
 
 | Category | Types |
 |---|---|
-| **Timing** (2) | [timeout](file:///Users/kaviru/Downloads/agent-disrupt-bench/AgentDisruptBench/python/agentdisruptbench/core/engine.py#285-299), [latency](file:///Users/kaviru/Downloads/agent-disrupt-bench/AgentDisruptBench/python/agentdisruptbench/core/engine.py#301-312) |
+| **Timing** (2) | `timeout`, `latency` |
 | **HTTP Status** (6) | `http_429`, `http_401`, `http_403`, `http_500`, `http_502`, `http_503` |
-| **Response Content** (7) | [malformed_json](file:///Users/kaviru/Downloads/agent-disrupt-bench/AgentDisruptBench/python/agentdisruptbench/core/engine.py#325-336), [truncated](file:///Users/kaviru/Downloads/agent-disrupt-bench/AgentDisruptBench/python/agentdisruptbench/core/engine.py#338-349), [null_response](file:///Users/kaviru/Downloads/agent-disrupt-bench/AgentDisruptBench/python/agentdisruptbench/core/engine.py#351-357), [missing_fields](file:///Users/kaviru/Downloads/agent-disrupt-bench/AgentDisruptBench/python/agentdisruptbench/core/engine.py#359-374), [type_mismatch](file:///Users/kaviru/Downloads/agent-disrupt-bench/AgentDisruptBench/python/agentdisruptbench/core/engine.py#376-403), [schema_drift](file:///Users/kaviru/Downloads/agent-disrupt-bench/AgentDisruptBench/python/agentdisruptbench/core/engine.py#405-421), [wrong_data](file:///Users/kaviru/Downloads/agent-disrupt-bench/AgentDisruptBench/python/agentdisruptbench/core/engine.py#423-452) |
-| **Behavioral** (5) | [intermittent](file:///Users/kaviru/Downloads/agent-disrupt-bench/AgentDisruptBench/python/agentdisruptbench/core/engine.py#454-468), [flapping](file:///Users/kaviru/Downloads/agent-disrupt-bench/AgentDisruptBench/python/agentdisruptbench/core/engine.py#470-486), [quota_exhausted](file:///Users/kaviru/Downloads/agent-disrupt-bench/AgentDisruptBench/python/agentdisruptbench/core/engine.py#488-500), [auth_expiry](file:///Users/kaviru/Downloads/agent-disrupt-bench/AgentDisruptBench/python/agentdisruptbench/core/engine.py#502-514), [cascading](file:///Users/kaviru/Downloads/agent-disrupt-bench/AgentDisruptBench/python/agentdisruptbench/core/engine.py#516-532) |
+| **Response Content** (7) | `malformed_json`, `truncated`, `null_response`, `missing_fields`, `type_mismatch`, `schema_drift`, `wrong_data` |
+| **Behavioral** (5) | `intermittent`, `flapping`, `quota_exhausted`, `auth_expiry`, `cascading` |
 
 ---
 
