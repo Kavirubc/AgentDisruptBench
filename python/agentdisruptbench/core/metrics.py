@@ -10,7 +10,7 @@ Purpose:     Computes all benchmark metrics from raw traces and agent output.
 Author:      AgentDisruptBench Contributors
 License:     MIT
 Created:     2026-03-09
-Modified:    2026-03-09
+Modified:    2026-03-18
 
 Key Definitions:
     BenchmarkResult    : Dataclass holding all metrics for one run.
@@ -36,6 +36,7 @@ import logging
 from dataclasses import dataclass, field
 from typing import Any
 
+from agentdisruptbench.core.state import COMPENSATION_PAIRS, StateAction
 from agentdisruptbench.core.trace import ToolCallTrace
 from agentdisruptbench.tasks.schemas import Task
 
@@ -108,6 +109,13 @@ class BenchmarkResult:
     disruption_types_seen: list[str]
     max_cascade_depth: int
 
+    # State & compensation metrics (P0)
+    compensation_count: int = 0
+    compensation_success_rate: float = 0.0
+    side_effect_score: float = 0.0
+    idempotency_violations: int = 0
+    loop_count: int = 0
+
     # Raw data
     traces: list[ToolCallTrace] = field(default_factory=list)
     duration_seconds: float = 0.0
@@ -154,6 +162,9 @@ class MetricsCalculator:
         profile_name: str,
         seed: int,
         duration_seconds: float,
+        state_actions: list[StateAction] | None = None,
+        state_diff: dict | None = None,
+        idempotency_violations: int = 0,
     ) -> BenchmarkResult:
         """Compute metrics for a single (task, profile) run.
 
@@ -213,6 +224,13 @@ class MetricsCalculator:
         acknowledged_failure = self._check_acknowledged(agent_output)
         attempted_alternative = self._check_alternative(traces, task)
 
+        # -- Compensation & state metrics (P0) ---------------------------------
+        comp_count, comp_success = self._compute_compensation(
+            traces, state_actions or []
+        )
+        side_effect_score = self._compute_side_effect_score(state_diff or {})
+        loop_count = self._compute_loops(traces)
+
         return BenchmarkResult(
             task_id=task.task_id,
             agent_id=agent_id,
@@ -235,6 +253,11 @@ class MetricsCalculator:
             disruptions_recovered=disruptions_recovered,
             disruption_types_seen=disruption_types_seen,
             max_cascade_depth=max_cascade_depth,
+            compensation_count=comp_count,
+            compensation_success_rate=comp_success,
+            side_effect_score=side_effect_score,
+            idempotency_violations=idempotency_violations,
+            loop_count=loop_count,
             traces=traces,
             duration_seconds=duration_seconds,
         )
@@ -403,3 +426,104 @@ class MetricsCalculator:
                     if traces[j].tool_name != t.tool_name:
                         return True
         return False
+
+    # ------------------------------------------------------------------
+    # Compensation detection (P0)
+    # ------------------------------------------------------------------
+
+    def _compute_compensation(
+        self,
+        traces: list[ToolCallTrace],
+        state_actions: list[StateAction],
+    ) -> tuple[int, float]:
+        """Detect compensation patterns in traces.
+
+        A compensation is when a side-effect tool call is followed by its
+        compensating tool call (e.g. book_flight → cancel_booking).
+
+        Returns:
+            (compensation_count, compensation_success_rate)
+        """
+        # Build set of side-effect tools that were called
+        side_effect_calls: list[tuple[int, str]] = []
+        for i, t in enumerate(traces):
+            if t.tool_name in COMPENSATION_PAIRS and t.observed_success:
+                comp_tool = COMPENSATION_PAIRS[t.tool_name]
+                if comp_tool is not None:
+                    side_effect_calls.append((i, t.tool_name))
+
+        if not side_effect_calls:
+            return 0, 0.0
+
+        compensated = 0
+        for _idx, tool_name in side_effect_calls:
+            comp_tool = COMPENSATION_PAIRS[tool_name]
+            # Check if compensating tool was called after the side-effect
+            for t in traces[_idx + 1:]:
+                if t.tool_name == comp_tool and t.observed_success:
+                    compensated += 1
+                    break
+
+        total = len(side_effect_calls)
+        return compensated, (compensated / total if total > 0 else 0.0)
+
+    # ------------------------------------------------------------------
+    # Side-effect score (P0)
+    # ------------------------------------------------------------------
+
+    @staticmethod
+    def _compute_side_effect_score(state_diff: dict) -> float:
+        """Compute unresolved side-effect score from state diff.
+
+        0.0 = no unresolved state changes (clean run or all compensated).
+        1.0 = maximum unresolved side effects.
+
+        Score = num_unresolved_changes / max(num_unresolved_changes, 1).
+        Currently a simple count; can be refined with severity weighting.
+        """
+        if not state_diff:
+            return 0.0
+
+        total_changes = 0
+        for _coll, changes in state_diff.items():
+            total_changes += len(changes)
+
+        # Normalize: 0 changes = 0.0, 5+ changes = 1.0
+        return min(1.0, total_changes / 5.0)
+
+    # ------------------------------------------------------------------
+    # Loop detection (P0)
+    # ------------------------------------------------------------------
+
+    @staticmethod
+    def _compute_loops(
+        traces: list[ToolCallTrace], min_repeat: int = 3
+    ) -> int:
+        """Count loops: N (>= min_repeat) consecutive identical calls.
+
+        An identical call = same tool_name AND same inputs.
+
+        Returns:
+            Number of distinct loops detected.
+        """
+        if len(traces) < min_repeat:
+            return 0
+
+        loops = 0
+        streak = 1
+
+        for i in range(1, len(traces)):
+            same_tool = traces[i].tool_name == traces[i - 1].tool_name
+            same_inputs = traces[i].inputs == traces[i - 1].inputs
+            if same_tool and same_inputs:
+                streak += 1
+            else:
+                if streak >= min_repeat:
+                    loops += 1
+                streak = 1
+
+        # Check final streak
+        if streak >= min_repeat:
+            loops += 1
+
+        return loops
