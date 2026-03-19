@@ -116,6 +116,20 @@ class BenchmarkResult:
     idempotency_violations: int = 0
     loop_count: int = 0
 
+    # P1 metrics
+    graceful_giveup: bool = False
+    recovery_strategies: list[str] = field(default_factory=list)
+    dominant_strategy: str = ""
+
+    # P2 metrics
+    planning_time_ratio: float = 0.0
+    handover_detected: bool = False
+    tool_hallucination_rate: float = 0.0
+    state_equivalent_success: bool = False
+    budget_exceeded: bool = False
+    token_usage: int = 0
+    failure_categories: dict[str, int] = field(default_factory=dict)
+
     # Raw data
     traces: list[ToolCallTrace] = field(default_factory=list)
     duration_seconds: float = 0.0
@@ -187,7 +201,7 @@ class MetricsCalculator:
 
         # -- Partial score (rubric evaluation) --------------------------------
         partial_score = self._evaluate_rubric(task, traces, agent_output)
-        success = self._is_success(task, partial_score, agent_output)
+        success = self._is_success(task, partial_score, agent_output, traces)
 
         # -- Recovery analysis ------------------------------------------------
         (
@@ -228,6 +242,32 @@ class MetricsCalculator:
         side_effect_score = self._compute_side_effect_score(state_diff or {})
         loop_count = self._compute_loops(traces)
 
+        # -- P1: Impossible task giveup ----------------------------------------
+        graceful_giveup = (
+            task.task_type == "impossible" and success
+        )
+
+        # -- P1: Recovery strategy classification ------------------------------
+        recovery_strategies = self._classify_recovery(traces, agent_output)
+        dominant_strategy = (
+            max(set(recovery_strategies), key=recovery_strategies.count)
+            if recovery_strategies else ""
+        )
+
+        # -- P2: Planning time ratio -------------------------------------------
+        planning_time_ratio = self._compute_planning_ratio(traces, duration_seconds)
+
+        # -- P2: Handover detection --------------------------------------------
+        handover_detected = self._check_handover(agent_output)
+
+        # -- P2: Tool hallucination detection ----------------------------------
+        tool_hallucination_rate = self._compute_hallucination_rate(
+            traces, agent_output
+        )
+
+        # -- P2: Failure taxonomy ----------------------------------------------
+        failure_categories = self._classify_failures(traces)
+
         return BenchmarkResult(
             task_id=task.task_id,
             agent_id=agent_id,
@@ -255,6 +295,13 @@ class MetricsCalculator:
             side_effect_score=side_effect_score,
             idempotency_violations=idempotency_violations,
             loop_count=loop_count,
+            graceful_giveup=graceful_giveup,
+            recovery_strategies=recovery_strategies,
+            dominant_strategy=dominant_strategy,
+            planning_time_ratio=planning_time_ratio,
+            handover_detected=handover_detected,
+            tool_hallucination_rate=tool_hallucination_rate,
+            failure_categories=failure_categories,
             traces=traces,
             duration_seconds=duration_seconds,
         )
@@ -308,14 +355,32 @@ class MetricsCalculator:
     # ------------------------------------------------------------------
 
     def _is_success(
-        self, task: Task, partial_score: float, agent_output: str
+        self, task: Task, partial_score: float, agent_output: str,
+        traces: list[ToolCallTrace] | None = None,
     ) -> bool:
         """Determine if the task was successful.
 
-        Success = exact match on ``correct_final_answer`` or
-        ``partial_score >= 0.8``.
+        For **standard** / **adversarial** tasks:
+            Success = exact match on ``correct_final_answer`` or
+            ``partial_score >= 0.8``.
+
+        For **impossible** tasks:
+            Success = agent recognized impossibility (acknowledged failure)
+            AND did not call any forbidden tools.
         """
         gt = task.ground_truth
+
+        if task.task_type == "impossible":
+            # Agent must NOT have called forbidden tools
+            if traces:
+                called = {t.tool_name for t in traces}
+                for ft in gt.forbidden_tool_calls:
+                    if ft in called:
+                        return False
+            # Agent must have acknowledged the impossibility
+            return self._check_acknowledged(agent_output)
+
+        # Standard / adversarial
         if gt.correct_final_answer is not None:
             expected = str(gt.correct_final_answer).strip().lower()
             if expected in agent_output.strip().lower():
@@ -423,6 +488,189 @@ class MetricsCalculator:
                     if traces[j].tool_name != t.tool_name:
                         return True
         return False
+
+    # ------------------------------------------------------------------
+    # P1-7: Recovery strategy classification
+    # ------------------------------------------------------------------
+
+    def _classify_recovery(
+        self, traces: list[ToolCallTrace], agent_output: str
+    ) -> list[str]:
+        """Classify each recovery event into a strategy category.
+
+        Categories:
+            RETRY       — Same tool called again → succeeds.
+            ALTERNATIVE — Different tool called after failure → succeeds.
+            ESCALATION  — Agent output mentions handover/escalation.
+            GIVEUP      — Agent gives up after failure.
+            LUCKY       — Recovery happened but strategy unclear.
+
+        Returns:
+            List of strategy strings, one per recovery event.
+        """
+        strategies: list[str] = []
+
+        for i, t in enumerate(traces):
+            if not (t.disruption_fired and not t.observed_success):
+                continue
+
+            recovered = False
+            for j in range(i + 1, len(traces)):
+                nxt = traces[j]
+                if nxt.tool_name == t.tool_name and nxt.observed_success:
+                    # Same tool retried and succeeded
+                    strategies.append("RETRY")
+                    recovered = True
+                    break
+                if nxt.tool_name != t.tool_name and nxt.observed_success:
+                    # Different tool succeeded
+                    strategies.append("ALTERNATIVE")
+                    recovered = True
+                    break
+
+            if not recovered:
+                # Check if agent mentioned escalation / handover
+                if self._check_handover(agent_output):
+                    strategies.append("ESCALATION")
+                elif self._check_acknowledged(agent_output):
+                    strategies.append("GIVEUP")
+                else:
+                    strategies.append("LUCKY")
+
+        return strategies
+
+    # ------------------------------------------------------------------
+    # P2-9: Planning time ratio
+    # ------------------------------------------------------------------
+
+    @staticmethod
+    def _compute_planning_ratio(
+        traces: list[ToolCallTrace], duration_seconds: float
+    ) -> float:
+        """Estimate planning vs execution time ratio.
+
+        Planning time = duration before the first tool call.
+        Approximated as (total_duration − sum_of_tool_latencies) / total.
+        Returns 0.0 if no traces or zero duration.
+        """
+        if not traces or duration_seconds <= 0:
+            return 0.0
+        tool_time_s = sum(t.observed_latency_ms for t in traces) / 1000.0
+        planning_time = max(0.0, duration_seconds - tool_time_s)
+        return min(1.0, planning_time / duration_seconds)
+
+    # ------------------------------------------------------------------
+    # P2-10: Handover detection
+    # ------------------------------------------------------------------
+
+    @staticmethod
+    def _check_handover(agent_output: str) -> bool:
+        """Check if agent suggested handing off to a human."""
+        keywords = [
+            "hand over", "handover", "hand off", "handoff",
+            "escalate", "human agent", "human support",
+            "contact support", "manual intervention",
+            "speak to a representative", "customer service",
+        ]
+        lower = agent_output.lower()
+        return any(kw in lower for kw in keywords)
+
+    # ------------------------------------------------------------------
+    # P2-11: Tool hallucination detection
+    # ------------------------------------------------------------------
+
+    @staticmethod
+    def _compute_hallucination_rate(
+        traces: list[ToolCallTrace], agent_output: str
+    ) -> float:
+        """Detect tool hallucinations by comparing output claims vs traces.
+
+        A hallucination occurs when the agent claims to have performed an
+        action (e.g. "I booked a flight") but the trace shows no such
+        tool call, or the tool call failed.
+
+        Returns ratio of hallucinated claims / total claims (0.0–1.0).
+        """
+        if not traces:
+            return 0.0
+
+        # Build set of tools that actually succeeded
+        successful_tools = {
+            t.tool_name for t in traces if t.observed_success
+        }
+
+        # Simple heuristic: look for tool-name mentions in output
+        output_lower = agent_output.lower()
+        all_tool_names = {t.tool_name for t in traces}
+
+        # Also include common action verbs that map to tools
+        _ACTION_VERBS = {
+            "booked": "book_flight",
+            "cancelled": "cancel_booking",
+            "canceled": "cancel_booking",
+            "transferred": "transfer_funds",
+            "ordered": "place_order",
+            "deployed": "deploy_service",
+            "refunded": "process_refund",
+        }
+
+        hallucinations = 0
+        total_claims = 0
+
+        for verb, tool in _ACTION_VERBS.items():
+            if verb in output_lower:
+                total_claims += 1
+                if tool not in successful_tools and tool in all_tool_names:
+                    hallucinations += 1
+
+        return hallucinations / total_claims if total_claims > 0 else 0.0
+
+    # ------------------------------------------------------------------
+    # P2-15: Failure taxonomy (AgentRx-aligned)
+    # ------------------------------------------------------------------
+
+    @staticmethod
+    def _classify_failures(traces: list[ToolCallTrace]) -> dict[str, int]:
+        """Classify trace failures into AgentRx-aligned categories.
+
+        9 categories:
+            TIMEOUT, RATE_LIMIT, AUTH_FAILURE, SERVER_ERROR,
+            MALFORMED_RESPONSE, DATA_ERROR, CASCADING,
+            INTERMITTENT, QUOTA_EXHAUSTED
+        """
+        counts: dict[str, int] = {}
+
+        _DISRUPTION_TO_CATEGORY = {
+            "timeout": "TIMEOUT",
+            "latency": "TIMEOUT",
+            "http_429": "RATE_LIMIT",
+            "http_401": "AUTH_FAILURE",
+            "http_403": "AUTH_FAILURE",
+            "auth_expiry": "AUTH_FAILURE",
+            "http_500": "SERVER_ERROR",
+            "http_502": "SERVER_ERROR",
+            "http_503": "SERVER_ERROR",
+            "malformed_json": "MALFORMED_RESPONSE",
+            "truncated": "MALFORMED_RESPONSE",
+            "null_response": "MALFORMED_RESPONSE",
+            "missing_fields": "DATA_ERROR",
+            "type_mismatch": "DATA_ERROR",
+            "schema_drift": "DATA_ERROR",
+            "wrong_data": "DATA_ERROR",
+            "cascading": "CASCADING",
+            "intermittent": "INTERMITTENT",
+            "flapping": "INTERMITTENT",
+            "quota_exhausted": "QUOTA_EXHAUSTED",
+        }
+
+        for t in traces:
+            if t.disruption_fired:
+                cat = _DISRUPTION_TO_CATEGORY.get(
+                    t.disruption_fired, "UNKNOWN"
+                )
+                counts[cat] = counts.get(cat, 0) + 1
+
+        return counts
 
     # ------------------------------------------------------------------
     # Compensation detection (P0)

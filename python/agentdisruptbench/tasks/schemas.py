@@ -58,6 +58,10 @@ class GroundTruth(BaseModel):
         evaluation_rubric:          Criterion → weight (should sum ≈ 1.0).
         disruption_sensitive_tools: Tools where failure is most impactful.
         recovery_actions:           Expected recovery behaviours.
+        trap_description:           For adversarial tasks: describes the trap
+                                    the agent should avoid.
+        impossibility_reason:       For impossible tasks: why the task has no
+                                    valid solution.
     """
 
     expected_outcome: str
@@ -67,6 +71,8 @@ class GroundTruth(BaseModel):
     evaluation_rubric: dict[str, float] = Field(default_factory=dict)
     disruption_sensitive_tools: list[str] = Field(default_factory=list)
     recovery_actions: list[str] = Field(default_factory=list)
+    trap_description: str | None = None
+    impossibility_reason: str | None = None
 
 
 class Task(BaseModel):
@@ -78,6 +84,7 @@ class Task(BaseModel):
         description:              Full prompt given to the agent.
         domain:                   Domain category.
         difficulty:               1–5 difficulty rating.
+        task_type:                One of 'standard', 'adversarial', 'impossible'.
         required_tools:           Tool names needed to solve the task.
         expected_tool_call_depth: Expected tool calls under clean conditions.
         ground_truth:             Evaluation ground truth.
@@ -90,6 +97,7 @@ class Task(BaseModel):
     description: str
     domain: str
     difficulty: int = Field(ge=1, le=5)
+    task_type: str = "standard"  # standard | adversarial | impossible
     required_tools: list[str]
     expected_tool_call_depth: int
     ground_truth: GroundTruth

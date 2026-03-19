@@ -51,6 +51,10 @@ from agentdisruptbench.core.profiles import (
     load_profiles,
 )
 from agentdisruptbench.core.proxy import ToolProxy
+from agentdisruptbench.core.reliability import (
+    ReliabilitySurface,
+    compute_reliability_surface,
+)
 from agentdisruptbench.core.trace import ToolCallTrace, TraceCollector
 
 # Harness
@@ -75,6 +79,8 @@ __all__ = [
     "ToolCallTrace",
     "MetricsCalculator",
     "BenchmarkResult",
+    "ReliabilitySurface",
+    "compute_reliability_surface",
     # Profiles
     "BUILTIN_PROFILES",
     "get_profile",

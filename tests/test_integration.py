@@ -83,14 +83,14 @@ class TestTaskRegistry:
 
     def test_from_builtin(self):
         registry = TaskRegistry.from_builtin()
-        assert len(registry) == 80  # 20 per domain × 4 domains
+        assert len(registry) == 100  # 80 standard + 8 adversarial + 8 impossible + 4 handover
         assert "retail" in registry.domains()
         assert "travel" in registry.domains()
 
     def test_filter_by_domain(self):
         registry = TaskRegistry.from_builtin()
         retail_tasks = registry.filter(domain="retail")
-        assert len(retail_tasks) == 20
+        assert len(retail_tasks) == 25  # 20 standard + 2 adversarial + 2 impossible + 1 handover
         assert all(t.domain == "retail" for t in retail_tasks)
 
     def test_filter_by_difficulty(self):
