@@ -68,6 +68,7 @@ RUNNER_REGISTRY = {
     "langchain": "evaluation.runners.langchain_runner:LangChainRunner",
     "autogen": "evaluation.runners.autogen_runner:AutoGenRunner",
     "crewai": "evaluation.runners.crewai_runner:CrewAIRunner",
+    "rac": "evaluation.runners.rac_runner:RACRunner",
 }
 
 
