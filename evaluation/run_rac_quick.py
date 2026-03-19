@@ -1,6 +1,16 @@
 #!/usr/bin/env python3
 """
-Quick RAC Runner Test — Run a few tasks with structured JSONL logging.
+AgentDisruptBench — Quick RAC Runner
+======================================
+
+File:        run_rac_quick.py
+Purpose:     Quick smoke-run script for the RAC (React-Agent-Compensation)
+             evaluation runner with structured JSONL logging.
+
+Author:      AgentDisruptBench Contributors
+License:     MIT
+Created:     2026-03-19
+Modified:    2026-03-19
 
 Usage:
     # Ensure GEMINI_API_KEY or GOOGLE_API_KEY is set
@@ -12,6 +22,9 @@ Usage:
     # Analyze the run afterwards:
     python evaluation/show_run.py           # latest run
     python evaluation/show_run.py --run-id <timestamp>
+
+Convention:
+    Every source file MUST include a header block like this one.
 """
 
 import os

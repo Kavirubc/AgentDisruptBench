@@ -1,10 +1,23 @@
 #!/usr/bin/env python3
 """
-Quick Base LangChain Runner — No RAC compensation, just vanilla ReAct agent.
+AgentDisruptBench — Quick Base LangChain Runner
+=================================================
+
+File:        run_base_quick.py
+Purpose:     Quick smoke-run script for the vanilla LangChain ReAct agent
+             (no RAC compensation) for comparison against the RAC runner.
+
+Author:      AgentDisruptBench Contributors
+License:     MIT
+Created:     2026-03-19
+Modified:    2026-03-19
 
 Usage:
     python evaluation/run_base_quick.py --model gemini-flash-latest
     python evaluation/run_base_quick.py --model gemini-flash-latest --task-ids travel_019 retail_020
+
+Convention:
+    Every source file MUST include a header block like this one.
 """
 
 import os

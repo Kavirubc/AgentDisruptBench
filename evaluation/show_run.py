@@ -1,15 +1,26 @@
 #!/usr/bin/env python3
 """
-show_run.py — Rich CLI renderer for AgentDisruptBench run logs.
+AgentDisruptBench — Run Log Renderer
+======================================
 
-Renders the full step-by-step narrative of a benchmark run:
-task descriptions, tool call timeline, disruptions fired,
-RAC compensation/recovery events, and final metrics.
+File:        show_run.py
+Purpose:     Rich CLI renderer for AgentDisruptBench run logs.
+             Renders the full step-by-step narrative of a benchmark run:
+             task descriptions, tool call timeline, disruptions fired,
+             RAC compensation/recovery events, and final metrics.
+
+Author:      AgentDisruptBench Contributors
+License:     MIT
+Created:     2026-03-19
+Modified:    2026-03-19
 
 Usage:
     python evaluation/show_run.py                              # latest run
     python evaluation/show_run.py --run-id 20260319_045500_a3f
     python evaluation/show_run.py -d results                   # different logs dir
+
+Convention:
+    Every source file MUST include a header block like this one.
 """
 
 import json

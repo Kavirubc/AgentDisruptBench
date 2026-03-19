@@ -1,9 +1,19 @@
 """
-AgentDisruptBench — P1/P2 Feature Tests
-========================================
+AgentDisruptBench — Unit Tests: P1/P2 Features
+================================================
 
-Tests for P1 (adversarial, impossible, recovery classification, reliability)
-and P2 (planning ratio, handover, hallucination, failure taxonomy) features.
+File:        test_p1.py
+Purpose:     Tests for P1 (adversarial, impossible, recovery classification,
+             reliability) and P2 (planning ratio, handover, hallucination,
+             failure taxonomy) features.
+
+Author:      AgentDisruptBench Contributors
+License:     MIT
+Created:     2026-03-19
+Modified:    2026-03-19
+
+Convention:
+    Every source file MUST include a header block like this one.
 """
 
 from agentdisruptbench.core.metrics import BenchmarkResult, MetricsCalculator

@@ -249,10 +249,15 @@ class MetricsCalculator:
 
         # -- P1: Recovery strategy classification ------------------------------
         recovery_strategies = self._classify_recovery(traces, agent_output)
-        dominant_strategy = (
-            max(set(recovery_strategies), key=recovery_strategies.count)
-            if recovery_strategies else ""
-        )
+        if recovery_strategies:
+            from collections import Counter
+            _strategy_counter = Counter(recovery_strategies)
+            dominant_strategy = min(
+                _strategy_counter,
+                key=lambda s: (-_strategy_counter[s], s),
+            )
+        else:
+            dominant_strategy = ""
 
         # -- P2: Planning time ratio -------------------------------------------
         planning_time_ratio = self._compute_planning_ratio(traces, duration_seconds)
@@ -620,7 +625,9 @@ class MetricsCalculator:
         for verb, tool in _ACTION_VERBS.items():
             if verb in output_lower:
                 total_claims += 1
-                if tool not in successful_tools and tool in all_tool_names:
+                # Hallucination: agent claims action but tool never succeeded
+                # (covers both "tool called but failed" and "tool never called")
+                if tool not in successful_tools:
                     hallucinations += 1
 
         return hallucinations / total_claims if total_claims > 0 else 0.0
