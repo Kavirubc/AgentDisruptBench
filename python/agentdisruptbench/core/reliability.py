@@ -57,6 +57,49 @@ class ReliabilitySurface:
     num_results: int = 0
 
 
+def _compute_k_and_lambda(
+    results: list[BenchmarkResult],
+) -> tuple[float, float]:
+    """Compute k-consistency and lambda-fault-tolerance for a result set.
+
+    Returns:
+        (k_consistency, lambda_fault_tolerance) both in [0.0, 1.0].
+    """
+    overall_rate = sum(r.success for r in results) / len(results)
+
+    # k: pass rate across repeated seeds for the same (task, profile) pair
+    k_groups: dict[tuple[str, str], list[bool]] = defaultdict(list)
+    for r in results:
+        k_groups[(r.task_id, r.profile_name)].append(r.success)
+
+    k_rates = [
+        sum(s) / len(s)
+        for s in k_groups.values()
+        if len(s) > 1
+    ]
+    k_consistency = sum(k_rates) / len(k_rates) if k_rates else overall_rate
+
+    # λ: pass rate across *unique* profiles per task; dedupe repeated seeds
+    profile_groups: dict[tuple[str, str], list[bool]] = defaultdict(list)
+    for r in results:
+        profile_groups[(r.task_id, r.profile_name)].append(r.success)
+
+    task_profile_rates: dict[str, list[float]] = defaultdict(list)
+    for (task_id, _), successes in profile_groups.items():
+        task_profile_rates[task_id].append(sum(successes) / len(successes))
+
+    lambda_rates = [
+        sum(rates) / len(rates)
+        for rates in task_profile_rates.values()
+        if rates
+    ]
+    lambda_fault_tolerance = (
+        sum(lambda_rates) / len(lambda_rates) if lambda_rates else overall_rate
+    )
+
+    return k_consistency, lambda_fault_tolerance
+
+
 def compute_reliability_surface(
     results: list[BenchmarkResult],
 ) -> ReliabilitySurface:
@@ -74,69 +117,48 @@ def compute_reliability_surface(
     if not results:
         return ReliabilitySurface()
 
-    # --- k-consistency: pass rate over seeds for same (task, profile) ---
-    k_groups: dict[tuple[str, str], list[bool]] = defaultdict(list)
-    for r in results:
-        k_groups[(r.task_id, r.profile_name)].append(r.success)
+    k_consistency, lambda_fault_tolerance = _compute_k_and_lambda(results)
 
-    k_rates = []
-    for successes in k_groups.values():
-        if len(successes) > 1:
-            k_rates.append(sum(successes) / len(successes))
-    k_consistency = sum(k_rates) / len(k_rates) if k_rates else (
-        sum(r.success for r in results) / len(results)
-    )
-
-    # --- ε-robustness: placeholder (no variant tasks yet) ---
+    # ε-robustness: placeholder (no variant tasks yet)
     epsilon_robustness = 1.0
 
-    # --- λ-fault-tolerance: pass rate across profiles for same task ---
-    lambda_groups: dict[str, list[bool]] = defaultdict(list)
-    for r in results:
-        lambda_groups[r.task_id].append(r.success)
-
-    lambda_rates = []
-    for successes in lambda_groups.values():
-        if len(successes) > 1:
-            lambda_rates.append(sum(successes) / len(successes))
-    lambda_fault_tolerance = (
-        sum(lambda_rates) / len(lambda_rates) if lambda_rates
-        else sum(r.success for r in results) / len(results)
-    )
-
-    # --- Composite ---
     composite = k_consistency * epsilon_robustness * lambda_fault_tolerance
 
     # --- Per-domain breakdown ---
-    # Known prefixes for special task types whose first token is not the domain.
+    # Use the authoritative task_domain field when available; fall back to
+    # parsing task_id for results produced before this field existed.
     _TASK_TYPE_PREFIXES = {"adversarial", "impossible", "handover"}
 
     domain_groups: dict[str, list[BenchmarkResult]] = defaultdict(list)
     for r in results:
-        parts = r.task_id.split("_")
-        if parts[0] in _TASK_TYPE_PREFIXES and len(parts) >= 3:
-            # e.g. "adversarial_retail_001" → domain "retail"
-            domain = parts[1]
-        elif len(parts) >= 2:
-            # e.g. "retail_001" → domain "retail"
-            domain = parts[0]
+        if r.task_domain:
+            domain = r.task_domain
         else:
-            domain = "unknown"
+            parts = r.task_id.split("_")
+            if parts[0] in _TASK_TYPE_PREFIXES and len(parts) >= 3:
+                domain = parts[1]
+            elif len(parts) >= 2:
+                domain = parts[0]
+            else:
+                domain = "unknown"
         domain_groups[domain].append(r)
 
-    # Per-domain composite score: k × ε × λ computed for each domain's results
     per_domain: dict[str, float] = {}
-    for domain, domain_results in domain_groups.items():
-        dr_pass_rate = sum(r.success for r in domain_results) / len(domain_results)
-        # Use global epsilon (placeholder) and domain pass rate for k and λ axes
-        per_domain[domain] = round(
-            dr_pass_rate * epsilon_robustness * dr_pass_rate, 4
-        )
+    for domain, dr in domain_groups.items():
+        dk, dl = _compute_k_and_lambda(dr)
+        per_domain[domain] = round(dk * epsilon_robustness * dl, 4)
 
     # --- Per-difficulty breakdown ---
-    # Difficulty is not in BenchmarkResult, so we approximate from task_id suffix
-    # This will be more accurate when we store difficulty in the result
+    # Use the authoritative task_difficulty field when available.
+    difficulty_groups: dict[int, list[BenchmarkResult]] = defaultdict(list)
+    for r in results:
+        if r.task_difficulty:
+            difficulty_groups[r.task_difficulty].append(r)
+
     per_difficulty: dict[int, float] = {}
+    for diff, dr in difficulty_groups.items():
+        dk, dl = _compute_k_and_lambda(dr)
+        per_difficulty[diff] = round(dk * epsilon_robustness * dl, 4)
 
     return ReliabilitySurface(
         k_consistency=round(k_consistency, 4),

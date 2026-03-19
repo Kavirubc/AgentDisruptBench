@@ -218,6 +218,10 @@ def main():
         print(f"  Profile:     {args.profile}")
         print(f"{'─' * 60}")
 
+        # Derive a stable per-task seed so each task gets a unique but
+        # reproducible RNG stream even when the same global seed is used.
+        per_task_seed = (args.seed ^ hash(task.task_id)) & 0x7FFFFFFF
+
         run_log.emit("task_started", {
             "task_id": task.task_id,
             "title": task.title,
@@ -226,10 +230,11 @@ def main():
             "required_tools": task.required_tools,
             "expected_depth": task.expected_tool_call_depth,
             "profile": args.profile,
+            "disruption_seed": per_task_seed,
         })
 
-        # Create disruption engine
-        engine = DisruptionEngine(configs=profile, seed=args.seed)
+        # Create disruption engine with a per-task seed
+        engine = DisruptionEngine(configs=profile, seed=per_task_seed)
         trace_collector = TraceCollector()
 
         # Create tool proxies
@@ -297,8 +302,19 @@ def main():
             messages = result.get("messages", [])
             if messages:
                 last_msg = messages[-1]
-                agent_output = getattr(last_msg, "content", str(last_msg))
-                if not agent_output:
+                raw_content = getattr(last_msg, "content", str(last_msg))
+                # Normalize structured content (e.g., Gemini returns list of parts)
+                if isinstance(raw_content, list):
+                    parts = []
+                    for item in raw_content:
+                        if isinstance(item, dict):
+                            parts.append(str(item.get("text", item)))
+                        else:
+                            parts.append(str(item))
+                    agent_output = " ".join(parts)
+                elif raw_content:
+                    agent_output = str(raw_content)
+                else:
                     agent_output = "[No response from agent]"
             else:
                 agent_output = "[Agent produced no output]"
@@ -343,6 +359,17 @@ def main():
             "duration_seconds": round(elapsed, 2),
             "recovery_strategies": metric_result.recovery_strategies,
             "dominant_strategy": metric_result.dominant_strategy,
+            # P1/P2 metrics
+            "graceful_giveup": metric_result.graceful_giveup,
+            "compensation_count": metric_result.compensation_count,
+            "compensation_success_rate": round(metric_result.compensation_success_rate, 4),
+            "side_effect_score": round(metric_result.side_effect_score, 4),
+            "idempotency_violations": metric_result.idempotency_violations,
+            "loop_count": metric_result.loop_count,
+            "planning_time_ratio": round(metric_result.planning_time_ratio, 4),
+            "handover_detected": metric_result.handover_detected,
+            "tool_hallucination_rate": round(metric_result.tool_hallucination_rate, 4),
+            "failure_categories": metric_result.failure_categories,
             "agent_output": agent_output[:500],
         })
 

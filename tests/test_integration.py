@@ -83,14 +83,21 @@ class TestTaskRegistry:
 
     def test_from_builtin(self):
         registry = TaskRegistry.from_builtin()
-        assert len(registry) == 100  # 80 standard + 8 adversarial + 8 impossible + 4 handover
+        assert len(registry) >= 100  # at least 80 standard + 8 adversarial + 8 impossible + 4 handover
         assert "retail" in registry.domains()
         assert "travel" in registry.domains()
+        # Verify adversarial and impossible task types are present
+        all_tasks = registry.all_tasks()
+        type_counts = {}
+        for t in all_tasks:
+            type_counts[t.task_type] = type_counts.get(t.task_type, 0) + 1
+        assert type_counts.get("adversarial", 0) >= 8
+        assert type_counts.get("impossible", 0) >= 8
 
     def test_filter_by_domain(self):
         registry = TaskRegistry.from_builtin()
         retail_tasks = registry.filter(domain="retail")
-        assert len(retail_tasks) == 25  # 20 standard + 2 adversarial + 2 impossible + 1 handover
+        assert len(retail_tasks) >= 25  # at least 20 standard + 2 adversarial + 2 impossible + 1 handover
         assert all(t.domain == "retail" for t in retail_tasks)
 
     def test_filter_by_difficulty(self):

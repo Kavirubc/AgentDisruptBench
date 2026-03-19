@@ -269,7 +269,12 @@ class TestP2Features:
     """Tests for P2 metric helpers."""
 
     def test_planning_ratio_no_traces(self):
+        # No tool calls means the entire run was pre-tool (planning) time
         ratio = MetricsCalculator._compute_planning_ratio([], 10.0)
+        assert ratio == 1.0
+
+    def test_planning_ratio_zero_duration(self):
+        ratio = MetricsCalculator._compute_planning_ratio([], 0.0)
         assert ratio == 0.0
 
     def test_planning_ratio_some_tool_time(self):
@@ -288,29 +293,44 @@ class TestP2Features:
             _make_trace("book_flight", observed_success=False),
         ]
         rate = MetricsCalculator._compute_hallucination_rate(
-            traces, "I booked your flight successfully"
+            traces, "I booked your flight successfully",
+            expected_tools={"book_flight"},
         )
         assert rate == 1.0  # Agent claimed "booked" but book_flight failed
+
+    def test_hallucination_no_traces(self):
+        # Agent claims action with no traces at all — should detect hallucination
+        rate = MetricsCalculator._compute_hallucination_rate(
+            [], "I booked your flight successfully",
+            expected_tools={"book_flight"},
+        )
+        assert rate == 1.0  # No tool calls, but agent claimed booking
 
     def test_no_hallucination(self):
         traces = [_make_trace("book_flight")]
         rate = MetricsCalculator._compute_hallucination_rate(
-            traces, "I booked your flight successfully"
+            traces, "I booked your flight successfully",
+            expected_tools={"book_flight"},
         )
         assert rate == 0.0
 
     def test_failure_taxonomy(self):
+        # Only disruptions where observed_success=False should be counted
         traces = [
-            _make_trace("a", disruption="timeout"),
-            _make_trace("b", disruption="http_429"),
-            _make_trace("c", disruption="http_500"),
-            _make_trace("d", disruption="malformed_json"),
+            _make_trace("a", disruption="timeout", observed_success=False),
+            _make_trace("b", disruption="http_429", observed_success=False),
+            _make_trace("c", disruption="http_500", observed_success=False),
+            _make_trace("d", disruption="malformed_json", observed_success=False),
+            # This disruption fired but the call still succeeded — should NOT count
+            _make_trace("e", disruption="latency", observed_success=True),
         ]
         cats = MetricsCalculator._classify_failures(traces)
         assert cats["TIMEOUT"] == 1
         assert cats["RATE_LIMIT"] == 1
         assert cats["SERVER_ERROR"] == 1
         assert cats["MALFORMED_RESPONSE"] == 1
+        # Soft-fault with success should not appear
+        assert cats.get("TIMEOUT", 0) == 1  # still only 1, not 2
 
     def test_failure_taxonomy_empty(self):
         cats = MetricsCalculator._classify_failures([])

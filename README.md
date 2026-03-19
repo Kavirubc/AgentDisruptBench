@@ -350,6 +350,7 @@ AgentDisruptBench provides **self-contained evaluation runners** that run full L
 | `simple` | Rule-based baseline | ❌ | Built-in |
 | `openai` | OpenAI function calling | ✅ | `pip install openai` |
 | `langchain` | LangChain ReAct agent | ✅ | `pip install langchain-openai langgraph` |
+| `rac` | RAC (React-Agent-Compensation) | ✅ | `pip install react-agent-compensation langchain-google-genai` |
 | `autogen` | AutoGen two-agent pattern | ✅ | `pip install pyautogen` |
 | `crewai` | CrewAI Crew + Agent | ✅ | `pip install crewai` |
 
@@ -365,11 +366,37 @@ python -m evaluation.run_benchmark --runner openai --model gpt-4o --domains reta
 # LangChain with hostile environment
 python -m evaluation.run_benchmark --runner langchain --profiles clean hostile_environment --max-difficulty 3
 
+# RAC runner — compensation-aware agent
+python -m evaluation.run_benchmark --runner rac --model gemini-2.0-flash --profiles clean mild_production
+
 # AutoGen on finance domain
 python -m evaluation.run_benchmark --runner autogen --model gpt-4o --domains finance --seeds 42 123
 
 # See all options
 python -m evaluation.run_benchmark --help
+```
+
+### Quick-Run Scripts (Local Smoke Testing)
+
+For fast local iteration, two standalone scripts run a small subset of tasks and produce structured JSONL logs:
+
+```bash
+# Vanilla LangChain ReAct (no RAC) — compare against RAC baseline
+python evaluation/run_base_quick.py --model gemini-2.0-flash --domain travel --max-tasks 3
+
+# RAC compensated agent
+python evaluation/run_rac_quick.py --model gemini-2.0-flash --domain travel --max-tasks 3
+
+# Filter to specific tasks
+python evaluation/run_base_quick.py --task-ids travel_001 travel_002
+
+# Inspect the run output
+python evaluation/show_run.py                          # latest run
+python evaluation/show_run.py --run-id <timestamp_id> # specific run
+python evaluation/show_run.py -d results               # different logs dir
+
+# Install CLI dependencies
+pip install "agentdisruptbench[cli]"
 ```
 
 ### Writing Your Own Runner
@@ -434,10 +461,14 @@ AgentDisruptBench/
 ├── evaluation/                  # Self-contained evaluation runners
 │   ├── base_runner.py           # BaseAgentRunner ABC
 │   ├── run_benchmark.py         # CLI entry point
+│   ├── run_base_quick.py        # Quick smoke-run: vanilla ReAct (no RAC)
+│   ├── run_rac_quick.py         # Quick smoke-run: RAC compensated agent
+│   ├── show_run.py              # Rich CLI viewer for JSONL run logs
 │   └── runners/
 │       ├── simple_runner.py     # No-LLM baseline
 │       ├── openai_runner.py     # OpenAI function calling
 │       ├── langchain_runner.py  # LangChain ReAct agent
+│       ├── rac_runner.py        # RAC (React-Agent-Compensation) runner
 │       ├── autogen_runner.py    # AutoGen two-agent
 │       └── crewai_runner.py     # CrewAI Crew + Agent
 ├── network/                     # Track B: Go + Envoy (coming soon)

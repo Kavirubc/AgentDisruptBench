@@ -130,6 +130,10 @@ class BenchmarkResult:
     token_usage: int = 0
     failure_categories: dict[str, int] = field(default_factory=dict)
 
+    # Task metadata (authoritative fields for downstream slicing)
+    task_domain: str = ""
+    task_difficulty: int = 0
+
     # Raw data
     traces: list[ToolCallTrace] = field(default_factory=list)
     duration_seconds: float = 0.0
@@ -267,7 +271,7 @@ class MetricsCalculator:
 
         # -- P2: Tool hallucination detection ----------------------------------
         tool_hallucination_rate = self._compute_hallucination_rate(
-            traces, agent_output
+            traces, agent_output, expected_tools=set(task.required_tools)
         )
 
         # -- P2: Failure taxonomy ----------------------------------------------
@@ -281,6 +285,8 @@ class MetricsCalculator:
             success=success,
             partial_score=partial_score,
             agent_output=agent_output,
+            task_domain=task.domain,
+            task_difficulty=task.difficulty,
             resilience_ratio=resilience_ratio,
             recovery_rate=recovery_rate,
             mean_steps_to_recovery=mean_steps,
@@ -550,18 +556,33 @@ class MetricsCalculator:
 
     @staticmethod
     def _compute_planning_ratio(
-        traces: list[ToolCallTrace], duration_seconds: float
+        traces: list[ToolCallTrace],
+        duration_seconds: float,
+        run_start_time: float | None = None,
     ) -> float:
-        """Estimate planning vs execution time ratio.
+        """Estimate the fraction of run time spent before the first tool call.
 
-        Planning time = duration before the first tool call.
-        Approximated as (total_duration − sum_of_tool_latencies) / total.
-        Returns 0.0 if no traces or zero duration.
+        If *run_start_time* (Unix epoch seconds) is provided, planning time is
+        measured as the wall-clock gap between run start and the first trace's
+        timestamp.  Otherwise it is approximated as
+        ``(total_duration - sum_of_tool_latencies) / total_duration``.
+
+        Returns 1.0 when there are no traces (the entire run was pre-tool time).
+        Returns 0.0 when duration_seconds is zero or negative.
         """
-        if not traces or duration_seconds <= 0:
+        if duration_seconds <= 0:
             return 0.0
-        tool_time_s = sum(t.observed_latency_ms for t in traces) / 1000.0
-        planning_time = max(0.0, duration_seconds - tool_time_s)
+        if not traces:
+            return 1.0  # No tool calls — entire run is planning time
+
+        if run_start_time is not None:
+            first_call_time = traces[0].timestamp
+            planning_time = max(0.0, first_call_time - run_start_time)
+        else:
+            # Approximation: non-tool latency as proxy for pre-first-call time
+            tool_time_s = sum(t.observed_latency_ms for t in traces) / 1000.0
+            planning_time = max(0.0, duration_seconds - tool_time_s)
+
         return min(1.0, planning_time / duration_seconds)
 
     # ------------------------------------------------------------------
@@ -586,29 +607,32 @@ class MetricsCalculator:
 
     @staticmethod
     def _compute_hallucination_rate(
-        traces: list[ToolCallTrace], agent_output: str
+        traces: list[ToolCallTrace],
+        agent_output: str,
+        expected_tools: set[str] | None = None,
     ) -> float:
         """Detect tool hallucinations by comparing output claims vs traces.
 
         A hallucination occurs when the agent claims to have performed an
-        action (e.g. "I booked a flight") but the trace shows no such
-        tool call, or the tool call failed.
+        action (e.g. "I booked a flight") but either no tool trace exists for
+        that action or the tool call failed.  This handles the most suspicious
+        case: the agent claims success with zero tool calls.
 
-        Returns ratio of hallucinated claims / total claims (0.0–1.0).
+        Args:
+            traces:         Tool call traces from the run (may be empty).
+            agent_output:   Agent's final textual response.
+            expected_tools: Set of tool names the task involves (used for
+                            hallucination detection when traces are absent).
+                            Falls back to tools seen in traces if None.
+
+        Returns:
+            Ratio of hallucinated claims to total claims (0.0–1.0).
         """
-        if not traces:
-            return 0.0
-
         # Build set of tools that actually succeeded
-        successful_tools = {
-            t.tool_name for t in traces if t.observed_success
-        }
+        successful_tools = {t.tool_name for t in traces if t.observed_success}
+        all_tool_names = expected_tools or {t.tool_name for t in traces}
 
-        # Simple heuristic: look for tool-name mentions in output
-        output_lower = agent_output.lower()
-        all_tool_names = {t.tool_name for t in traces}
-
-        # Also include common action verbs that map to tools
+        # Common action verbs that map to specific tools
         _ACTION_VERBS = {
             "booked": "book_flight",
             "cancelled": "cancel_booking",
@@ -619,16 +643,18 @@ class MetricsCalculator:
             "refunded": "process_refund",
         }
 
+        output_lower = agent_output.lower()
         hallucinations = 0
         total_claims = 0
 
         for verb, tool in _ACTION_VERBS.items():
             if verb in output_lower:
-                total_claims += 1
-                # Hallucination: agent claims action but tool never succeeded
-                # (covers both "tool called but failed" and "tool never called")
-                if tool not in successful_tools:
-                    hallucinations += 1
+                # Only score this claim if the tool is relevant to the run
+                if tool in all_tool_names or not all_tool_names:
+                    total_claims += 1
+                    # Hallucination: claimed action but tool never succeeded
+                    if tool not in successful_tools:
+                        hallucinations += 1
 
         return hallucinations / total_claims if total_claims > 0 else 0.0
 
@@ -671,7 +697,7 @@ class MetricsCalculator:
         }
 
         for t in traces:
-            if t.disruption_fired:
+            if t.disruption_fired and not t.observed_success:
                 cat = _DISRUPTION_TO_CATEGORY.get(
                     t.disruption_fired, "UNKNOWN"
                 )

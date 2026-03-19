@@ -223,6 +223,10 @@ def main():
         print(f"  Profile:     {args.profile}")
         print(f"{'─' * 60}")
 
+        # Derive a stable per-task seed so each task gets a unique but
+        # reproducible RNG stream even when the same global seed is used.
+        per_task_seed = (args.seed ^ hash(task.task_id)) & 0x7FFFFFFF
+
         run_log.emit("task_started", {
             "task_id": task.task_id,
             "title": task.title,
@@ -231,10 +235,11 @@ def main():
             "required_tools": task.required_tools,
             "expected_depth": task.expected_tool_call_depth,
             "profile": args.profile,
+            "disruption_seed": per_task_seed,
         })
 
-        # Create disruption engine for this run
-        engine = DisruptionEngine(configs=profile, seed=args.seed)
+        # Create disruption engine with a per-task seed
+        engine = DisruptionEngine(configs=profile, seed=per_task_seed)
         trace_collector = TraceCollector()
 
         # Create tool proxies
@@ -285,7 +290,7 @@ def main():
         )
         results.append(result)
 
-        # Log task result
+        # Log task result (emit full metrics so show_run.py sees everything)
         run_log.emit("task_completed", {
             "task_id": task.task_id,
             "success": result.success,
@@ -296,6 +301,17 @@ def main():
             "duration_seconds": round(elapsed, 2),
             "recovery_strategies": result.recovery_strategies,
             "dominant_strategy": result.dominant_strategy,
+            # P1/P2 metrics
+            "graceful_giveup": result.graceful_giveup,
+            "compensation_count": result.compensation_count,
+            "compensation_success_rate": round(result.compensation_success_rate, 4),
+            "side_effect_score": round(result.side_effect_score, 4),
+            "idempotency_violations": result.idempotency_violations,
+            "loop_count": result.loop_count,
+            "planning_time_ratio": round(result.planning_time_ratio, 4),
+            "handover_detected": result.handover_detected,
+            "tool_hallucination_rate": round(result.tool_hallucination_rate, 4),
+            "failure_categories": result.failure_categories,
             "agent_output": agent_output[:500],
         })
 

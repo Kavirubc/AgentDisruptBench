@@ -142,6 +142,9 @@ def render_run(events: list[dict[str, Any]], run_dir: Path) -> None:
         elif et == "tasks_selected":
             tasks_selected = payload
         elif et == "task_started":
+            # Save any in-progress block before starting a new one
+            if current_block is not None:
+                task_blocks.append(current_block)
             current_block = {
                 "started": payload,
                 "tool_calls": [],
@@ -159,6 +162,10 @@ def render_run(events: list[dict[str, Any]], run_dir: Path) -> None:
                 current_block = None
         elif et == "run_completed":
             run_completed = payload
+
+    # Capture any block that was in-progress when the run was interrupted
+    if current_block is not None:
+        task_blocks.append(current_block)
 
     # ── RUN HEADER ────────────────────────────────────────────────────────────
     run_id = (run_started or {}).get("run_id", run_dir.name)

@@ -22,7 +22,7 @@ Convention:
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
@@ -97,7 +97,7 @@ class Task(BaseModel):
     description: str
     domain: str
     difficulty: int = Field(ge=1, le=5)
-    task_type: str = "standard"  # standard | adversarial | impossible
+    task_type: Literal["standard", "adversarial", "impossible"] = "standard"
     required_tools: list[str]
     expected_tool_call_depth: int
     ground_truth: GroundTruth
