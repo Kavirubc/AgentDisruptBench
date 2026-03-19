@@ -185,12 +185,31 @@ class RACRunner(BaseAgentRunner):
             )
             lc_tools.append(tool)
 
-        # Step 2: Build compensation mapping for tools in this task
+        # Step 2: Build compensation mapping for tools in this task.
+        #
+        # IMPORTANT: RAC only tracks and retries tools that appear in the
+        # compensation_mapping.  Tools NOT in the mapping get zero retry
+        # or recovery coverage — errors pass straight through to the LLM.
+        #
+        # Strategy:
+        #   - Side-effect tools → their real compensator (e.g. book_flight → cancel_booking)
+        #   - Read-only tools  → mapped to themselves as a no-op sentinel,
+        #     which makes RAC consider them "compensatable" so it will
+        #     record, detect errors, and retry them using the retry_policy.
         comp_mapping: dict[str, str] = {}
         tool_names = set(tools.keys())
-        for action, compensator in _BENCH_COMPENSATION_PAIRS.items():
-            if action in tool_names and compensator in tool_names:
-                comp_mapping[action] = compensator
+
+        for name in tool_names:
+            if name in _BENCH_COMPENSATION_PAIRS:
+                compensator = _BENCH_COMPENSATION_PAIRS[name]
+                if compensator and compensator in tool_names:
+                    comp_mapping[name] = compensator
+                else:
+                    # Side-effect tool whose compensator isn't in this task
+                    comp_mapping[name] = name
+            else:
+                # Read-only tool — map to self so RAC tracks + retries it
+                comp_mapping[name] = name
 
         # Step 3: Create RAC compensated agent
         retry_policy = RetryPolicy(
