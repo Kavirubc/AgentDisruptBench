@@ -361,6 +361,79 @@ class TestSideEffectScore:
         score = MetricsCalculator._compute_side_effect_score(diff)
         assert score == 1.0
 
+    def test_resolved_changes_excluded(self):
+        """Deleted and cancelled changes should not count."""
+        diff = {
+            "bookings": [
+                {"entity_id": "BK-001", "type": "deleted"},  # resolved
+                {"entity_id": "BK-002", "type": "modified",
+                 "after": {"status": "cancelled"}},  # resolved
+                {"entity_id": "BK-003", "type": "created"},  # unresolved
+            ],
+        }
+        score = MetricsCalculator._compute_side_effect_score(diff)
+        # Only 1 unresolved out of 3 → 1/5 = 0.2
+        assert score == 0.2
+
+
+# ===================================================================
+# Entity-Level Compensation Tests
+# ===================================================================
+
+
+class TestEntityCompensation:
+    """Tests for entity-level one-to-one compensation pairing."""
+
+    @staticmethod
+    def _make_trace(
+        tool_name: str, inputs: dict | None = None,
+        real_result: dict | None = None,
+    ) -> ToolCallTrace:
+        return ToolCallTrace(
+            call_id="test", tool_name=tool_name,
+            inputs=inputs or {}, real_result=real_result or {"ok": True},
+            observed_result={"ok": True},
+            real_success=True, observed_success=True,
+            disruption_fired=None, real_latency_ms=10.0,
+            observed_latency_ms=10.0, error=None, timestamp=0.0,
+            call_number=1,
+        )
+
+    def test_entity_matched_compensation(self):
+        """Compensation matched by entity ID."""
+        calc = MetricsCalculator()
+        traces = [
+            self._make_trace("book_flight", real_result={"booking_id": "BKG-001"}),
+            self._make_trace("cancel_booking", inputs={"booking_id": "BKG-001"}),
+        ]
+        count, rate = calc._compute_compensation(traces)
+        assert count == 1
+        assert rate == 1.0
+
+    def test_entity_mismatched_not_compensated(self):
+        """Cancel for different entity shouldn't compensate the booking."""
+        calc = MetricsCalculator()
+        traces = [
+            self._make_trace("book_flight", real_result={"booking_id": "BKG-001"}),
+            self._make_trace("cancel_booking", inputs={"booking_id": "BKG-999"}),
+        ]
+        count, rate = calc._compute_compensation(traces)
+        assert count == 0
+        assert rate == 0.0
+
+    def test_one_to_one_pairing(self):
+        """One cancel_booking can only compensate one book_flight."""
+        calc = MetricsCalculator()
+        traces = [
+            self._make_trace("book_flight", real_result={"booking_id": "BKG-001"}),
+            self._make_trace("book_flight", real_result={"booking_id": "BKG-001"}),
+            self._make_trace("cancel_booking", inputs={"booking_id": "BKG-001"}),
+        ]
+        count, rate = calc._compute_compensation(traces)
+        # Only 1 cancel for 2 bookings → 1 compensated, rate = 0.5
+        assert count == 1
+        assert rate == 0.5
+
 
 # ===================================================================
 # End-to-End Evaluation with State

@@ -432,36 +432,78 @@ class MetricsCalculator:
         self,
         traces: list[ToolCallTrace],
     ) -> tuple[int, float]:
-        """Detect compensation patterns in traces.
+        """Detect compensation patterns in traces via entity-level pairing.
 
-        A compensation is when a side-effect tool call is followed by its
-        compensating tool call (e.g. book_flight → cancel_booking).
+        A compensation is when a side-effect tool's entity is later
+        addressed by its compensating tool (e.g. book_flight(BKG-001) →
+        cancel_booking(BKG-001)).
+
+        Uses ``real_success`` to catch hidden successful side effects
+        (where the tool actually succeeded but the agent was shown a
+        disrupted response).  Pairing is one-to-one: each compensating
+        trace can satisfy at most one side-effect.
 
         Returns:
             (compensation_count, compensation_success_rate)
         """
-        # Build set of side-effect tools that were called
-        side_effect_calls: list[tuple[int, str]] = []
+        from agentdisruptbench.tools.stateful import _TOOL_STATE_MAP
+
+        # Build list of (index, tool_name, entity_id) for real side-effect calls
+        side_effect_calls: list[tuple[int, str, str]] = []
         for i, t in enumerate(traces):
-            if t.tool_name in COMPENSATION_PAIRS and t.observed_success:
+            if t.tool_name in COMPENSATION_PAIRS and t.real_success:
                 comp_tool = COMPENSATION_PAIRS[t.tool_name]
                 if comp_tool is not None:
-                    side_effect_calls.append((i, t.tool_name))
+                    # Extract entity_id from inputs or real_result
+                    eid = self._extract_entity_id(t, _TOOL_STATE_MAP)
+                    side_effect_calls.append((i, t.tool_name, eid))
 
         if not side_effect_calls:
             return 0, 0.0
 
+        # One-to-one matching: track consumed compensating traces
+        consumed: set[int] = set()
         compensated = 0
-        for idx, tool_name in side_effect_calls:
+        for idx, tool_name, entity_id in side_effect_calls:
             comp_tool = COMPENSATION_PAIRS[tool_name]
-            # Check if compensating tool was called after the side-effect
-            for t in traces[idx + 1:]:
-                if t.tool_name == comp_tool and t.observed_success:
+            for j, t in enumerate(traces[idx + 1:], start=idx + 1):
+                if j in consumed:
+                    continue
+                if t.tool_name == comp_tool and t.real_success:
+                    comp_eid = self._extract_entity_id(t, _TOOL_STATE_MAP)
+                    # Match by entity if both have identifiable entities
+                    if entity_id != "unknown" and comp_eid != "unknown":
+                        if entity_id != comp_eid:
+                            continue
+                    consumed.add(j)
                     compensated += 1
                     break
 
         total = len(side_effect_calls)
         return compensated, (compensated / total if total > 0 else 0.0)
+
+    @staticmethod
+    def _extract_entity_id(
+        trace: ToolCallTrace,
+        tool_state_map: dict[str, tuple[str, str]],
+    ) -> str:
+        """Extract entity ID from a trace's inputs or real_result."""
+        if trace.tool_name not in tool_state_map:
+            return "unknown"
+        _, id_field = tool_state_map[trace.tool_name]
+
+        # Try inputs first (canonical for cancel/update tools)
+        eid = trace.inputs.get(id_field) or trace.inputs.get("id")
+        if eid is not None:
+            return str(eid)
+
+        # Then try real_result
+        if isinstance(trace.real_result, dict):
+            eid = trace.real_result.get(id_field) or trace.real_result.get("id")
+            if eid is not None:
+                return str(eid)
+
+        return "unknown"
 
     # ------------------------------------------------------------------
     # Side-effect score (P0)
@@ -474,18 +516,37 @@ class MetricsCalculator:
         0.0 = no unresolved state changes (clean run or all compensated).
         1.0 = maximum unresolved side effects.
 
-        Normalization: ``min(1.0, total_changes / 5.0)`` — 5+ unresolved
-        changes saturate at 1.0.  Can be refined with severity weighting.
+        Resolved changes (deletions, or modifications where the status
+        indicates cancellation/resolution/refund) are excluded so that
+        compensated flows don't inflate the score.
+
+        Normalization: ``min(1.0, unresolved / 5.0)`` — 5+ unresolved
+        changes saturate at 1.0.
         """
         if not state_diff:
             return 0.0
 
-        total_changes = 0
-        for coll_changes in state_diff.values():
-            total_changes += len(coll_changes)
+        _RESOLVED_STATUSES = {
+            "cancelled", "canceled", "resolved", "refunded",
+            "rolled_back", "compensated", "reversed",
+        }
 
-        # Normalize: 0 changes = 0.0, 5+ changes = 1.0
-        return min(1.0, total_changes / 5.0)
+        unresolved = 0
+        for coll_changes in state_diff.values():
+            for change in coll_changes:
+                # Deletions are resolved (entity was removed/cleaned up)
+                if change.get("type") == "deleted":
+                    continue
+                # Modifications where status indicates resolution
+                if change.get("type") == "modified":
+                    after = change.get("after", {})
+                    status = str(after.get("status", "")).lower()
+                    if status in _RESOLVED_STATUSES:
+                        continue
+                unresolved += 1
+
+        # Normalize: 0 unresolved = 0.0, 5+ = 1.0
+        return min(1.0, unresolved / 5.0)
 
     # ------------------------------------------------------------------
     # Loop detection (P0)

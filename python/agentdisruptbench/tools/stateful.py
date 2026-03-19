@@ -90,10 +90,12 @@ def wrap_tool_with_state(
         # Call the original tool
         result = fn(**kwargs)
 
-        # Extract entity ID from result
-        entity_id = "unknown"
-        if isinstance(result, dict):
-            entity_id = str(result.get(id_field, result.get("id", "unknown")))
+        # Extract entity ID: prefer kwargs (canonical for cancel/update),
+        # then result dict, then fall back to "unknown"
+        entity_id_value = kwargs.get(id_field) or kwargs.get("id")
+        if entity_id_value is None and isinstance(result, dict):
+            entity_id_value = result.get(id_field) or result.get("id")
+        entity_id = str(entity_id_value or "unknown")
 
         # Record in state
         state_manager.write(

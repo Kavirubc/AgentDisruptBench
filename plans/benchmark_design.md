@@ -17,7 +17,7 @@ AgentDisruptBench is a benchmark for evaluating AI agent **resilience under runt
 |---|---|---|---|
 | Total tools | 25–30 | 30 | ✅ |
 | Tools per domain | 5–6 | 6–8 per domain | ✅ |
-| Side-effect tools per domain | 2 | Tools exist but no mutable state sandbox | ⚠️ |
+| Side-effect tools per domain | 2 | StateManager with in-memory mutable state | ✅ |
 | Total tasks | 80+ | 80 (20 × 4 domains, D1–D5) | ✅ |
 | Disruption types | 20 | 20 in 4 categories | ✅ |
 | Profiles | 9+ | 9 built-in + YAML custom | ✅ |
@@ -177,9 +177,9 @@ AgentRx (Mar 2026) introduced a systematic debugging framework with a 9-category
 | Missing tool call | Agent skipped required tool | ✅ Measured via rubric |
 | Wrong parameters | Correct tool, wrong inputs | ⚠️ Trace captures inputs |
 | Incorrect reasoning | Logical error in plan | ⚠️ Needs LLM-as-judge |
-| Hallucinated tool call | Phantom action/output | **NEW** — need to add |
-| Context loss | Agent forgets prior state | **NEW** — need long-horizon tasks |
-| Loop detection | Agent repeats actions | **NEW** — need loop counter metric |
+| Hallucinated tool call | Phantom action/output | **Future: P2** — need to add |
+| Context loss | Agent forgets prior state | **Future: P1** — need long-horizon tasks |
+| Loop detection | Agent repeats actions | ✅ **Implemented** — `loop_count` metric |
 | Premature termination | Agent gives up too early | ✅ `acknowledged_failure` |
 
 ### 4.2 Tool Hallucination Types
