@@ -655,7 +655,23 @@ class MetricsCalculator:
         """
         # Build set of tools that actually succeeded
         successful_tools = {t.tool_name for t in traces if t.observed_success}
+
+        # Expand with ALTERNATIVE_TOOL_MAP equivalents so that a
+        # substitute-tool recovery (e.g. reserve_flight succeeding when
+        # book_flight failed) is not counted as a hallucination.
+        successful_or_equivalent: set[str] = set(successful_tools)
+        for primary, alternatives in ALTERNATIVE_TOOL_MAP.items():
+            tool_family = {primary, *alternatives}
+            if successful_tools & tool_family:
+                successful_or_equivalent.update(tool_family)
+
         all_tool_names = expected_tools or {t.tool_name for t in traces}
+        # Also expand relevance check with alternatives
+        all_tool_names_expanded: set[str] = set(all_tool_names)
+        for primary, alternatives in ALTERNATIVE_TOOL_MAP.items():
+            tool_family = {primary, *alternatives}
+            if all_tool_names & tool_family:
+                all_tool_names_expanded.update(tool_family)
 
         # Common action verbs that map to specific tools
         _ACTION_VERBS = {
@@ -675,10 +691,11 @@ class MetricsCalculator:
         for verb, tool in _ACTION_VERBS.items():
             if verb in output_lower:
                 # Only score this claim if the tool is relevant to the run
-                if tool in all_tool_names or not all_tool_names:
+                if tool in all_tool_names_expanded or not all_tool_names:
                     total_claims += 1
                     # Hallucination: claimed action but tool never succeeded
-                    if tool not in successful_tools:
+                    # (including via known substitutes)
+                    if tool not in successful_or_equivalent:
                         hallucinations += 1
 
         return hallucinations / total_claims if total_claims > 0 else 0.0

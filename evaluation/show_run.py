@@ -113,12 +113,13 @@ def strategy_style(strat: str) -> str:
     styles = {
         "RETRY": "bold cyan",
         "ALTERNATIVE": "bold blue",
+        "ESCALATION": "bold magenta",
         "WORKAROUND": "bold yellow",
         "SKIP": "dim yellow",
         "GIVEUP": "bold red",
         "LUCKY": "bold green",
     }
-    return styles.get(strat.upper(), "white")
+    return styles.get(strat.upper(), "white") if strat else "dim"
 
 
 # ─── RENDERER ─────────────────────────────────────────────────────────────────
@@ -298,7 +299,7 @@ def render_run(events: list[dict[str, Any]], run_dir: Path) -> None:
         metrics.add_row("Duration", f"{completed.get('duration_seconds', 0):.1f}s")
 
         strategies = completed.get("recovery_strategies", [])
-        dominant = completed.get("dominant_strategy", "—")
+        dominant = completed.get("dominant_strategy") or "—"
         if strategies:
             strat_parts = []
             for s in strategies:
@@ -352,6 +353,16 @@ def render_run(events: list[dict[str, Any]], run_dir: Path) -> None:
         # ── AGENT OUTPUT ──────────────────────────────────────────────────────
         output = completed.get("agent_output", "")
         if output:
+            # Normalise list-of-dicts (Gemini format) to plain string
+            if isinstance(output, list):
+                parts = []
+                for item in output:
+                    if isinstance(item, dict):
+                        parts.append(item.get("text", str(item)))
+                    else:
+                        parts.append(str(item))
+                output = "\n".join(parts)
+            output = str(output)
             # Truncate long outputs
             display_output = output[:600] + ("..." if len(output) > 600 else "")
             console.print(Panel(
@@ -403,7 +414,7 @@ def render_run(events: list[dict[str, Any]], run_dir: Path) -> None:
                 ok = c.get("success", False)
                 sc = c.get("partial_score", 0)
                 sc_s = score_color(sc)
-                dom = c.get("dominant_strategy", "—")
+                dom = c.get("dominant_strategy") or "—"
                 ds = strategy_style(dom) if dom != "—" else "dim"
 
                 task_summary.add_row(

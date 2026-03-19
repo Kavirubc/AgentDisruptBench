@@ -101,8 +101,15 @@ class RACEventCapture(logging.Handler):
 
     def emit(self, record):
         msg = record.getMessage()
-        # Only capture interesting RAC events
-        if "[COMPENSATION]" in msg or "Retrying" in msg:
+        # Capture RAC middleware events and the runner's transaction snapshot.
+        if (
+            "[COMPENSATION]" in msg
+            or "Retrying" in msg
+            or (
+                record.name == "agentdisruptbench.evaluation.runners.rac"
+                and ("rac_transaction_log" in msg or "action=" in msg)
+            )
+        ):
             self.run_logger.emit("rac_event", {
                 "logger": record.name,
                 "level": record.levelname,
@@ -142,8 +149,12 @@ def main():
     # Attach RAC event capture handler
     rac_handler = RACEventCapture(run_log)
     rac_handler.setLevel(logging.DEBUG)
-    for logger_name in ("react_agent_compensation", "react_agent_compensation.langchain_adaptor.agent",
-                         "react_agent_compensation.core.recovery_manager"):
+    for logger_name in (
+        "agentdisruptbench.evaluation.runners.rac",
+        "react_agent_compensation",
+        "react_agent_compensation.langchain_adaptor.agent",
+        "react_agent_compensation.core.recovery_manager",
+    ):
         logging.getLogger(logger_name).addHandler(rac_handler)
 
     print("=" * 60)
