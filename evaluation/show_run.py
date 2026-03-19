@@ -308,6 +308,45 @@ def render_run(events: list[dict[str, Any]], run_dir: Path) -> None:
             ds = strategy_style(dominant)
             metrics.add_row("Dominant", f"[{ds}]{dominant}[/{ds}]")
 
+        # P1/P2 metrics (emitted by both quick runners)
+        if "graceful_giveup" in completed:
+            metrics.add_row("Graceful Giveup", str(completed["graceful_giveup"]))
+        if "compensation_count" in completed:
+            comp_rate = completed.get("compensation_success_rate", 0)
+            metrics.add_row(
+                "Compensations",
+                f"{completed['compensation_count']} ({comp_rate:.0%} success)",
+            )
+        if "side_effect_score" in completed:
+            metrics.add_row("Side-Effect Score", str(completed["side_effect_score"]))
+        if "idempotency_violations" in completed:
+            metrics.add_row(
+                "Idempotency Violations",
+                str(completed["idempotency_violations"]),
+            )
+        if "loop_count" in completed:
+            metrics.add_row("Loop Count", str(completed["loop_count"]))
+        if "planning_time_ratio" in completed:
+            metrics.add_row(
+                "Planning Ratio",
+                f"{completed['planning_time_ratio']:.0%}",
+            )
+        if "handover_detected" in completed:
+            metrics.add_row("Handover Detected", str(completed["handover_detected"]))
+        if "tool_hallucination_rate" in completed:
+            metrics.add_row(
+                "Hallucination Rate",
+                f"{completed['tool_hallucination_rate']:.0%}",
+            )
+        if completed.get("failure_categories"):
+            metrics.add_row(
+                "Failure Categories",
+                ", ".join(
+                    f"{k}:{v}"
+                    for k, v in sorted(completed["failure_categories"].items())
+                ),
+            )
+
         console.print(Panel(metrics, title="[bold]Metrics[/bold]", border_style="yellow"))
 
         # ── AGENT OUTPUT ──────────────────────────────────────────────────────

@@ -32,6 +32,7 @@ import sys
 import time
 import json
 import uuid
+import hashlib
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -225,7 +226,12 @@ def main():
 
         # Derive a stable per-task seed so each task gets a unique but
         # reproducible RNG stream even when the same global seed is used.
-        per_task_seed = (args.seed ^ hash(task.task_id)) & 0x7FFFFFFF
+        # Use hashlib (not hash()) to avoid PYTHONHASHSEED randomization.
+        _task_id_hash = int.from_bytes(
+            hashlib.blake2s(task.task_id.encode("utf-8"), digest_size=4).digest(),
+            "big",
+        )
+        per_task_seed = (args.seed ^ _task_id_hash) & 0x7FFFFFFF
 
         run_log.emit("task_started", {
             "task_id": task.task_id,
@@ -287,6 +293,7 @@ def main():
             profile_name=args.profile,
             seed=args.seed,
             duration_seconds=elapsed,
+            run_start_time=start,
         )
         results.append(result)
 

@@ -180,6 +180,7 @@ class MetricsCalculator:
         profile_name: str,
         seed: int,
         duration_seconds: float,
+        run_start_time: float | None = None,
         state_diff: dict | None = None,
         idempotency_violations: int = 0,
     ) -> BenchmarkResult:
@@ -264,7 +265,9 @@ class MetricsCalculator:
             dominant_strategy = ""
 
         # -- P2: Planning time ratio -------------------------------------------
-        planning_time_ratio = self._compute_planning_ratio(traces, duration_seconds)
+        planning_time_ratio = self._compute_planning_ratio(
+            traces, duration_seconds, run_start_time=run_start_time
+        )
 
         # -- P2: Handover detection --------------------------------------------
         handover_detected = self._check_handover(agent_output)
@@ -545,8 +548,8 @@ class MetricsCalculator:
                     strategies.append("ESCALATION")
                 elif self._check_acknowledged(agent_output):
                     strategies.append("GIVEUP")
-                else:
-                    strategies.append("LUCKY")
+                # Otherwise emit no strategy — unrecovered failures without
+                # an explicit response pattern are not classified as LUCKY.
 
         return strategies
 
