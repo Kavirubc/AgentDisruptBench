@@ -44,6 +44,24 @@ logger = logging.getLogger("agentdisruptbench.metrics")
 
 
 # ---------------------------------------------------------------------------
+# Alternative-tool substitution map
+# ---------------------------------------------------------------------------
+
+# Maps a tool name to the set of tools that are known substitutes for it.
+# Only tools listed here will be classified as ALTERNATIVE recoveries.
+# Extend this mapping as the benchmark grows to cover new tool families.
+ALTERNATIVE_TOOL_MAP: dict[str, set[str]] = {
+    "search_flights": {"search_alternative_flights", "search_flights_v2"},
+    "book_flight": {"book_alternative_flight", "reserve_flight"},
+    "search_hotels": {"search_alternative_hotels", "search_hotels_v2"},
+    "book_hotel": {"book_alternative_hotel", "reserve_hotel"},
+    "transfer_funds": {"wire_transfer", "send_payment"},
+    "get_stock_price": {"get_stock_quote", "fetch_market_data"},
+    "deploy_service": {"deploy_service_v2", "rollout_service"},
+}
+
+
+# ---------------------------------------------------------------------------
 # BenchmarkResult
 # ---------------------------------------------------------------------------
 
@@ -536,8 +554,12 @@ class MetricsCalculator:
                     strategies.append("RETRY")
                     recovered = True
                     break
-                if nxt.tool_name != t.tool_name and nxt.observed_success:
-                    # Different tool succeeded
+                if (
+                    nxt.tool_name != t.tool_name
+                    and nxt.observed_success
+                    and nxt.tool_name in ALTERNATIVE_TOOL_MAP.get(t.tool_name, set())
+                ):
+                    # A known substitute tool succeeded
                     strategies.append("ALTERNATIVE")
                     recovered = True
                     break

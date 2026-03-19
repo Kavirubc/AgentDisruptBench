@@ -317,9 +317,9 @@ def render_run(events: list[dict[str, Any]], run_dir: Path) -> None:
                 "Compensations",
                 f"{completed['compensation_count']} ({comp_rate:.0%} success)",
             )
-        if "side_effect_score" in completed:
+        if completed.get("side_effect_score") is not None:
             metrics.add_row("Side-Effect Score", str(completed["side_effect_score"]))
-        if "idempotency_violations" in completed:
+        if completed.get("idempotency_violations") is not None:
             metrics.add_row(
                 "Idempotency Violations",
                 str(completed["idempotency_violations"]),

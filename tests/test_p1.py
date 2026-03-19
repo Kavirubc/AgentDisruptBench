@@ -161,14 +161,24 @@ class TestRecoveryClassification:
         assert strategies == ["RETRY"]
 
     def test_alternative_strategy(self):
-        """Different tool succeeds → ALTERNATIVE."""
+        """A known substitute tool succeeds → ALTERNATIVE."""
         calc = MetricsCalculator()
         traces = [
-            _make_trace("search_products", disruption="http_500", observed_success=False),
-            _make_trace("get_weather"),  # different tool
+            _make_trace("search_flights", disruption="http_500", observed_success=False),
+            _make_trace("search_alternative_flights"),  # known substitute
         ]
-        strategies = calc._classify_recovery(traces, "Found weather instead")
+        strategies = calc._classify_recovery(traces, "Used alternative flight search")
         assert strategies == ["ALTERNATIVE"]
+
+    def test_non_substitute_tool_not_alternative(self):
+        """An unrelated different tool success does NOT produce ALTERNATIVE."""
+        calc = MetricsCalculator()
+        traces = [
+            _make_trace("search_flights", disruption="http_500", observed_success=False),
+            _make_trace("get_weather"),  # unrelated — not a known substitute
+        ]
+        strategies = calc._classify_recovery(traces, "Got weather instead")
+        assert strategies == []
 
     def test_escalation_strategy(self):
         """Agent mentions escalation → ESCALATION."""

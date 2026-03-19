@@ -312,8 +312,9 @@ def main():
             "graceful_giveup": result.graceful_giveup,
             "compensation_count": result.compensation_count,
             "compensation_success_rate": round(result.compensation_success_rate, 4),
-            "side_effect_score": round(result.side_effect_score, 4),
-            "idempotency_violations": result.idempotency_violations,
+            # State-safety metrics require state snapshots; not measured in quick-run
+            "side_effect_score": None,
+            "idempotency_violations": None,
             "loop_count": result.loop_count,
             "planning_time_ratio": round(result.planning_time_ratio, 4),
             "handover_detected": result.handover_detected,
