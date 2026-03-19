@@ -136,6 +136,53 @@ class RACRunner(BaseAgentRunner):
         logger.info("rac_runner_setup provider=%s model=%s", provider, self.config.model)
         super().setup()
 
+    @staticmethod
+    def _build_args_schema(tool_name: str, proxy_fn: Any) -> type | None:
+        """Build a Pydantic model from the mock tool's function signature.
+
+        StructuredTool.from_function infers its schema from the wrapped
+        function's signature.  Since our wrapper uses ``**kwargs``, the
+        inferred schema has a single ``kwargs`` field — which breaks
+        argument forwarding.
+
+        This method inspects the *underlying* mock tool function (accessed
+        via ``proxy_fn._fn``) and dynamically creates a Pydantic BaseModel
+        with the correct parameter names and types.
+        """
+        import inspect
+        from pydantic import BaseModel, Field, create_model
+
+        # Walk through the proxy chain: ToolProxy._fn → static method
+        real_fn = getattr(proxy_fn, '_fn', None)
+        if real_fn is None:
+            return None
+
+        try:
+            sig = inspect.signature(real_fn)
+        except (ValueError, TypeError):
+            return None
+
+        fields: dict[str, Any] = {}
+        for param_name, param in sig.parameters.items():
+            if param_name in ("self", "cls"):
+                continue
+
+            # Determine type annotation (default to str)
+            ann = param.annotation if param.annotation != inspect.Parameter.empty else str
+
+            # Determine default
+            if param.default != inspect.Parameter.empty:
+                fields[param_name] = (ann, Field(default=param.default))
+            else:
+                fields[param_name] = (ann, ...)
+
+        if not fields:
+            return None
+
+        # Create a Pydantic model with the tool name as class name
+        model_name = "".join(part.capitalize() for part in tool_name.split("_")) + "Input"
+        return create_model(model_name, **fields)
+
     def run_task(self, task: Task, tools: dict[str, Any]) -> str:
         """Run a RAC compensated agent for one benchmark task.
 
@@ -164,6 +211,12 @@ class RACRunner(BaseAgentRunner):
             ) from e
 
         # Step 1: Convert ToolProxy callables → LangChain StructuredTool
+        #
+        # We must build a proper Pydantic args_schema for each tool so that
+        # LangChain (and the LLM) sees the correct parameter names/types.
+        # Without this, StructuredTool.from_function infers a schema from
+        # the wrapper's **kwargs signature, which produces a single "kwargs"
+        # field — breaking argument forwarding.
         lc_tools = []
         for name, fn in tools.items():
             proxy_fn = fn  # capture in closure
@@ -178,10 +231,14 @@ class RACRunner(BaseAgentRunner):
                         return json.dumps({"error": str(exc), "status": "failed"})
                 return tool_fn
 
+            # Build Pydantic schema from the underlying mock tool's signature
+            args_schema = self._build_args_schema(name, fn)
+
             tool = StructuredTool.from_function(
                 func=_make_tool_fn(),
                 name=name,
                 description=f"Execute the {name} tool.",
+                args_schema=args_schema,
             )
             lc_tools.append(tool)
 
