@@ -37,6 +37,10 @@ langchain = ["langchain-core>=0.1"]
 openai = ["openai>=1.0"]
 autogen = ["pyautogen>=0.2"]
 crewai = ["crewai>=0.1"]
+cli = [
+    "rich>=13.0",
+    "typer>=0.9",
+]
 all = [
     "langchain-core>=0.1",
     "openai>=1.0",

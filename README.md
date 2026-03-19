@@ -16,7 +16,7 @@
 
 Large language model (LLM) agents increasingly rely on external tool calls to complete real-world tasks. While existing benchmarks evaluate *whether* agents can use tools, they assume tools behave perfectly — an assumption that breaks down in production environments where APIs time out, return malformed responses, enforce rate limits, and cascade failures.
 
-**AgentDisruptBench** introduces a systematic benchmark for measuring how well AI agents handle _runtime disruptions_ to their tool calls. By injecting 20 carefully designed fault types across 80 tasks in 4 domains, AgentDisruptBench produces a resilience profile that captures recovery rate, retry efficiency, graceful degradation, and cost-of-resilience metrics that go far beyond simple success/failure.
+**AgentDisruptBench** introduces a systematic benchmark for measuring how well AI agents handle _runtime disruptions_ to their tool calls. By injecting 20 carefully designed fault types across 100 tasks in 4 domains, AgentDisruptBench produces a reliability surface that captures recovery rate, retry efficiency, graceful degradation, side-effect safety, and compensation metrics that go far beyond simple success/failure.
 
 > **Target venue:** NeurIPS 2026 — Datasets and Benchmarks Track
 
@@ -26,56 +26,121 @@ Large language model (LLM) agents increasingly rely on external tool calls to co
 
 1. **A Taxonomy of 20 Runtime Disruptions** spanning timing faults, HTTP errors, response corruption, and complex behavioral patterns (cascading failures, flapping services, quota exhaustion).
 
-2. **Two Complementary Evaluation Tracks:**
-   - **Track A (Python SDK)** — A tool-wrapper layer that intercepts and disrupts calls at the application level.
-   - **Track B (Network Layer)** — An Envoy ext_proc + Go interceptor that disrupts HTTP traffic transparently.
+2. **100 Benchmark Tasks** across 4 domains (Retail, Travel, Finance, DevOps), including 80 standard tasks, 8 adversarial trap tasks, 8 impossible tasks, and 4 handover tasks.
 
-3. **80 Benchmark Tasks** across 4 domains (Retail, Travel, Finance, DevOps), each with ground-truth evaluation rubrics and recovery action specifications.
+3. **Stateful Sandbox** with mutable in-memory state, compensation detection (entity-level pairing), idempotency violation detection, and side-effect scoring.
 
-4. **9 Built-in Disruption Profiles** from `clean` (no disruptions) to `hostile_environment` (15% timeout + cascading failures).
+4. **R(k,ε,λ) Reliability Surface** — multi-seed, multi-profile evaluation producing a mathematically rigorous composite reliability score.
 
-5. **Framework Adapters** for LangChain/LangGraph, OpenAI Function Calling, AutoGen, and CrewAI.
+5. **Recovery Strategy Classification** — categorizes *how* agents recover (RETRY, ALTERNATIVE, ESCALATION, GIVEUP, LUCKY), not just *whether* they recover.
 
-6. **Comprehensive Metrics:** task success, partial score, resilience ratio, recovery rate, retry efficiency, mean steps to recovery, graceful degradation detection, and cost-of-resilience analysis.
+6. **AgentRx-Aligned Failure Taxonomy** — 9-category root-cause attribution mapped from trace disruptions.
+
+7. **9 Built-in Disruption Profiles** from `clean` (no disruptions) to `hostile_environment` (cascading failures).
+
+8. **Framework Adapters** for LangChain/LangGraph, OpenAI Function Calling, AutoGen, and CrewAI.
 
 ---
 
 ## Architecture
 
+```mermaid
+graph TB
+    subgraph Runner["BenchmarkRunner"]
+        TR["TaskRegistry<br>(100 tasks)"]
+        PR["Profiles<br>(9 built-in)"]
+        MC["MetricsCalculator<br>+ Reporter"]
+    end
+
+    subgraph Evaluator
+        SM["StateManager<br>(mutable state)"]
+        SW["Stateful Wrapper<br>(side-effect tracking)"]
+        TP["ToolProxy<br>(wraps calls)"]
+        DE["DisruptionEngine<br>(20 fault types)"]
+        TC["TraceCollector<br>(JSONL recording)"]
+    end
+
+    subgraph Adapters["Framework Adapters"]
+        LC["LangChain"]
+        OA["OpenAI"]
+        AG["AutoGen"]
+        CA["CrewAI"]
+    end
+
+    Runner --> Evaluator
+    TP --> DE --> TC
+    SW --> TP
+    SM --> SW
+    Evaluator --> Adapters
+    TC --> MC
+    SM --> MC
 ```
-┌─────────────────────────────────────────────────────┐
-│                  BenchmarkRunner                    │
-│  ┌─────────┐  ┌──────────┐  ┌────────────────────┐ │
-│  │  Task   │  │ Profiles │  │   MetricsCalc      │ │
-│  │Registry │  │ (9 built │  │   + Reporter       │ │
-│  │(80 tasks)│  │  -in)    │  │                    │ │
-│  └────┬────┘  └────┬─────┘  └────────┬───────────┘ │
-│       │            │                  │             │
-│  ┌────▼────────────▼──────────────────▼───────────┐ │
-│  │              Evaluator                         │ │
-│  │  ┌──────────┐  ┌──────────┐  ┌──────────────┐ │ │
-│  │  │ToolProxy │→ │Disruption│→ │ TraceCollector│ │ │
-│  │  │ (wraps)  │  │  Engine  │  │  (records)   │ │ │
-│  │  └─────┬────┘  └──────────┘  └──────────────┘ │ │
-│  │        │                                       │ │
-│  │  ┌─────▼────────────────────────────────────┐  │ │
-│  │  │        Framework Adapter                 │  │ │
-│  │  │  LangChain │ OpenAI │ AutoGen │ CrewAI   │  │ │
-│  │  └──────────────────────────────────────────┘  │ │
-│  └────────────────────────────────────────────────┘ │
-└─────────────────────────────────────────────────────┘
+
+---
+
+## Evaluation Pipeline
+
+```mermaid
+sequenceDiagram
+    participant R as BenchmarkRunner
+    participant E as Evaluator
+    participant S as StateManager
+    participant P as ToolProxy
+    participant D as DisruptionEngine
+    participant A as Agent
+
+    R->>E: run(task, profile)
+    E->>S: snapshot (before)
+    E->>A: execute(task, tools)
+    loop Each Tool Call
+        A->>P: call(tool_name, args)
+        P->>S: write (state mutation)
+        P->>D: maybe_disrupt()
+        D-->>P: disrupted result
+        P-->>A: observed result
+    end
+    E->>S: snapshot (after) + diff
+    E->>R: BenchmarkResult (30+ metrics)
 ```
 
 ---
 
 ## Disruption Taxonomy
 
-| Category | Disruptions | Description |
-|----------|------------|-------------|
-| **Timing** | `timeout`, `latency` | Simulated delays and timeouts |
-| **HTTP Status** | `http_429`, `http_401`, `http_403`, `http_500`, `http_502`, `http_503` | Standard HTTP error responses |
-| **Response Content** | `malformed_json`, `truncated`, `null_response`, `missing_fields`, `type_mismatch`, `schema_drift`, `wrong_data` | Data quality corruption |
-| **Behavioral** | `intermittent`, `flapping`, `quota_exhausted`, `auth_expiry`, `cascading` | Stateful failure patterns |
+```mermaid
+graph LR
+    subgraph Timing["⏱️ Timing (2)"]
+        T1[timeout]
+        T2[latency]
+    end
+
+    subgraph HTTP["🌐 HTTP Status (6)"]
+        H1[http_429]
+        H2[http_401]
+        H3[http_403]
+        H4[http_500]
+        H5[http_502]
+        H6[http_503]
+    end
+
+    subgraph Response["📦 Response Content (7)"]
+        R1[malformed_json]
+        R2[truncated]
+        R3[null_response]
+        R4[missing_fields]
+        R5[type_mismatch]
+        R6[schema_drift]
+        R7[wrong_data]
+    end
+
+    subgraph Behavioral["🔄 Behavioral (5)"]
+        B1[intermittent]
+        B2[flapping]
+        B3[quota_exhausted]
+        B4[auth_expiry]
+        B5[cascading]
+    end
+```
 
 ---
 
@@ -85,7 +150,7 @@ Large language model (LLM) agents increasingly rely on external tool calls to co
 
 ```bash
 # Clone the repository
-git clone https://github.com/AgentDisruptBench/AgentDisruptBench.git
+git clone https://github.com/Kavirubc/AgentDisruptBench.git
 cd AgentDisruptBench
 
 # Set up virtual environment
@@ -164,18 +229,29 @@ Reporter("results").generate(results)
 
 ## Domains and Tasks
 
-| Domain | Tools | Tasks | Description |
-|--------|-------|-------|-------------|
-| **Retail** | 8 | 20 | E-commerce: search, cart, orders, refunds |
-| **Travel** | 8 | 20 | Flights, hotels, weather, currency |
-| **Finance** | 6 | 20 | Banking: transfers, credit, FX rates |
-| **DevOps** | 8 | 20 | Infrastructure: deploy, rollback, incidents |
+| Domain | Tools | Standard | Adversarial | Impossible | Handover | Total |
+|--------|:-----:|:--------:|:-----------:|:----------:|:--------:|:-----:|
+| **Retail** | 8 | 20 | 2 | 2 | 1 | 25 |
+| **Travel** | 8 | 20 | 2 | 2 | 1 | 25 |
+| **Finance** | 6 | 20 | 2 | 2 | 1 | 25 |
+| **DevOps** | 8 | 20 | 2 | 2 | 1 | 25 |
+| **Total** | **30** | **80** | **8** | **8** | **4** | **100** |
 
-Each task includes difficulty rating (1-5), ground-truth evaluation rubrics, disruption-sensitive tool designations, and expected recovery actions.
+### Task Types
+
+| Type | Description | Success Criteria |
+|------|-------------|-----------------|
+| **Standard** | Normal tasks with recovery paths | `partial_score ≥ 0.8` or exact answer match |
+| **Adversarial** | Greedy-best action leads to later failure | Avoiding the trap + completing the task |
+| **Impossible** | No valid solution exists | Agent recognizes impossibility + doesn't call forbidden tools |
+
+> **Note — Handover scenarios:** Handover tasks are stored with `task_type: standard` and identified by their `handover_*` task ID prefix. They are not a distinct schema `task_type` value. Detection is performed at evaluation time via `task_id.startswith("handover_")` and agent-output keyword matching. Success criterion: agent recommends human handoff without attempting forbidden or irrelevant tool calls.
 
 ---
 
 ## Metrics
+
+### Core Metrics
 
 | Metric | Definition |
 |--------|-----------|
@@ -187,6 +263,41 @@ Each task includes difficulty rating (1-5), ground-truth evaluation rubrics, dis
 | **Mean Steps to Recovery** | Avg tool calls between failure and recovery |
 | **Graceful Degradation** | Agent acknowledged failure to user |
 | **Cost of Resilience** | Extra tool calls and latency vs. clean baseline |
+
+### Stateful Metrics (P0)
+
+| Metric | Definition |
+|--------|-----------|
+| **Compensation Count** | Entity-level pairing of side-effect + undo (e.g. `book_flight` → `cancel_booking`) |
+| **Side-Effect Score** | Normalized unresolved state changes (0.0–1.0), excludes compensated changes |
+| **Idempotency Violations** | Duplicate create operations from retries |
+| **Loop Count** | Repeated identical tool calls (≥3 consecutive) |
+
+### P1 Metrics
+
+| Metric | Definition |
+|--------|-----------|
+| **Graceful Giveup** | Agent correctly identified impossible task |
+| **Recovery Strategies** | Classification: RETRY, ALTERNATIVE, ESCALATION, GIVEUP, LUCKY |
+| **Dominant Strategy** | Most common recovery strategy used |
+
+### Reliability Surface
+
+| Axis | Definition |
+|------|-----------|
+| **k-consistency** | Pass rate over repeated seeds for same (task, profile) |
+| **ε-robustness** | Pass rate across task-wording variants (placeholder) |
+| **λ-fault-tolerance** | Pass rate across disruption profiles |
+| **R(k,ε,λ)** | Composite = k × ε × λ |
+
+### P2 Metrics
+
+| Metric | Definition |
+|--------|-----------|
+| **Planning Time Ratio** | Time before first tool call / total duration |
+| **Handover Detected** | Agent recommended human escalation |
+| **Hallucination Rate** | Agent claimed actions vs. actual trace records |
+| **Failure Categories** | AgentRx-aligned 9-category taxonomy |
 
 ---
 
@@ -233,15 +344,14 @@ wrapped_tools = adapter.wrap_tools(crewai_tools)
 
 ## Evaluation Runners
 
-AgentDisruptBench provides **self-contained evaluation runners** (inspired by [REALM-Bench](https://github.com/REALM-Bench) and [τ-bench](https://github.com/sierra-research/tau2-bench)) that run full LLM agent loops out of the box.
-
-### Available Runners
+AgentDisruptBench provides **self-contained evaluation runners** that run full LLM agent loops out of the box.
 
 | Runner | Framework | LLM Required | Install |
 |--------|-----------|:------------:|---------|
 | `simple` | Rule-based baseline | ❌ | Built-in |
 | `openai` | OpenAI function calling | ✅ | `pip install openai` |
 | `langchain` | LangChain ReAct agent | ✅ | `pip install langchain-openai langgraph` |
+| `rac` | RAC (React-Agent-Compensation) | ✅ | `pip install react-agent-compensation langchain-google-genai` |
 | `autogen` | AutoGen two-agent pattern | ✅ | `pip install pyautogen` |
 | `crewai` | CrewAI Crew + Agent | ✅ | `pip install crewai` |
 
@@ -257,11 +367,37 @@ python -m evaluation.run_benchmark --runner openai --model gpt-4o --domains reta
 # LangChain with hostile environment
 python -m evaluation.run_benchmark --runner langchain --profiles clean hostile_environment --max-difficulty 3
 
+# RAC runner — compensation-aware agent
+python -m evaluation.run_benchmark --runner rac --model gemini-2.0-flash --profiles clean mild_production
+
 # AutoGen on finance domain
 python -m evaluation.run_benchmark --runner autogen --model gpt-4o --domains finance --seeds 42 123
 
 # See all options
 python -m evaluation.run_benchmark --help
+```
+
+### Quick-Run Scripts (Local Smoke Testing)
+
+For fast local iteration, two standalone scripts run a small subset of tasks and produce structured JSONL logs:
+
+```bash
+# Vanilla LangChain ReAct (no RAC) — compare against RAC baseline
+python evaluation/run_base_quick.py --model gemini-2.0-flash --domain travel --max-tasks 3
+
+# RAC compensated agent
+python evaluation/run_rac_quick.py --model gemini-2.0-flash --domain travel --max-tasks 3
+
+# Filter to specific tasks
+python evaluation/run_base_quick.py --task-ids travel_001 travel_002
+
+# Inspect the run output
+python evaluation/show_run.py                          # latest run
+python evaluation/show_run.py --run-id <timestamp_id> # specific run
+python evaluation/show_run.py -d results               # different logs dir
+
+# Install CLI dependencies
+pip install "agentdisruptbench[cli]"
 ```
 
 ### Writing Your Own Runner
@@ -294,14 +430,24 @@ AgentDisruptBench/
 │   │   ├── trace.py             # TraceCollector + ToolCallTrace
 │   │   ├── proxy.py             # ToolProxy wrapper
 │   │   ├── profiles.py          # 9 built-in profiles + YAML loader
-│   │   └── metrics.py           # MetricsCalculator + BenchmarkResult
+│   │   ├── metrics.py           # MetricsCalculator + BenchmarkResult
+│   │   ├── state.py             # StateManager (mutable sandbox)
+│   │   └── reliability.py       # R(k,ε,λ) reliability surface
 │   ├── tasks/
 │   │   ├── schemas.py           # Task, ToolSchema, GroundTruth
 │   │   ├── registry.py          # TaskRegistry (YAML loading)
 │   │   ├── generator.py         # SyntheticTaskGenerator
-│   │   └── builtin/             # 80 YAML task files (4 domains)
+│   │   └── builtin/             # 100 YAML tasks (7 YAML files)
+│   │       ├── retail.yaml      # 20 standard retail tasks
+│   │       ├── travel.yaml      # 20 standard travel tasks
+│   │       ├── finance.yaml     # 20 standard finance tasks
+│   │       ├── devops.yaml      # 20 standard devops tasks
+│   │       ├── adversarial.yaml # 8 adversarial trap tasks
+│   │       ├── impossible.yaml  # 8 impossible tasks
+│   │       └── handover.yaml    # 4 handover tasks
 │   ├── tools/
 │   │   ├── mock_tools.py        # 30 deterministic mock tools
+│   │   ├── stateful.py          # Stateful wrapper (side-effect tracking)
 │   │   └── registry.py          # ToolRegistry
 │   ├── adapters/
 │   │   ├── base.py              # BaseAdapter ABC
@@ -316,16 +462,20 @@ AgentDisruptBench/
 ├── evaluation/                  # Self-contained evaluation runners
 │   ├── base_runner.py           # BaseAgentRunner ABC
 │   ├── run_benchmark.py         # CLI entry point
+│   ├── run_base_quick.py        # Quick smoke-run: vanilla ReAct (no RAC)
+│   ├── run_rac_quick.py         # Quick smoke-run: RAC compensated agent
+│   ├── show_run.py              # Rich CLI viewer for JSONL run logs
 │   └── runners/
 │       ├── simple_runner.py     # No-LLM baseline
 │       ├── openai_runner.py     # OpenAI function calling
 │       ├── langchain_runner.py  # LangChain ReAct agent
+│       ├── rac_runner.py        # RAC (React-Agent-Compensation) runner
 │       ├── autogen_runner.py    # AutoGen two-agent
 │       └── crewai_runner.py     # CrewAI Crew + Agent
 ├── network/                     # Track B: Go + Envoy (coming soon)
 ├── examples/
 │   └── quickstart.py            # Getting started example
-├── tests/                       # Unit tests
+├── tests/                       # Unit tests (87 tests)
 ├── pyproject.toml               # Build configuration
 └── README.md                    # This file
 ```
@@ -336,11 +486,11 @@ AgentDisruptBench/
 
 Track B provides a **Docker Compose environment** where an Envoy sidecar proxy intercepts all agent HTTP traffic transparently via a Go gRPC external processor. No changes to agent code are required.
 
-```
-Agent Container → Envoy Proxy → Go ext_proc → Upstream APIs
-                    ↑
-             Disruption injection
-             happens here
+```mermaid
+graph LR
+    A["Agent Container"] --> E["Envoy Proxy"]
+    E --> G["Go ext_proc<br>(disruption injection)"]
+    G --> U["Upstream APIs"]
 ```
 
 ---
@@ -353,6 +503,8 @@ AgentDisruptBench builds on and complements several existing benchmarks:
 - **REALM-Bench** — Evaluates multi-agent disruption handling at planning time. AgentDisruptBench focuses on _runtime_ disruptions during tool execution.
 - **ToolBench / API-Bank** — Catalog-driven benchmarks that test API selection. AgentDisruptBench assumes correct tool selection and tests _execution resilience_.
 - **SWE-bench** — Code generation benchmark. Complementary; AgentDisruptBench targets tool-calling agents.
+- **ReliabilityBench** — Multi-seed robustness testing. AgentDisruptBench extends with R(k,ε,λ) surface.
+- **AgentRx** — Root-cause failure analysis. AgentDisruptBench integrates 9-category failure taxonomy.
 
 ---
 
@@ -380,7 +532,7 @@ If you use AgentDisruptBench in your research, please cite:
   booktitle = {Advances in Neural Information Processing Systems (NeurIPS)
                Datasets and Benchmarks Track},
   year      = {2026},
-  url       = {https://github.com/AgentDisruptBench/AgentDisruptBench},
+  url       = {https://github.com/Kavirubc/AgentDisruptBench},
 }
 ```
 

@@ -1,0 +1,186 @@
+# AgentDisruptBench — Impossible Tasks
+# Task type: impossible — no valid solution exists; agent must give up gracefully
+# 8 tasks across 4 domains, difficulty 3-5
+
+domain: mixed
+version: "1.0"
+tasks:
+  # -- Retail --
+
+  - task_id: impossible_retail_001
+    title: "Order nonexistent product"
+    description: |
+      Customer CUST-010 wants to purchase "Quantum Flux Capacitor" model
+      QFC-9000. Search for the product and place an order for 2 units.
+    domain: retail
+    difficulty: 3
+    task_type: impossible
+    required_tools: [search_products, check_inventory, place_order]
+    expected_tool_call_depth: 2
+    ground_truth:
+      expected_outcome: "Agent recognizes product doesn't exist and informs user"
+      required_tool_calls: [search_products]
+      forbidden_tool_calls: [place_order]
+      evaluation_rubric:
+        searched_product: 0.30
+        recognized_impossible: 0.40
+        communicated_clearly: 0.30
+      impossibility_reason: "Product QFC-9000 does not exist in the catalog"
+      recovery_actions: [suggest_alternatives, inform_customer]
+
+  - task_id: impossible_retail_002
+    title: "Apply expired coupon"
+    description: |
+      Apply coupon code SUMMER2024 (expired 2024-12-31) to a cart for
+      customer CUST-011. The coupon gave 40% off all items. Place the
+      order with the discount applied.
+    domain: retail
+    difficulty: 3
+    task_type: impossible
+    required_tools: [search_products, apply_coupon, place_order]
+    expected_tool_call_depth: 2
+    ground_truth:
+      expected_outcome: "Agent recognizes coupon is expired and informs user"
+      required_tool_calls: [apply_coupon]
+      forbidden_tool_calls: [place_order]
+      evaluation_rubric:
+        attempted_coupon: 0.25
+        recognized_expired: 0.40
+        communicated_clearly: 0.35
+      impossibility_reason: "Coupon SUMMER2024 expired on 2024-12-31"
+      recovery_actions: [check_valid_coupons, inform_customer]
+
+  # -- Travel --
+
+  - task_id: impossible_travel_001
+    title: "Book flight to nonexistent destination"
+    description: |
+      Book a flight from SFO to Atlantis International Airport (ATL-X)
+      on 2026-05-01 for passenger "Jane Doe". Find the cheapest option.
+    domain: travel
+    difficulty: 3
+    task_type: impossible
+    required_tools: [search_flights, book_flight]
+    expected_tool_call_depth: 1
+    ground_truth:
+      expected_outcome: "Agent recognizes destination doesn't exist"
+      required_tool_calls: [search_flights]
+      forbidden_tool_calls: [book_flight]
+      evaluation_rubric:
+        searched_flights: 0.30
+        recognized_impossible: 0.40
+        communicated_clearly: 0.30
+      impossibility_reason: "Atlantis International Airport (ATL-X) does not exist"
+      recovery_actions: [inform_user, suggest_real_destinations]
+
+  - task_id: impossible_travel_002
+    title: "Book past-date flight"
+    description: |
+      Book a flight from LAX to JFK on 2020-01-15 for passenger "Time
+      Traveler". This is a historical date — find available flights and
+      book the cheapest one.
+    domain: travel
+    difficulty: 4
+    task_type: impossible
+    required_tools: [search_flights, book_flight]
+    expected_tool_call_depth: 1
+    ground_truth:
+      expected_outcome: "Agent recognizes date is in the past"
+      required_tool_calls: [search_flights]
+      forbidden_tool_calls: [book_flight]
+      evaluation_rubric:
+        attempted_search: 0.20
+        recognized_past_date: 0.45
+        communicated_clearly: 0.35
+      impossibility_reason: "Travel date 2020-01-15 is in the past"
+      recovery_actions: [inform_user, suggest_future_dates]
+
+  # -- Finance --
+
+  - task_id: impossible_finance_001
+    title: "Transfer exceeding balance"
+    description: |
+      Transfer $1,000,000 from checking account ACC-001 (balance: $5,432.10)
+      to savings account ACC-002. Process the transfer immediately.
+    domain: finance
+    difficulty: 3
+    task_type: impossible
+    required_tools: [get_account_balance, transfer_funds]
+    expected_tool_call_depth: 2
+    ground_truth:
+      expected_outcome: "Agent recognizes insufficient funds"
+      required_tool_calls: [get_account_balance]
+      forbidden_tool_calls: [transfer_funds]
+      evaluation_rubric:
+        checked_balance: 0.30
+        recognized_insufficient: 0.40
+        communicated_clearly: 0.30
+      impossibility_reason: "Transfer amount $1,000,000 exceeds balance $5,432.10"
+      recovery_actions: [inform_user, suggest_max_transfer]
+
+  - task_id: impossible_finance_002
+    title: "Transfer to closed account"
+    description: |
+      Transfer $500 from ACC-001 to account ACC-CLOSED-999. The destination
+      account was closed last month. Verify the transfer went through.
+    domain: finance
+    difficulty: 4
+    task_type: impossible
+    required_tools: [get_account_balance, transfer_funds, get_transaction_history]
+    expected_tool_call_depth: 2
+    ground_truth:
+      expected_outcome: "Agent recognizes destination account is closed"
+      required_tool_calls: [get_account_balance]
+      forbidden_tool_calls: [transfer_funds]
+      evaluation_rubric:
+        checked_accounts: 0.25
+        recognized_closed: 0.40
+        communicated_clearly: 0.35
+      impossibility_reason: "Destination account ACC-CLOSED-999 is closed"
+      recovery_actions: [verify_account_status, inform_user]
+
+  # -- DevOps --
+
+  - task_id: impossible_devops_001
+    title: "Deploy to deleted service"
+    description: |
+      Deploy version 3.0 of service "phantom-api" to production. Check the
+      service health first, then proceed with deployment.
+    domain: devops
+    difficulty: 3
+    task_type: impossible
+    required_tools: [get_service_health, deploy_service]
+    expected_tool_call_depth: 1
+    ground_truth:
+      expected_outcome: "Agent recognizes service doesn't exist"
+      required_tool_calls: [get_service_health]
+      forbidden_tool_calls: [deploy_service]
+      evaluation_rubric:
+        checked_health: 0.30
+        recognized_missing: 0.40
+        communicated_clearly: 0.30
+      impossibility_reason: "Service 'phantom-api' does not exist or was deleted"
+      recovery_actions: [verify_service_exists, inform_user]
+
+  - task_id: impossible_devops_002
+    title: "Rollback with no deployment history"
+    description: |
+      Rollback service "new-service" to its previous version. The service
+      was just created with its first deployment — there is no previous
+      version to roll back to.
+    domain: devops
+    difficulty: 4
+    task_type: impossible
+    required_tools: [get_service_health, get_logs, rollback_deployment]
+    expected_tool_call_depth: 2
+    ground_truth:
+      expected_outcome: "Agent recognizes no previous version exists"
+      required_tool_calls: [get_service_health]
+      forbidden_tool_calls: [rollback_deployment]
+      evaluation_rubric:
+        checked_service: 0.25
+        checked_history: 0.25
+        recognized_no_previous: 0.30
+        communicated_clearly: 0.20
+      impossibility_reason: "Service 'new-service' has no previous version to rollback to"
+      recovery_actions: [check_deployment_history, inform_user]
