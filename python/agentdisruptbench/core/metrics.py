@@ -10,7 +10,7 @@ Purpose:     Computes all benchmark metrics from raw traces and agent output.
 Author:      AgentDisruptBench Contributors
 License:     MIT
 Created:     2026-03-09
-Modified:    2026-03-09
+Modified:    2026-03-18
 
 Key Definitions:
     BenchmarkResult    : Dataclass holding all metrics for one run.
@@ -36,6 +36,7 @@ import logging
 from dataclasses import dataclass, field
 from typing import Any
 
+from agentdisruptbench.core.state import COMPENSATION_PAIRS
 from agentdisruptbench.core.trace import ToolCallTrace
 from agentdisruptbench.tasks.schemas import Task
 
@@ -108,6 +109,13 @@ class BenchmarkResult:
     disruption_types_seen: list[str]
     max_cascade_depth: int
 
+    # State & compensation metrics (P0)
+    compensation_count: int = 0
+    compensation_success_rate: float = 0.0
+    side_effect_score: float = 0.0
+    idempotency_violations: int = 0
+    loop_count: int = 0
+
     # Raw data
     traces: list[ToolCallTrace] = field(default_factory=list)
     duration_seconds: float = 0.0
@@ -154,6 +162,8 @@ class MetricsCalculator:
         profile_name: str,
         seed: int,
         duration_seconds: float,
+        state_diff: dict | None = None,
+        idempotency_violations: int = 0,
     ) -> BenchmarkResult:
         """Compute metrics for a single (task, profile) run.
 
@@ -213,6 +223,11 @@ class MetricsCalculator:
         acknowledged_failure = self._check_acknowledged(agent_output)
         attempted_alternative = self._check_alternative(traces, task)
 
+        # -- Compensation & state metrics (P0) ---------------------------------
+        comp_count, comp_success = self._compute_compensation(traces)
+        side_effect_score = self._compute_side_effect_score(state_diff or {})
+        loop_count = self._compute_loops(traces)
+
         return BenchmarkResult(
             task_id=task.task_id,
             agent_id=agent_id,
@@ -235,6 +250,11 @@ class MetricsCalculator:
             disruptions_recovered=disruptions_recovered,
             disruption_types_seen=disruption_types_seen,
             max_cascade_depth=max_cascade_depth,
+            compensation_count=comp_count,
+            compensation_success_rate=comp_success,
+            side_effect_score=side_effect_score,
+            idempotency_violations=idempotency_violations,
+            loop_count=loop_count,
             traces=traces,
             duration_seconds=duration_seconds,
         )
@@ -403,3 +423,164 @@ class MetricsCalculator:
                     if traces[j].tool_name != t.tool_name:
                         return True
         return False
+
+    # ------------------------------------------------------------------
+    # Compensation detection (P0)
+    # ------------------------------------------------------------------
+
+    def _compute_compensation(
+        self,
+        traces: list[ToolCallTrace],
+    ) -> tuple[int, float]:
+        """Detect compensation patterns in traces via entity-level pairing.
+
+        A compensation is when a side-effect tool's entity is later
+        addressed by its compensating tool (e.g. book_flight(BKG-001) →
+        cancel_booking(BKG-001)).
+
+        Uses ``real_success`` to catch hidden successful side effects
+        (where the tool actually succeeded but the agent was shown a
+        disrupted response).  Pairing is one-to-one: each compensating
+        trace can satisfy at most one side-effect.
+
+        Returns:
+            (compensation_count, compensation_success_rate)
+        """
+        from agentdisruptbench.tools.stateful import _TOOL_STATE_MAP
+
+        # Build list of (index, tool_name, entity_id) for real side-effect calls
+        side_effect_calls: list[tuple[int, str, str]] = []
+        for i, t in enumerate(traces):
+            if t.tool_name in COMPENSATION_PAIRS and t.real_success:
+                comp_tool = COMPENSATION_PAIRS[t.tool_name]
+                if comp_tool is not None:
+                    # Extract entity_id from inputs or real_result
+                    eid = self._extract_entity_id(t, _TOOL_STATE_MAP)
+                    side_effect_calls.append((i, t.tool_name, eid))
+
+        if not side_effect_calls:
+            return 0, 0.0
+
+        # One-to-one matching: track consumed compensating traces
+        consumed: set[int] = set()
+        compensated = 0
+        for idx, tool_name, entity_id in side_effect_calls:
+            comp_tool = COMPENSATION_PAIRS[tool_name]
+            for j, t in enumerate(traces[idx + 1:], start=idx + 1):
+                if j in consumed:
+                    continue
+                if t.tool_name == comp_tool and t.real_success:
+                    comp_eid = self._extract_entity_id(t, _TOOL_STATE_MAP)
+                    # Match by entity if both have identifiable entities
+                    if entity_id != "unknown" and comp_eid != "unknown":
+                        if entity_id != comp_eid:
+                            continue
+                    consumed.add(j)
+                    compensated += 1
+                    break
+
+        total = len(side_effect_calls)
+        return compensated, (compensated / total if total > 0 else 0.0)
+
+    @staticmethod
+    def _extract_entity_id(
+        trace: ToolCallTrace,
+        tool_state_map: dict[str, tuple[str, str]],
+    ) -> str:
+        """Extract entity ID from a trace's inputs or real_result."""
+        if trace.tool_name not in tool_state_map:
+            return "unknown"
+        _, id_field = tool_state_map[trace.tool_name]
+
+        # Try inputs first (canonical for cancel/update tools)
+        eid = trace.inputs.get(id_field) or trace.inputs.get("id")
+        if eid is not None:
+            return str(eid)
+
+        # Then try real_result
+        if isinstance(trace.real_result, dict):
+            eid = trace.real_result.get(id_field) or trace.real_result.get("id")
+            if eid is not None:
+                return str(eid)
+
+        return "unknown"
+
+    # ------------------------------------------------------------------
+    # Side-effect score (P0)
+    # ------------------------------------------------------------------
+
+    @staticmethod
+    def _compute_side_effect_score(state_diff: dict) -> float:
+        """Compute unresolved side-effect score from state diff.
+
+        0.0 = no unresolved state changes (clean run or all compensated).
+        1.0 = maximum unresolved side effects.
+
+        Resolved changes (deletions, or modifications where the status
+        indicates cancellation/resolution/refund) are excluded so that
+        compensated flows don't inflate the score.
+
+        Normalization: ``min(1.0, unresolved / 5.0)`` — 5+ unresolved
+        changes saturate at 1.0.
+        """
+        if not state_diff:
+            return 0.0
+
+        _RESOLVED_STATUSES = {
+            "cancelled", "canceled", "resolved", "refunded",
+            "rolled_back", "compensated", "reversed",
+        }
+
+        unresolved = 0
+        for coll_changes in state_diff.values():
+            for change in coll_changes:
+                # Deletions are resolved (entity was removed/cleaned up)
+                if change.get("type") == "deleted":
+                    continue
+                # Modifications where status indicates resolution
+                if change.get("type") == "modified":
+                    after = change.get("after", {})
+                    status = str(after.get("status", "")).lower()
+                    if status in _RESOLVED_STATUSES:
+                        continue
+                unresolved += 1
+
+        # Normalize: 0 unresolved = 0.0, 5+ = 1.0
+        return min(1.0, unresolved / 5.0)
+
+    # ------------------------------------------------------------------
+    # Loop detection (P0)
+    # ------------------------------------------------------------------
+
+    @staticmethod
+    def _compute_loops(
+        traces: list[ToolCallTrace], min_repeat: int = 3
+    ) -> int:
+        """Count loops: N (>= min_repeat) consecutive identical calls.
+
+        An identical call = same tool_name AND same inputs.
+
+        Returns:
+            Number of distinct loops detected.
+        """
+        if len(traces) < min_repeat:
+            return 0
+
+        loops = 0
+        streak = 1
+
+        for i in range(1, len(traces)):
+            same_tool = traces[i].tool_name == traces[i - 1].tool_name
+            same_inputs = traces[i].inputs == traces[i - 1].inputs
+            if same_tool and same_inputs:
+                streak += 1
+            else:
+                if streak >= min_repeat:
+                    loops += 1
+                streak = 1
+
+        # Check final streak
+        if streak >= min_repeat:
+            loops += 1
+
+        return loops
