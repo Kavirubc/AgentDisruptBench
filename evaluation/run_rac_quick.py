@@ -107,7 +107,7 @@ def main():
         print(f"{'─' * 60}")
 
         # Create disruption engine for this run
-        engine = DisruptionEngine(disruptions=profile, seed=args.seed)
+        engine = DisruptionEngine(configs=profile, seed=args.seed)
         trace_collector = TraceCollector()
 
         # Create tool proxies (with disruption injection)
@@ -115,10 +115,10 @@ def main():
         for tool_name in task.required_tools:
             raw_fn = tool_registry.get(tool_name)
             proxy = ToolProxy(
-                tool_name=tool_name,
-                real_fn=raw_fn,
+                name=tool_name,
+                fn=raw_fn,
                 engine=engine,
-                collector=trace_collector,
+                trace_collector=trace_collector,
             )
             proxied_tools[tool_name] = proxy
 
@@ -131,7 +131,7 @@ def main():
         elapsed = time.time() - start
 
         # Compute metrics
-        traces = trace_collector.traces
+        traces = trace_collector.get_traces()
         result = calc.compute(
             task=task,
             traces=traces,
