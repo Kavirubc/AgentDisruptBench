@@ -31,13 +31,13 @@ AgentDisruptBench is a benchmark for evaluating AI agent **resilience under runt
 
 Based on chaos engineering's *"steady-state hypothesis"* and PlanCraft's dependency graphs:
 
-| Capability | What It Tests | How We Test It | Status |
-|---|---|---|---|
-| **Greedy planning** | Following best-next-step reaches solution | D1–D2 tasks: linear tool chains | ✅ |
-| **Multi-turn branching** | Must choose the right branch, not just greedy | D3–D5: conditional logic ("book only if weather favorable") | ✅ |
-| **Local replanning** | Recovery from each error type within a step | Engine injects per-call disruptions; `recovery_actions` per task | ✅ |
-| **Long-horizon traps** | Correct early action looks wrong; "safe" action → catastrophe later | **Adversarial tasks** (8 tasks across domains) | ✅ |
-| **Impossible tasks** | Agent must recognize & give up (per PlanCraft) | **Impossible tasks** (8 tasks) — agent must not call forbidden tools | ✅ |
+| Capability | What It Tests | How We Test It | Status | Who Else? |
+|---|---|---|---|---|
+| **Greedy planning** | Following best-next-step reaches solution | D1–D2 tasks: linear tool chains | ✅ | Most benchmarks (WorkBench, AppWorld, etc.) |
+| **Multi-turn branching** | Must choose the right branch, not just greedy | D3–D5: conditional logic ("book only if weather favorable") | ✅ | Tau2-Bench, AppWorld (partial) |
+| **Local replanning** | Recovery from each error type within a step | Engine injects per-call disruptions; `recovery_actions` per task | ✅ | ReliabilityBench (partial, no side effects) |
+| **Long-horizon traps** | Correct early action looks wrong; "safe" action → catastrophe later | **Adversarial tasks** (8 tasks across domains) | ✅ | ❌ Unique to us |
+| **Impossible tasks** | Agent must recognize & give up (per PlanCraft) | **Impossible tasks** (8 tasks) — agent must not call forbidden tools | ✅ | PlanCraft (static only, no runtime disruptions) |
 
 ### 1.3 Failure Handling (Primary Differentiator)
 
@@ -62,59 +62,59 @@ Drawing from distributed systems fault taxonomy (infrastructure, network, depend
 
 #### Outcome Metrics
 
-| Metric | Description | Status |
-|---|---|---|
-| `task_success` | `partial_score >= 0.8` or exact answer match | ✅ |
-| `partial_score` | Weighted rubric satisfaction (goal-sat score) | ✅ |
-| `acknowledged_failure` | Agent communicated failure to user | ✅ |
-| `attempted_alternative` | Agent tried different tool after failure | ✅ |
+| Metric | Description | Status | Who Else? |
+|---|---|---|---|
+| `task_success` | `partial_score >= 0.8` or exact answer match | ✅ | WorkBench, PlanCraft, AppWorld, Tau2-Bench |
+| `partial_score` | Weighted rubric satisfaction (goal-sat score) | ✅ | WorkBench (binary), ReliabilityBench |
+| `acknowledged_failure` | Agent communicated failure to user | ✅ | PlanCraft (impossible task detection) |
+| `attempted_alternative` | Agent tried different tool after failure | ✅ | ❌ Unique to us |
 
 #### Resilience Metrics
 
-| Metric | Description | Status |
-|---|---|---|
-| `recovery_rate` | recovered_failures / total_failures | ✅ |
-| `mean_steps_to_recovery` | Avg tool calls between failure and recovery | ✅ |
-| `retry_efficiency` | successful_retries / total_retries | ✅ |
-| `resilience_ratio` | success_disrupted / success_clean | ✅ |
-| `max_cascade_depth` | Consecutive cascade failures | ✅ |
+| Metric | Description | Status | Who Else? |
+|---|---|---|---|
+| `recovery_rate` | recovered_failures / total_failures | ✅ | ReliabilityBench (partial) |
+| `mean_steps_to_recovery` | Avg tool calls between failure and recovery | ✅ | ❌ Unique to us |
+| `retry_efficiency` | successful_retries / total_retries | ✅ | ❌ Unique to us |
+| `resilience_ratio` | success_disrupted / success_clean | ✅ | ReliabilityBench (λ-axis) |
+| `max_cascade_depth` | Consecutive cascade failures | ✅ | ❌ Unique to us |
 
 #### Cost Metrics
 
-| Metric | Description | Status |
-|---|---|---|
-| `total_tool_calls` / `extra_tool_calls` | Overhead from disruptions | ✅ |
-| `total_latency_ms` / `extra_latency_ms` | Time overhead | ✅ |
-| Token usage | Total tokens consumed | ✅ Runner-level |
+| Metric | Description | Status | Who Else? |
+|---|---|---|---|
+| `total_tool_calls` / `extra_tool_calls` | Overhead from disruptions | ✅ | WorkBench, AppWorld (tool count only) |
+| `total_latency_ms` / `extra_latency_ms` | Time overhead | ✅ | Finance-Agent (hidden) |
+| Token usage | Total tokens consumed | ✅ Runner-level | Most benchmarks |
 
 #### State & Compensation Metrics (P0 — Implemented)
 
-| Metric | Description | Status |
-|---|---|---|
-| `compensation_count` | Rollback/undo actions via entity-level pairing | ✅ |
-| `compensation_success_rate` | Successful compensations / total attempts | ✅ |
-| `side_effect_score` | Unintended state changes left unresolved | ✅ |
-| `idempotency_violations` | Duplicate actions from retries (double-booking, etc.) | ✅ |
-| `loop_count` | Repeated identical tool calls | ✅ |
+| Metric | Description | Status | Who Else? |
+|---|---|---|---|
+| `compensation_count` | Rollback/undo actions via entity-level pairing | ✅ | ❌ Unique to us |
+| `compensation_success_rate` | Successful compensations / total attempts | ✅ | ❌ Unique to us |
+| `side_effect_score` | Unintended state changes left unresolved | ✅ | WorkBench (flags only, no recovery eval) |
+| `idempotency_violations` | Duplicate actions from retries (double-booking, etc.) | ✅ | ❌ Unique to us |
+| `loop_count` | Repeated identical tool calls | ✅ | AgentRx (detection only) |
 
 #### Recovery Strategy Metrics (P1 — Implemented)
 
-| Metric | Description | Status |
-|---|---|---|
-| `recovery_strategies` | List of classified strategies per recovery event | ✅ |
-| `dominant_strategy` | Most frequent strategy (RETRY, ALTERNATIVE, ESCALATION, GIVEUP) | ✅ |
-| `graceful_giveup` | Agent correctly refused impossible tasks | ✅ |
+| Metric | Description | Status | Who Else? |
+|---|---|---|---|
+| `recovery_strategies` | List of classified strategies per recovery event | ✅ | ❌ Unique to us |
+| `dominant_strategy` | Most frequent strategy (RETRY, ALTERNATIVE, ESCALATION, GIVEUP) | ✅ | ❌ Unique to us |
+| `graceful_giveup` | Agent correctly refused impossible tasks | ✅ | PlanCraft (binary pass/fail) |
 
 #### Planning & Diagnostic Metrics (P2 — Implemented)
 
-| Metric | Description | Status |
-|---|---|---|
-| `planning_time_ratio` | Time on initial planning vs execution | ✅ |
-| `handover_detected` | Agent suggested human handoff | ✅ |
-| `tool_hallucination_rate` | Phantom actions/outputs vs TraceCollector reality | ✅ |
-| `state_equivalent_success` | End-state equivalence instead of text match | ✅ |
-| `budget_exceeded` | Fixed budget overrun detection | ✅ |
-| `failure_categories` | AgentRx-aligned 9-category root-cause attribution | ✅ |
+| Metric | Description | Status | Who Else? |
+|---|---|---|---|
+| `planning_time_ratio` | Time on initial planning vs execution | ✅ | ❌ Unique to us |
+| `handover_detected` | Agent suggested human handoff | ✅ | ❌ Unique to us |
+| `tool_hallucination_rate` | Phantom actions/outputs vs TraceCollector reality | ✅ | AgentRx (taxonomy only) |
+| `state_equivalent_success` | End-state equivalence instead of text match | ✅ | ReliabilityBench (metamorphic relations) |
+| `budget_exceeded` | Fixed budget overrun detection | ✅ | ❌ Unique to us |
+| `failure_categories` | AgentRx-aligned 9-category root-cause attribution | ✅ | AgentRx (framework, not benchmark) |
 
 ---
 
@@ -159,18 +159,18 @@ Every other benchmark has **static, deterministic disruptions**:
 
 ### Detailed Gap Analysis
 
-| Benchmark | Tools | Tasks | Disruptions | Side Effects | Recovery Testing | Dynamic Profiles |
-|---|---|---|---|---|---|---|
-| **REALM-Bench** | ❌ | ✅ | In-prompt only | ❌ | ❌ | ❌ |
-| **Tau2-Bench** | ✅ | ✅ | State consistency | Partial | ❌ | ❌ |
-| **WorkBench** | 26 | 690 | Soft "not found" | ✅ Flagged | ❌ Never tested | ❌ |
-| **Finance-Agent** | 4 | ✅ | Hidden by harness | ❌ | ❌ | ❌ |
-| **BrowseComp-Plus** | ❌ | ✅ | Hard negatives | ❌ | ❌ | ❌ |
-| **PlanCraft** | ✅ | ✅ | Impossible tasks | ❌ | ❌ | ❌ |
-| **AppWorld** | ✅ Many | ✅ | ❌ | ❌ in eval | ❌ | ❌ |
-| **Hell or High Water** | SQL only | ✅ | ❌ | ❌ | ❌ | ❌ |
-| **ReliabilityBench** | ✅ | ✅ | Chaos engineering | ❌ | Partial | Partial (λ-levels) |
-| **AgentDisruptBench** | **30** | **100** | **20 types, runtime** | **✅** | **✅** | **✅ Per-profile** |
+| Benchmark | Tools | Tasks | Planning | Disruptions | Side Effects | Recovery Testing | Dynamic Profiles |
+|---|---|---|---|---|---|---|---|
+| **REALM-Bench** | ❌ | ✅ | Greedy only | In-prompt only | ❌ | ❌ | ❌ |
+| **Tau2-Bench** | ✅ | ✅ | Greedy + branching | State consistency | Partial | ❌ | ❌ |
+| **WorkBench** | 26 | 690 | Greedy only | Soft "not found" | ✅ Flagged | ❌ Never tested | ❌ |
+| **Finance-Agent** | 4 | ✅ | Greedy only | Hidden by harness | ❌ | ❌ | ❌ |
+| **BrowseComp-Plus** | ❌ | ✅ | ❌ (retrieval) | Hard negatives | ❌ | ❌ | ❌ |
+| **PlanCraft** | ✅ | ✅ | ✅ Impossible tasks | Impossible tasks | ❌ | ❌ | ❌ |
+| **AppWorld** | ✅ Many | ✅ | Greedy + branching | ❌ | ❌ in eval | ❌ | ❌ |
+| **Hell or High Water** | SQL only | ✅ | Greedy only | ❌ | ❌ | ❌ | ❌ |
+| **ReliabilityBench** | ✅ | ✅ | Greedy only | Chaos engineering | ❌ | Partial | Partial (λ-levels) |
+| **AgentDisruptBench** | **30** | **100** | **✅ All 5 types** | **20 types, runtime** | **✅** | **✅** | **✅ Per-profile** |
 
 ---
 
