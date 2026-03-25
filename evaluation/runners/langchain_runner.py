@@ -34,74 +34,14 @@ Convention:
 from __future__ import annotations
 
 import logging
-import os
 from typing import Any
 
-from evaluation.base_runner import BaseAgentRunner, RunnerConfig
 from agentdisruptbench.tasks.schemas import Task
 
+from evaluation.base_runner import BaseAgentRunner, RunnerConfig
+from evaluation.llm_factory import create_langchain_llm, detect_provider
+
 logger = logging.getLogger("agentdisruptbench.evaluation.runners.langchain")
-
-
-def _is_gemini_model(model: str) -> bool:
-    """Check if the model name is a Gemini model."""
-    return model.lower().startswith("gemini")
-
-
-def _create_llm(config: RunnerConfig):
-    """Create the appropriate LangChain chat model based on model name.
-
-    - Gemini models (gemini-*) → ChatGoogleGenerativeAI via GEMINI_API_KEY
-    - OpenAI models (gpt-*)   → ChatOpenAI via OPENAI_API_KEY
-    """
-    if _is_gemini_model(config.model):
-        try:
-            from langchain_google_genai import ChatGoogleGenerativeAI
-        except ImportError:
-            raise ImportError(
-                "Gemini models require langchain-google-genai. "
-                "Install with: pip install langchain-google-genai"
-            )
-
-        api_key = (
-            config.api_key
-            or os.environ.get("GEMINI_API_KEY")
-            or os.environ.get("GOOGLE_API_KEY")
-        )
-        if not api_key:
-            raise ValueError(
-                "Gemini API key required. Set GEMINI_API_KEY or GOOGLE_API_KEY "
-                "env var, or pass api_key in RunnerConfig."
-            )
-
-        return ChatGoogleGenerativeAI(
-            model=config.model,
-            google_api_key=api_key,
-            temperature=config.temperature,
-            max_output_tokens=config.max_tokens,
-        )
-    else:
-        try:
-            from langchain_openai import ChatOpenAI
-        except ImportError:
-            raise ImportError(
-                "OpenAI models require langchain-openai. "
-                "Install with: pip install langchain-openai"
-            )
-
-        api_key = config.api_key or os.environ.get("OPENAI_API_KEY")
-        if not api_key:
-            raise ValueError(
-                "OpenAI API key required. Set OPENAI_API_KEY env var "
-                "or pass api_key in RunnerConfig."
-            )
-
-        return ChatOpenAI(
-            model=config.model,
-            api_key=api_key,
-            temperature=config.temperature,
-            max_tokens=config.max_tokens,
-        )
 
 
 class LangChainRunner(BaseAgentRunner):
@@ -133,8 +73,8 @@ class LangChainRunner(BaseAgentRunner):
 
     def setup(self) -> None:
         """Initialise the LangChain chat model (Gemini or OpenAI)."""
-        self._llm = _create_llm(self.config)
-        provider = "Gemini" if _is_gemini_model(self.config.model) else "OpenAI"
+        self._llm = create_langchain_llm(self.config)
+        provider = detect_provider(self.config.model)
         logger.info("langchain_runner_setup provider=%s model=%s", provider, self.config.model)
         super().setup()
 

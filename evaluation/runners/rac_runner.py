@@ -34,13 +34,15 @@ from __future__ import annotations
 
 import json
 import logging
-import os
 from typing import Any
 
-from evaluation.base_runner import BaseAgentRunner, RunnerConfig
 from agentdisruptbench.tasks.schemas import Task
 
+from evaluation.base_runner import BaseAgentRunner, RunnerConfig
+from evaluation.llm_factory import create_langchain_llm, detect_provider
+
 logger = logging.getLogger("agentdisruptbench.evaluation.runners.rac")
+
 
 # Maps AgentDisruptBench side-effect tools → their compensation tools.
 # Uses the same mappings that AgentDisruptBench's StateManager tracks.
@@ -50,58 +52,6 @@ _BENCH_COMPENSATION_PAIRS: dict[str, str] = {
     "deploy_service": "rollback_deployment",
     "create_incident": "resolve_incident",
 }
-
-
-def _is_gemini_model(model: str) -> bool:
-    return model.lower().startswith("gemini")
-
-
-def _create_llm(config: RunnerConfig):
-    """Create the LangChain chat model (Gemini or OpenAI)."""
-    if _is_gemini_model(config.model):
-        try:
-            from langchain_google_genai import ChatGoogleGenerativeAI
-        except ImportError:
-            raise ImportError(
-                "Gemini models require langchain-google-genai. "
-                "Install with: pip install langchain-google-genai"
-            )
-
-        api_key = (
-            config.api_key
-            or os.environ.get("GEMINI_API_KEY")
-            or os.environ.get("GOOGLE_API_KEY")
-        )
-        if not api_key:
-            raise ValueError(
-                "Gemini API key required. Set GEMINI_API_KEY or GOOGLE_API_KEY."
-            )
-
-        return ChatGoogleGenerativeAI(
-            model=config.model,
-            google_api_key=api_key,
-            temperature=config.temperature,
-            max_output_tokens=config.max_tokens,
-        )
-    else:
-        try:
-            from langchain_openai import ChatOpenAI
-        except ImportError:
-            raise ImportError(
-                "OpenAI models require langchain-openai. "
-                "Install with: pip install langchain-openai"
-            )
-
-        api_key = config.api_key or os.environ.get("OPENAI_API_KEY")
-        if not api_key:
-            raise ValueError("OpenAI API key required. Set OPENAI_API_KEY.")
-
-        return ChatOpenAI(
-            model=config.model,
-            api_key=api_key,
-            temperature=config.temperature,
-            max_tokens=config.max_tokens,
-        )
 
 
 class RACRunner(BaseAgentRunner):
@@ -131,8 +81,8 @@ class RACRunner(BaseAgentRunner):
 
     def setup(self) -> None:
         """Initialise the LLM for RAC agent creation."""
-        self._llm = _create_llm(self.config)
-        provider = "Gemini" if _is_gemini_model(self.config.model) else "OpenAI"
+        self._llm = create_langchain_llm(self.config)
+        provider = detect_provider(self.config.model)
         logger.info("rac_runner_setup provider=%s model=%s", provider, self.config.model)
         super().setup()
 
@@ -150,7 +100,8 @@ class RACRunner(BaseAgentRunner):
         with the correct parameter names and types.
         """
         import inspect
-        from pydantic import BaseModel, Field, create_model
+
+        from pydantic import Field, create_model
 
         # Walk through the proxy chain: ToolProxy._fn → static method
         real_fn = getattr(proxy_fn, '_fn', None)
@@ -199,11 +150,11 @@ class RACRunner(BaseAgentRunner):
 
         try:
             from langchain_core.tools import StructuredTool
+            from react_agent_compensation.core import RetryPolicy
             from react_agent_compensation.langchain_adaptor import (
                 create_compensated_agent,
                 get_compensation_middleware,
             )
-            from react_agent_compensation.core import RetryPolicy
         except ImportError as e:
             raise ImportError(
                 "RAC runner requires react-agent-compensation[langchain]. "
