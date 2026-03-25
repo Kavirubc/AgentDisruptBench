@@ -23,11 +23,11 @@ Usage:
     # LangChain with a specific model
     python -m evaluation.run_benchmark --runner langchain --model gpt-4o-mini --max-difficulty 3
 
-    # AutoGen
-    python -m evaluation.run_benchmark --runner autogen --model gpt-4o --domains retail travel
+    # YAML-based configuration (recommended)
+    python -m evaluation.run_benchmark --config config/benchmark.yaml --llm-config config/llm/gpt-4o.yaml
 
-    # CrewAI
-    python -m evaluation.run_benchmark --runner crewai --model gpt-4o --profiles clean
+    # YAML config with CLI overrides
+    python -m evaluation.run_benchmark --config config/benchmark.yaml --llm-config config/llm/gemini-2.5-flash.yaml --max-difficulty 3
 
 Convention:
     Every source file MUST include a header block like this one.
@@ -58,8 +58,9 @@ from agentdisruptbench import (
     ToolRegistry,
 )
 from agentdisruptbench.harness.reporter import Reporter
-from evaluation.base_runner import RunnerConfig
 
+from evaluation.base_runner import RunnerConfig
+from evaluation.config_loader import load_benchmark_config, load_llm_config
 
 # Registry of available runners
 RUNNER_REGISTRY = {
@@ -88,7 +89,7 @@ def _load_runner(name: str, runner_config: RunnerConfig):
         return runner_cls(runner_config)
     except ImportError as exc:
         print(f"❌ Failed to import runner '{name}': {exc}")
-        print(f"   Install the required dependencies for this runner.")
+        print("   Install the required dependencies for this runner.")
         sys.exit(1)
 
 
@@ -105,9 +106,24 @@ Examples:
   # OpenAI GPT-4o on retail tasks
   python -m evaluation.run_benchmark --runner openai --model gpt-4o --domains retail
 
-  # Full hostile environment test
-  python -m evaluation.run_benchmark --runner openai --profiles clean hostile_environment --max-difficulty 3
+  # YAML-based configuration (recommended)
+  python -m evaluation.run_benchmark --config config/benchmark.yaml --llm-config config/llm/gpt-4o.yaml
+
+  # YAML config with CLI overrides
+  python -m evaluation.run_benchmark -c config/benchmark.yaml -l config/llm/gemini-2.5-flash.yaml --max-difficulty 3
         """,
+    )
+
+    # YAML configuration (recommended)
+    parser.add_argument(
+        "--config", "-c",
+        default=None,
+        help="Path to benchmark YAML config (e.g. config/benchmark.yaml)",
+    )
+    parser.add_argument(
+        "--llm-config", "-l",
+        default=None,
+        help="Path to LLM YAML config (e.g. config/llm/gpt-4o.yaml)",
     )
 
     # Runner selection
@@ -161,23 +177,99 @@ Examples:
     print(" AgentDisruptBench — Benchmark Runner")
     print("=" * 60)
 
-    # Build runner config
-    runner_config = RunnerConfig(
-        model=args.model,
-        api_key=args.api_key,
-        temperature=args.temperature,
-        max_tokens=args.max_tokens,
-        max_steps=args.max_steps,
-        verbose=args.verbose,
+    # ── Step 0: Load YAML configs (if provided) ──────────────────
+    # YAML values serve as defaults; CLI args override them.
+    yaml_bench = None
+    yaml_llm = None
+
+    if args.config:
+        print(f"\n[0a] Loading benchmark config: {args.config}")
+        yaml_bench = load_benchmark_config(args.config)
+
+    if args.llm_config:
+        print(f"\n[0b] Loading LLM config: {args.llm_config}")
+        yaml_llm = load_llm_config(args.llm_config)
+
+    # ── Resolve runner name ──────────────────────────────────────
+    # Priority: CLI --runner > benchmark.yaml runner > LLM config inferred > default
+    cli_provided_runner = "--runner" in sys.argv or "-r" in sys.argv
+    if cli_provided_runner:
+        runner_name = args.runner
+    elif yaml_bench and yaml_bench.runner:
+        runner_name = yaml_bench.runner
+    elif yaml_llm:
+        runner_name = yaml_llm.infer_runner()
+    else:
+        runner_name = args.runner  # argparse default
+
+    # ── Resolve model / runner config ────────────────────────────
+    cli_provided_model = "--model" in sys.argv or "-m" in sys.argv
+    if yaml_llm:
+        runner_config = yaml_llm.to_runner_config()
+        # CLI overrides for model
+        if cli_provided_model:
+            runner_config.model = args.model
+        if args.api_key:
+            runner_config.api_key = args.api_key
+        if "--temperature" in sys.argv:
+            runner_config.temperature = args.temperature
+        if "--max-tokens" in sys.argv:
+            runner_config.max_tokens = args.max_tokens
+        if "--max-steps" in sys.argv:
+            runner_config.max_steps = args.max_steps
+        runner_config.verbose = args.verbose
+    else:
+        runner_config = RunnerConfig(
+            model=args.model,
+            api_key=args.api_key,
+            temperature=args.temperature,
+            max_tokens=args.max_tokens,
+            max_steps=args.max_steps,
+            verbose=args.verbose,
+        )
+
+    # ── Resolve benchmark config ─────────────────────────────────
+    cli_provided_profiles = "--profiles" in sys.argv or "-p" in sys.argv
+    cli_provided_domains = "--domains" in sys.argv or "-d" in sys.argv
+    cli_provided_seeds = "--seeds" in sys.argv or "-s" in sys.argv
+    cli_provided_difficulty = "--max-difficulty" in sys.argv
+    cli_provided_output = "--output-dir" in sys.argv or "-o" in sys.argv
+
+    profiles = (
+        args.profiles if cli_provided_profiles
+        else yaml_bench.profiles if yaml_bench
+        else args.profiles
     )
+    domains = (
+        args.domains if cli_provided_domains
+        else yaml_bench.domains if yaml_bench
+        else args.domains
+    )
+    max_difficulty = (
+        args.max_difficulty if cli_provided_difficulty
+        else yaml_bench.max_difficulty if yaml_bench
+        else args.max_difficulty
+    )
+    seeds = (
+        args.seeds if cli_provided_seeds
+        else yaml_bench.seeds if yaml_bench
+        else args.seeds
+    )
+    output_dir = (
+        args.output_dir if cli_provided_output
+        else yaml_bench.output_dir if yaml_bench
+        else args.output_dir
+    )
+    verbose = args.verbose or (yaml_bench.verbose if yaml_bench else False)
+    runner_config.verbose = verbose
 
     # Load runner
-    print(f"\n[1/5] Loading runner: {args.runner}")
-    runner = _load_runner(args.runner, runner_config)
+    print(f"\n[1/5] Loading runner: {runner_name}")
+    runner = _load_runner(runner_name, runner_config)
     runner.setup()
-    agent_id = args.agent_id or f"{args.runner}_{args.model}"
+    agent_id = args.agent_id or f"{runner_name}_{runner_config.model}"
     print(f"  → Runner: {type(runner).__name__}")
-    print(f"  → Model:  {args.model}")
+    print(f"  → Model:  {runner_config.model}")
 
     # Load tasks and tools
     print("\n[2/5] Loading tasks and tools...")
@@ -189,17 +281,17 @@ Examples:
     # Configure benchmark
     print("\n[3/5] Configuring benchmark...")
     config = BenchmarkConfig(
-        profiles=args.profiles,
-        seeds=args.seeds,
-        domains=args.domains,
-        max_difficulty=args.max_difficulty,
+        profiles=profiles,
+        seeds=seeds,
+        domains=domains,
+        max_difficulty=max_difficulty,
         agent_id=agent_id,
-        output_dir=args.output_dir,
+        output_dir=output_dir,
     )
     print(f"  → Profiles:       {config.profiles}")
-    print(f"  → Domains:        {args.domains or 'all'}")
-    print(f"  → Max difficulty:  {args.max_difficulty}")
-    print(f"  → Seeds:           {args.seeds}")
+    print(f"  → Domains:        {domains or 'all'}")
+    print(f"  → Max difficulty:  {max_difficulty}")
+    print(f"  → Seeds:           {seeds}")
 
     # Run benchmark
     print("\n[4/5] Running benchmark...")
@@ -218,7 +310,7 @@ Examples:
 
     # Generate report
     print("\n[5/5] Generating report...")
-    reporter = Reporter(output_dir=args.output_dir)
+    reporter = Reporter(output_dir=output_dir)
     paths = reporter.generate(results)
     for name, path in paths.items():
         print(f"  → {name}: {path}")
@@ -226,7 +318,7 @@ Examples:
     # Summary
     print("\n" + "=" * 60)
     success_count = sum(1 for r in results if r.success)
-    print(f"  Runner:       {args.runner} ({args.model})")
+    print(f"  Runner:       {runner_name} ({runner_config.model})")
     print(f"  Total runs:   {len(results)}")
     print(f"  Successful:   {success_count}/{len(results)}")
     print(f"  Success rate: {success_count / max(len(results), 1) * 100:.1f}%")
