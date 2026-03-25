@@ -56,7 +56,7 @@ class LLMConfig:
         provider:     LLM provider name (``"openai"`` or ``"gemini"``).
         model:        Model identifier (e.g. ``"gpt-4o"``, ``"gemini-2.5-flash"``).
         temperature:  Sampling temperature.
-        max_tokens:   Max tokens per LLM response.
+        max_tokens:   Max tokens per LLM response (None = provider default).
         max_retries:  Max retries on API errors.
         max_steps:    Max agent loop iterations.
         api_key:      Optional API key (falls back to env vars).
@@ -66,7 +66,7 @@ class LLMConfig:
     provider: str = "openai"
     model: str = "gpt-4o"
     temperature: float = 0.0
-    max_tokens: int = 4096
+    max_tokens: int | None = None
     max_retries: int = 3
     max_steps: int = 20
     api_key: str | None = None

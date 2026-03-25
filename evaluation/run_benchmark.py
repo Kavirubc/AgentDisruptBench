@@ -138,7 +138,10 @@ Examples:
     parser.add_argument("--model", "-m", default="gpt-4o", help="LLM model name")
     parser.add_argument("--api-key", default=None, help="API key (or set env var)")
     parser.add_argument("--temperature", type=float, default=0.0, help="LLM temperature")
-    parser.add_argument("--max-tokens", type=int, default=4096, help="Max tokens per response")
+    parser.add_argument(
+        "--max-tokens", type=int, default=None,
+        help="Max tokens per response (default: provider limit)",
+    )
     parser.add_argument("--max-steps", type=int, default=20, help="Max agent loop steps")
 
     # Benchmark configuration

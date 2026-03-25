@@ -48,7 +48,7 @@ class RunnerConfig:
         model:       Model name/identifier (e.g. "gpt-4o", "gemini-2.0-flash").
         api_key:     API key (falls back to env vars if not set).
         temperature: Sampling temperature for the LLM.
-        max_tokens:  Max tokens per LLM response.
+        max_tokens:  Max tokens per LLM response (None = provider default).
         max_retries: Max retries on API errors (not disruption retries).
         max_steps:   Max agent loop iterations before forced stop.
         verbose:     Print agent reasoning to stdout.
@@ -57,7 +57,7 @@ class RunnerConfig:
     model: str = "gpt-4o"
     api_key: str | None = None
     temperature: float = 0.0
-    max_tokens: int = 4096
+    max_tokens: int | None = None
     max_retries: int = 3
     max_steps: int = 20
     verbose: bool = False

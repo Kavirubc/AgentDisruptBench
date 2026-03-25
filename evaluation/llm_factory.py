@@ -98,12 +98,14 @@ def _create_gemini_llm(config: RunnerConfig) -> Any:
         )
 
     logger.info("creating_gemini_llm model=%s", config.model)
-    return ChatGoogleGenerativeAI(
-        model=config.model,
-        google_api_key=api_key,
-        temperature=config.temperature,
-        max_output_tokens=config.max_tokens,
-    )
+    kwargs: dict[str, Any] = {
+        "model": config.model,
+        "google_api_key": api_key,
+        "temperature": config.temperature,
+    }
+    if config.max_tokens is not None:
+        kwargs["max_output_tokens"] = config.max_tokens
+    return ChatGoogleGenerativeAI(**kwargs)
 
 
 def _create_openai_llm(config: RunnerConfig) -> Any:
@@ -129,9 +131,11 @@ def _create_openai_llm(config: RunnerConfig) -> Any:
         )
 
     logger.info("creating_openai_llm model=%s", config.model)
-    return ChatOpenAI(
-        model=config.model,
-        api_key=api_key,
-        temperature=config.temperature,
-        max_tokens=config.max_tokens,
-    )
+    kwargs: dict[str, Any] = {
+        "model": config.model,
+        "api_key": api_key,
+        "temperature": config.temperature,
+    }
+    if config.max_tokens is not None:
+        kwargs["max_tokens"] = config.max_tokens
+    return ChatOpenAI(**kwargs)

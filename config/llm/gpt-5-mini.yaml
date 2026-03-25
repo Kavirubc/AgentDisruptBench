@@ -1,0 +1,11 @@
+# AgentDisruptBench — LLM Configuration: GPT-5 Mini
+# =====================================================
+# Use with: python -m evaluation.run_benchmark --llm-config config/llm/gpt-5-mini.yaml
+#
+# Requires: OPENAI_API_KEY environment variable.
+
+provider: openai
+model: gpt-5-mini
+temperature: 0.0
+max_retries: 3
+max_steps: 20

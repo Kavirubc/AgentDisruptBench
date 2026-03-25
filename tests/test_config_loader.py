@@ -41,11 +41,19 @@ class TestLLMConfig:
         assert cfg.temperature == 0.0
 
     def test_to_runner_config(self):
-        cfg = LLMConfig(provider="openai", model="gpt-4o-mini", temperature=0.5, max_tokens=8192)
+        cfg = LLMConfig(
+            provider="openai", model="gpt-4o-mini",
+            temperature=0.5, max_tokens=8192,
+        )
         rc = cfg.to_runner_config()
         assert rc.model == "gpt-4o-mini"
         assert rc.temperature == 0.5
         assert rc.max_tokens == 8192
+
+    def test_to_runner_config_no_max_tokens(self):
+        cfg = LLMConfig(provider="openai", model="gpt-4o")
+        rc = cfg.to_runner_config()
+        assert rc.max_tokens is None
 
     def test_infer_runner_openai(self):
         cfg = LLMConfig(provider="openai")
