@@ -61,6 +61,7 @@ from agentdisruptbench.harness.reporter import Reporter
 
 from evaluation.base_runner import RunnerConfig
 from evaluation.config_loader import load_benchmark_config, load_llm_config
+from evaluation.run_logger import RunLogger
 
 # Registry of available runners
 RUNNER_REGISTRY = {
@@ -91,6 +92,179 @@ def _load_runner(name: str, runner_config: RunnerConfig):
         print(f"❌ Failed to import runner '{name}': {exc}")
         print("   Install the required dependencies for this runner.")
         sys.exit(1)
+
+
+def _emit_run_logs(results, runner_name, model, task_registry, config):
+    """Emit structured JSONL run logs for show_run.py.
+
+    Creates one run log per (profile × seed) combination so each
+    is independently viewable via ``python evaluation/show_run.py``.
+    """
+    from itertools import groupby
+
+    # Group results by (profile, seed)
+    def keyfunc(r):
+        return (r.profile_name, r.seed)
+
+    sorted_results = sorted(results, key=keyfunc)
+
+    run_ids = []
+    for (profile, seed), group in groupby(sorted_results, key=keyfunc):
+        group_results = list(group)
+        run_log = RunLogger(output_dir="logs")
+        run_ids.append(run_log.run_id)
+
+        # Emit run_started
+        run_log.emit("run_started", {
+            "run_id": run_log.run_id,
+            "runner": runner_name,
+            "model": model,
+            "profile": profile,
+            "domain": config.domains[0] if config.domains else "all",
+            "seed": seed,
+            "min_difficulty": 1,
+            "max_difficulty": config.max_difficulty,
+        })
+
+        # Emit tasks_selected
+        task_list = []
+        for r in group_results:
+            # Find task metadata from registry
+            matched = [
+                t for t in task_registry.all_tasks()
+                if t.task_id == r.task_id
+            ]
+            if matched:
+                t = matched[0]
+                task_list.append({
+                    "id": t.task_id,
+                    "title": t.title,
+                    "difficulty": t.difficulty,
+                    "tools": t.required_tools,
+                    "depth": t.expected_tool_call_depth,
+                })
+            else:
+                task_list.append({
+                    "id": r.task_id,
+                    "title": r.task_id,
+                    "difficulty": r.task_difficulty,
+                    "tools": [],
+                    "depth": 0,
+                })
+
+        run_log.emit("tasks_selected", {
+            "count": len(group_results),
+            "tasks": task_list,
+        })
+
+        # Emit per-task events
+        total_duration = 0.0
+        for r in group_results:
+            # Find task for metadata
+            matched = [
+                t for t in task_registry.all_tasks()
+                if t.task_id == r.task_id
+            ]
+            task_meta = matched[0] if matched else None
+
+            run_log.emit("task_started", {
+                "task_id": r.task_id,
+                "title": (
+                    task_meta.title if task_meta
+                    else r.task_id
+                ),
+                "difficulty": (
+                    task_meta.difficulty if task_meta
+                    else r.task_difficulty
+                ),
+                "task_type": (
+                    task_meta.task_type if task_meta
+                    else "standard"
+                ),
+                "required_tools": (
+                    task_meta.required_tools if task_meta
+                    else []
+                ),
+                "expected_depth": (
+                    task_meta.expected_tool_call_depth
+                    if task_meta else 0
+                ),
+                "profile": profile,
+            })
+
+            # Emit tool call traces
+            for trace in r.traces:
+                run_log.emit("tool_call", {
+                    "call_id": trace.call_id,
+                    "tool_name": trace.tool_name,
+                    "success": trace.observed_success,
+                    "disruption_type": (
+                        str(trace.disruption_fired)
+                        if trace.disruption_fired else None
+                    ),
+                    "latency_ms": round(
+                        trace.observed_latency_ms, 1
+                    ),
+                    "error": trace.error,
+                })
+
+            # Emit task_completed
+            run_log.emit("task_completed", {
+                "task_id": r.task_id,
+                "success": r.success,
+                "partial_score": round(r.partial_score, 4),
+                "recovery_rate": round(r.recovery_rate, 4),
+                "total_tool_calls": r.total_tool_calls,
+                "disruptions_encountered": r.disruptions_encountered,
+                "duration_seconds": round(r.duration_seconds, 2),
+                "recovery_strategies": r.recovery_strategies,
+                "dominant_strategy": r.dominant_strategy,
+                "graceful_giveup": r.graceful_giveup,
+                "compensation_count": r.compensation_count,
+                "compensation_success_rate": round(
+                    r.compensation_success_rate, 4
+                ),
+                "side_effect_score": (
+                    r.side_effect_score
+                    if r.side_effect_score else None
+                ),
+                "idempotency_violations": (
+                    r.idempotency_violations
+                    if r.idempotency_violations else None
+                ),
+                "loop_count": r.loop_count,
+                "planning_time_ratio": round(
+                    r.planning_time_ratio, 4
+                ),
+                "handover_detected": r.handover_detected,
+                "tool_hallucination_rate": round(
+                    r.tool_hallucination_rate, 4
+                ),
+                "failure_categories": r.failure_categories,
+                "agent_output": str(r.agent_output)[:500],
+            })
+
+            total_duration += r.duration_seconds
+
+        # Emit run_completed
+        success_count = sum(1 for r in group_results if r.success)
+        avg_partial = (
+            sum(r.partial_score for r in group_results)
+            / max(len(group_results), 1)
+        )
+        run_log.emit("run_completed", {
+            "total_tasks": len(group_results),
+            "successful": success_count,
+            "success_rate": round(
+                success_count / max(len(group_results), 1), 4
+            ),
+            "avg_partial_score": round(avg_partial, 4),
+            "total_duration_seconds": round(total_duration, 2),
+        })
+
+        run_log.close()
+
+    return run_ids
 
 
 def main():
@@ -318,6 +492,14 @@ Examples:
     for name, path in paths.items():
         print(f"  → {name}: {path}")
 
+    # Emit structured JSONL logs for show_run.py
+    run_ids = _emit_run_logs(
+        results, runner_name, runner_config.model,
+        task_registry, config,
+    )
+    for rid in run_ids:
+        print(f"  → run_log: logs/{rid}/run_log.jsonl")
+
     # Summary
     print("\n" + "=" * 60)
     success_count = sum(1 for r in results if r.success)
@@ -335,6 +517,11 @@ Examples:
         print(f"  API calls:    {stats['total_api_calls']}")
 
     print("=" * 60)
+
+    # Hint for viewing logs
+    if run_ids:
+        print("\n  💡 View latest: python evaluation/show_run.py")
+        print(f"  💡 View specific: python evaluation/show_run.py --run-id {run_ids[-1]}\n")
 
     # Cleanup
     runner.teardown()
