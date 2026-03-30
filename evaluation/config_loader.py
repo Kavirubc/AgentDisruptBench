@@ -109,7 +109,7 @@ class BenchmarkYAMLConfig:
         agent_id:       Optional agent identifier for reports.
     """
 
-    runner: str = "simple"
+    runner: str | None = None
     profiles: list[str] = field(
         default_factory=lambda: ["clean", "mild_production", "hostile_environment"]
     )

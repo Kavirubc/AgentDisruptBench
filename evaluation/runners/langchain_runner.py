@@ -38,7 +38,10 @@ from typing import Any
 
 from agentdisruptbench.tasks.schemas import Task
 
-from evaluation.base_runner import BaseAgentRunner, RunnerConfig
+from evaluation.base_runner import (
+    BaseAgentRunner, RunnerConfig,
+    _RESET, _BOLD, _DIM, _GREEN, _RED, _CYAN,
+)
 from evaluation.llm_factory import create_langchain_llm, detect_provider
 
 logger = logging.getLogger("agentdisruptbench.evaluation.runners.langchain")
@@ -99,18 +102,35 @@ class LangChainRunner(BaseAgentRunner):
         # Create Tool wrappers — use Tool() with a lambda wrapper instead
         # of StructuredTool.from_function(), because ToolProxy objects are
         # callable classes and Pydantic's validate_arguments can't introspect them.
+        verbose = self.config.verbose
         lc_tools = []
         for name, fn in tools.items():
-            # Wrap in a lambda so LangChain sees a proper function
             proxy_fn = fn  # capture in closure
+            tool_name = name  # capture for closure
+
+            def _make_func(captured_fn=proxy_fn, tname=tool_name):
+                def func(input_str):
+                    import json as _json
+                    kwargs = _json.loads(input_str) if input_str.strip().startswith("{") else {}
+                    if verbose:
+                        args_str = ", ".join(f"{k}={repr(v)[:40]}" for k, v in kwargs.items())
+                        print(f"    {_CYAN}🔧 {_BOLD}{tname}{_RESET}{_CYAN}({args_str}){_RESET}")
+                    try:
+                        result = captured_fn(**kwargs)
+                        if verbose:
+                            preview = str(result)[:100].replace("\n", " ")
+                            print(f"    {_GREEN}✓  → {_DIM}{preview}{_RESET}")
+                        return result
+                    except Exception as exc:
+                        if verbose:
+                            print(f"    {_RED}✗  → {exc}{_RESET}")
+                        raise
+                return func
+
             tool = Tool(
                 name=name,
                 description=f"Execute the {name} tool. Input should be a JSON string of keyword arguments.",
-                func=lambda input_str, _fn=proxy_fn: _fn(
-                    **__import__("json").loads(input_str)
-                    if input_str.strip().startswith("{")
-                    else {}
-                ),
+                func=_make_func(),
             )
             lc_tools.append(tool)
 

@@ -1,0 +1,11 @@
+# AgentDisruptBench — Special Tasks Benchmark Config
+# ====================================================
+# Runs only Adversarial (8), Impossible (8), and Handover (4) tasks
+# at full difficulty, across clean + hostile_environment profiles.
+
+profiles: [clean, hostile_environment]
+domains: null
+max_difficulty: 5
+seeds: [42]
+output_dir: results/special
+verbose: false

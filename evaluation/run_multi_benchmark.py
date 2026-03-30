@@ -253,6 +253,11 @@ Examples:
         help="Skip auto-comparison after runs complete",
     )
     parser.add_argument(
+        "--task-dir",
+        default=None,
+        help="Directory of task YAML files (overrides built-in tasks)",
+    )
+    parser.add_argument(
         "--verbose", "-v",
         action="store_true",
     )
@@ -293,6 +298,8 @@ Examples:
         )
     if args.runner:
         extra_args.extend(["--runner", args.runner])
+    if args.task_dir:
+        extra_args.extend(["--task-dir", args.task_dir])
     if args.verbose:
         extra_args.append("--verbose")
 

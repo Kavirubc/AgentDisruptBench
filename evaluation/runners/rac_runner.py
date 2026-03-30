@@ -38,7 +38,10 @@ from typing import Any
 
 from agentdisruptbench.tasks.schemas import Task
 
-from evaluation.base_runner import BaseAgentRunner, RunnerConfig
+from evaluation.base_runner import (
+    BaseAgentRunner, RunnerConfig,
+    _RESET, _BOLD, _DIM, _GREEN, _RED, _YELLOW, _CYAN, _MAGENTA,
+)
 from evaluation.llm_factory import create_langchain_llm, detect_provider
 
 logger = logging.getLogger("agentdisruptbench.evaluation.runners.rac")
@@ -103,13 +106,45 @@ class RACRunner(BaseAgentRunner):
 
         from pydantic import Field, create_model
 
-        # Walk through the proxy chain: ToolProxy._fn → static method
-        real_fn = getattr(proxy_fn, '_fn', None)
-        if real_fn is None:
-            return None
+        # Walk the proxy chain to find the real function with a meaningful signature:
+        #   ToolProxy._fn → may be a stateful_wrapper(**kwargs) or the raw static method
+        #   stateful_wrapper closure → contains the real mock tool function
+        # We keep unwrapping until we find a function with named parameters.
+        real_fn = getattr(proxy_fn, '_fn', None) or proxy_fn
 
+        # If real_fn only has **kwargs, try to find the original fn in its closure
         try:
             sig = inspect.signature(real_fn)
+            params = [
+                p for p in sig.parameters.values()
+                if p.name not in ("self", "cls")
+                and p.kind not in (
+                    inspect.Parameter.VAR_KEYWORD,
+                    inspect.Parameter.VAR_POSITIONAL,
+                )
+            ]
+            if not params:
+                # Look inside closure cells for a callable with real params
+                closure = getattr(real_fn, '__closure__', None) or []
+                for cell in closure:
+                    try:
+                        candidate = cell.cell_contents
+                        if callable(candidate) and candidate is not real_fn:
+                            csig = inspect.signature(candidate)
+                            cparams = [
+                                p for p in csig.parameters.values()
+                                if p.name not in ("self", "cls")
+                                and p.kind not in (
+                                    inspect.Parameter.VAR_KEYWORD,
+                                    inspect.Parameter.VAR_POSITIONAL,
+                                )
+                            ]
+                            if cparams:
+                                real_fn = candidate
+                                sig = csig
+                                break
+                    except (ValueError, AttributeError):
+                        continue
         except (ValueError, TypeError):
             return None
 
@@ -168,17 +203,28 @@ class RACRunner(BaseAgentRunner):
         # Without this, StructuredTool.from_function infers a schema from
         # the wrapper's **kwargs signature, which produces a single "kwargs"
         # field — breaking argument forwarding.
+        verbose = self.config.verbose
         lc_tools = []
         for name, fn in tools.items():
             proxy_fn = fn  # capture in closure
 
-            def _make_tool_fn(captured_fn=proxy_fn):
+            def _make_tool_fn(captured_fn=proxy_fn, tool_name=name):
                 """Create a tool function that accepts **kwargs."""
                 def tool_fn(**kwargs) -> str:
+                    if verbose:
+                        args_str = ", ".join(
+                            f"{k}={repr(v)[:40]}" for k, v in kwargs.items()
+                        )
+                        print(f"    {_CYAN}🔧 {_BOLD}{tool_name}{_RESET}{_CYAN}({args_str}){_RESET}")
                     try:
                         result = captured_fn(**kwargs)
+                        if verbose:
+                            preview = str(result)[:100].replace("\n", " ")
+                            print(f"    {_GREEN}✓  → {_DIM}{preview}{_RESET}")
                         return json.dumps(result) if isinstance(result, dict) else str(result)
                     except Exception as exc:
+                        if verbose:
+                            print(f"    {_RED}✗  → {exc}{_RESET}")
                         return json.dumps({"error": str(exc), "status": "failed"})
                 return tool_fn
 

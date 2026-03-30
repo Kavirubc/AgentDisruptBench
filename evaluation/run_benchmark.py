@@ -342,6 +342,13 @@ Examples:
         help="Random seeds for reproducibility",
     )
 
+    # Task selection
+    parser.add_argument(
+        "--task-dir",
+        default=None,
+        help="Directory of task YAML files (overrides built-in tasks)",
+    )
+
     # Output
     parser.add_argument("--output-dir", "-o", default="results", help="Output directory")
     parser.add_argument("--verbose", "-v", action="store_true", help="Print agent reasoning")
@@ -450,7 +457,10 @@ Examples:
 
     # Load tasks and tools
     print("\n[2/5] Loading tasks and tools...")
-    task_registry = TaskRegistry.from_builtin()
+    if args.task_dir:
+        task_registry = TaskRegistry.from_directory(args.task_dir)
+    else:
+        task_registry = TaskRegistry.from_builtin()
     tool_registry = ToolRegistry.from_mock_tools()
     print(f"  → {len(task_registry)} tasks loaded")
     print(f"  → {len(tool_registry)} tools available")

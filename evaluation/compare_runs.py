@@ -210,6 +210,25 @@ def discover_runs(
 # ─── RENDERERS ────────────────────────────────────────────────────────────────
 
 
+# ─── HELPERS ───────────────────────────────────────────────────────────────────
+
+
+def get_run_label(summary: RunSummary, summaries: list[RunSummary]) -> str:
+    """Generate a unique, descriptive label for a run in a set."""
+    # Count how many runs share this model
+    same_model = [s for s in summaries if s.model == summary.model]
+    if len(same_model) == 1:
+        return summary.model
+
+    # Multiple runs of same model - check profiles
+    same_profile = [s for s in same_model if s.profile == summary.profile]
+    if len(same_profile) == 1:
+        return f"{summary.model}\n({summary.profile})"
+
+    # Multiple runs of same model/profile - add run ID suffix
+    return f"{summary.model}\n({summary.profile} / {summary.run_id[-6:]})"
+
+
 def _score_color(score: float) -> str:
     if score >= 0.8:
         return "bold green"
@@ -239,8 +258,8 @@ def render_metadata(summaries: list[RunSummary]) -> None:
     )
     table.add_column("", style="bold dim", width=12)
     for s in summaries:
-        label = f"{s.model}\n({s.runner})"
-        table.add_column(label, min_width=18)
+        label = get_run_label(s, summaries)
+        table.add_column(label, min_width=18, justify="center")
 
     rows = [
         ("Run ID", [s.run_id[-12:] for s in summaries]),
@@ -267,7 +286,8 @@ def render_aggregate(summaries: list[RunSummary]) -> None:
     )
     table.add_column("Metric", style="bold", width=18)
     for s in summaries:
-        table.add_column(s.model, min_width=14, justify="center")
+        label = get_run_label(s, summaries).replace("\n", " ")
+        table.add_column(label, min_width=14, justify="center")
 
     # Find best values for highlighting
     success_rates = [s.success_rate for s in summaries]
@@ -324,6 +344,21 @@ def render_aggregate(summaries: list[RunSummary]) -> None:
         ],
     )
 
+    # Resilience Index (Hostile / Clean ratio)
+    # Only calculate if we have exactly 2 runs of the same model where one is 'clean' and one is 'hostile_environment'
+    if len(summaries) == 2 and summaries[0].model == summaries[1].model:
+        r1, r2 = summaries[0], summaries[1]
+        resilience = None
+        if r1.profile == "clean" and r2.profile == "hostile_environment" and r1.success_rate > 0:
+            resilience = r2.success_rate / r1.success_rate
+        elif r2.profile == "clean" and r1.profile == "hostile_environment" and r2.success_rate > 0:
+            resilience = r1.success_rate / r2.success_rate
+
+        if resilience is not None:
+            r_color = "green" if resilience >= 0.9 else "yellow" if resilience >= 0.7 else "red"
+            vals = [f"[{r_color}]{resilience:.1%}[/{r_color}]" for _ in summaries]
+            table.add_row("Resilience Index", *vals)
+
     console.print(table)
 
 
@@ -351,12 +386,13 @@ def render_per_task(summaries: list[RunSummary]) -> None:
     table.add_column("D", justify="center", width=2)
 
     for s in summaries:
+        label = get_run_label(s, summaries).replace("\n", " ")
         table.add_column(
-            f"{s.model}\nScore",
-            justify="center", width=8,
+            f"{label}\nScore",
+            justify="center", width=12,
         )
         table.add_column(
-            f"{s.model}\nTools",
+            f"{label}\nTools",
             justify="center", width=6,
         )
 
@@ -398,31 +434,31 @@ def render_win_loss(summaries: list[RunSummary]) -> None:
             all_task_ids.add(t.task_id)
 
     # Count wins for each run
-    wins: dict[str, int] = {s.model: 0 for s in summaries}
+    run_labels = [get_run_label(s, summaries).replace("\n", " ") for s in summaries]
+    wins: dict[int, int] = {i: 0 for i in range(len(summaries))}
     ties = 0
     total = 0
 
     for tid in all_task_ids:
-        scores: list[tuple[str, float]] = []
+        scores: list[float] = []
         for s in summaries:
             task = next(
                 (t for t in s.tasks if t.task_id == tid), None
             )
-            if task:
-                scores.append((s.model, task.partial_score))
+            scores.append(task.partial_score if task else 0.0)
 
         if len(scores) < 2:
             continue
 
         total += 1
-        best_score = max(sc for _, sc in scores)
-        winners = [m for m, sc in scores if abs(sc - best_score) < 0.001]
+        best_score = max(scores)
+        winners = [i for i, sc in enumerate(scores) if abs(sc - best_score) < 0.001]
 
         if len(winners) == len(scores):
             ties += 1
         else:
             for w in winners:
-                wins[w] = wins.get(w, 0) + 1
+                wins[w] += 1
 
     # Render
     table = Table(
@@ -430,15 +466,15 @@ def render_win_loss(summaries: list[RunSummary]) -> None:
         box=box.ROUNDED,
         padding=(0, 2),
     )
-    table.add_column("Model", style="bold cyan")
+    table.add_column("Run", style="bold cyan")
     table.add_column("Wins", justify="center", style="bold green")
     table.add_column("Win %", justify="center")
 
-    for s in summaries:
-        w = wins.get(s.model, 0)
+    for i, s in enumerate(summaries):
+        w = wins.get(i, 0)
         pct = w / max(total, 1) * 100
         table.add_row(
-            s.model,
+            run_labels[i],
             str(w),
             f"{pct:.0f}%",
         )
@@ -461,7 +497,8 @@ def render_cost_efficiency(summaries: list[RunSummary]) -> None:
     )
     table.add_column("Metric", style="bold", width=22)
     for s in summaries:
-        table.add_column(s.model, min_width=14, justify="center")
+        label = get_run_label(s, summaries).replace("\n", " ")
+        table.add_column(label, min_width=14, justify="center")
 
     # Total tool calls
     total_calls = [
