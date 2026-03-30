@@ -39,6 +39,25 @@ from agentdisruptbench.tasks.schemas import Task
 
 logger = logging.getLogger("agentdisruptbench.evaluation.base_runner")
 
+# ── ANSI colour helpers ───────────────────────────────────────────────────────
+_RESET  = "\033[0m"
+_BOLD   = "\033[1m"
+_DIM    = "\033[2m"
+_RED    = "\033[91m"
+_GREEN  = "\033[92m"
+_YELLOW = "\033[93m"
+_BLUE   = "\033[94m"
+_MAGENTA= "\033[95m"
+_CYAN   = "\033[96m"
+_WHITE  = "\033[97m"
+
+_TASK_TYPE_COLOUR = {
+    "adversarial": _RED,
+    "impossible":  _YELLOW,
+    "handover":    _MAGENTA,
+    "standard":    _BLUE,
+}
+
 
 @dataclass
 class RunnerConfig:
@@ -48,7 +67,7 @@ class RunnerConfig:
         model:       Model name/identifier (e.g. "gpt-4o", "gemini-2.0-flash").
         api_key:     API key (falls back to env vars if not set).
         temperature: Sampling temperature for the LLM.
-        max_tokens:  Max tokens per LLM response.
+        max_tokens:  Max tokens per LLM response (None = provider default).
         max_retries: Max retries on API errors (not disruption retries).
         max_steps:   Max agent loop iterations before forced stop.
         verbose:     Print agent reasoning to stdout.
@@ -57,7 +76,7 @@ class RunnerConfig:
     model: str = "gpt-4o"
     api_key: str | None = None
     temperature: float = 0.0
-    max_tokens: int = 4096
+    max_tokens: int | None = None
     max_retries: int = 3
     max_steps: int = 20
     verbose: bool = False
@@ -125,13 +144,31 @@ class BaseAgentRunner(abc.ABC):
         if not self._is_setup:
             self.setup()
 
+        if self.config.verbose:
+            ttype = getattr(task, "task_type", "standard")
+            tc = _TASK_TYPE_COLOUR.get(ttype, _BLUE)
+            tool_list = ", ".join(getattr(task, "required_tools", tools.keys()))
+            print(
+                f"\n{_BOLD}{_WHITE}{'─'*60}{_RESET}\n"
+                f"{_BOLD}{_CYAN}▶ {task.task_id}{_RESET}  "
+                f"{tc}{_BOLD}[{ttype.upper()}]{_RESET}  "
+                f"{_DIM}D{getattr(task,'difficulty','?')}{_RESET}\n"
+                f"  {_BOLD}Title :{_RESET} {_WHITE}{getattr(task,'title', task.task_id)}{_RESET}\n"
+                f"  {_BOLD}Tools :{_RESET} {_CYAN}{tool_list}{_RESET}\n"
+                f"  {_BOLD}Desc  :{_RESET} {_DIM}{str(getattr(task,'description',''))[:120]}{_RESET}"
+            )
+
         start = time.monotonic()
         result = self.run_task(task, tools)
         elapsed = time.monotonic() - start
         self._total_time += elapsed
 
         if self.config.verbose:
-            print(f"[{type(self).__name__}] task={task.task_id} time={elapsed:.1f}s")
+            output_preview = str(result).replace("\n", " ")[:120]
+            print(
+                f"  {_DIM}⏱  {elapsed:.1f}s{_RESET}  "
+                f"{_GREEN}Output:{_RESET} {_DIM}{output_preview}{_RESET}"
+            )
 
         return result
 

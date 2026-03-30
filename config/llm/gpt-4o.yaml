@@ -1,0 +1,11 @@
+# AgentDisruptBench — LLM Configuration: GPT-4o
+# ================================================
+# Use with: python -m evaluation.run_benchmark --llm-config config/llm/gpt-4o.yaml
+#
+# Requires: OPENAI_API_KEY environment variable.
+
+provider: openai
+model: gpt-4o
+temperature: 0.0
+max_retries: 3
+max_steps: 20

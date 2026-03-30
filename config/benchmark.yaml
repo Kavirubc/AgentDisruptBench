@@ -1,0 +1,14 @@
+# AgentDisruptBench — Benchmark Configuration
+# =============================================
+# Top-level configuration for a benchmark run.
+# Use with: python -m evaluation.run_benchmark --config config/benchmark.yaml
+#
+# CLI arguments override any values set here.
+
+runner: rac                                    # simple | openai | langchain | rac
+profiles: [clean, hostile_environment]         # Disruption profiles to evaluate
+domains: null                                  # null = all domains, or: [retail, travel, ...]
+max_difficulty: 5                              # 1-5
+seeds: [42]                                    # Random seeds for reproducibility
+output_dir: results                            # Directory for report output
+verbose: false                                 # Print agent reasoning to stdout

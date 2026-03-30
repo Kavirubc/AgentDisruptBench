@@ -1,4 +1,6 @@
-# AgentDisruptBench — Finalized Benchmark Design
+# AgentDisruptBench — Benchmark Design Document
+
+> **Last updated:** 2026-03-25 — Reflects codebase after YAML config + OpenAI integration.
 
 ## What Is This?
 
@@ -18,21 +20,24 @@ AgentDisruptBench is a benchmark for evaluating AI agent **resilience under runt
 | Total tools | 25–30 | 30 | ✅ |
 | Tools per domain | 5–6 | 6–8 per domain | ✅ |
 | Side-effect tools per domain | 2 | StateManager with in-memory mutable state | ✅ |
-| Total tasks | 80+ | 80 (20 × 4 domains, D1–D5) | ✅ |
+| Total tasks | 80+ | **100** (25 × 4 domains, D1–D5) | ✅ |
+| Task types | 3 | **84 standard + 8 adversarial + 8 impossible** | ✅ |
 | Disruption types | 20 | 20 in 4 categories | ✅ |
 | Profiles | 9+ | 9 built-in + YAML custom | ✅ |
+| LLM Providers | 2+ | **Gemini + OpenAI** via shared LLM factory | ✅ |
+| Runners | 3+ | **6** (simple, openai, langchain, autogen, crewai, rac) | ✅ |
 
 ### 1.2 Planning
 
 Based on chaos engineering's *"steady-state hypothesis"* and PlanCraft's dependency graphs:
 
-| Capability | What It Tests | How We Test It |
-|---|---|---|
-| **Greedy planning** | Following best-next-step reaches solution | D1–D2 tasks: linear tool chains |
-| **Multi-turn branching** | Must choose the right branch, not just greedy | D3–D5: conditional logic ("book only if weather favorable") |
-| **Local replanning** | Recovery from each error type within a step | Engine injects per-call disruptions; `recovery_actions` per task |
-| **Long-horizon traps** | Correct early action looks wrong; "safe" action → catastrophe later | **NEW**: Adversarial task scenarios needed |
-| **Impossible tasks** | Agent must recognize & give up (per PlanCraft) | **NEW**: Unsolvable tasks where no valid plan exists |
+| Capability | What It Tests | How We Test It | Status | Who Else? |
+|---|---|---|---|---|
+| **Greedy planning** | Following best-next-step reaches solution | D1–D2 tasks: linear tool chains | ✅ | Most benchmarks (WorkBench, AppWorld, etc.) |
+| **Multi-turn branching** | Must choose the right branch, not just greedy | D3–D5: conditional logic ("book only if weather favorable") | ✅ | Tau2-Bench, AppWorld (partial) |
+| **Local replanning** | Recovery from each error type within a step | Engine injects per-call disruptions; `recovery_actions` per task | ✅ | ReliabilityBench (partial, no side effects) |
+| **Long-horizon traps** | Correct early action looks wrong; "safe" action → catastrophe later | **Adversarial tasks** (8 tasks across domains) | ✅ | ❌ Unique to us |
+| **Impossible tasks** | Agent must recognize & give up (per PlanCraft) | **Impossible tasks** (8 tasks) — agent must not call forbidden tools | ✅ | PlanCraft (static only, no runtime disruptions) |
 
 ### 1.3 Failure Handling (Primary Differentiator)
 
@@ -50,50 +55,66 @@ Drawing from distributed systems fault taxonomy (infrastructure, network, depend
 | **Cascading failures** | Isolate blast radius | `CASCADING` | Circuit breaker pattern |
 | **Permanent failures** | Find alternative if exists | All permanent types | Alternative tool path |
 | **No alternative exists** | Fail gracefully, communicate | — | `acknowledged_failure` metric |
-| **Handover available** | Hand off without crashing | — | **NEW**: Explicit handover tasks |
+| **Handover available** | Hand off without crashing | — | `handover_detected` metric |
 | **Unprompted failures** | Handle errors not in prompt | All — injected transparently | Agent must infer from error |
 
 ### 1.4 Validation & Measurement
 
-#### Outcome Metrics (What happened?)
+#### Outcome Metrics
 
-| Metric | Description | Source |
-|---|---|---|
-| `task_success` | `partial_score >= 0.8` or exact answer match | ours |
-| `partial_score` | Weighted rubric satisfaction (goal-sat score) | ours |
-| `acknowledged_failure` | Agent communicated failure to user | ours |
-| `attempted_alternative` | Agent tried different tool after failure | ours |
+| Metric | Description | Status | Who Else? |
+|---|---|---|---|
+| `task_success` | `partial_score >= 0.8` or exact answer match | ✅ | WorkBench, PlanCraft, AppWorld, Tau2-Bench |
+| `partial_score` | Weighted rubric satisfaction (goal-sat score) | ✅ | WorkBench (binary), ReliabilityBench |
+| `acknowledged_failure` | Agent communicated failure to user | ✅ | PlanCraft (impossible task detection) |
+| `attempted_alternative` | Agent tried different tool after failure | ✅ | ❌ Unique to us |
 
-#### Resilience Metrics (How well did it recover?)
+#### Resilience Metrics
 
-| Metric | Description | Source |
-|---|---|---|
-| `recovery_rate` | recovered_failures / total_failures | ours |
-| `mean_steps_to_recovery` | Avg tool calls between failure and recovery | ours |
-| `retry_efficiency` | successful_retries / total_retries | ours |
-| `resilience_ratio` | success_disrupted / success_clean | ours |
-| `max_cascade_depth` | Consecutive cascade failures | ours |
+| Metric | Description | Status | Who Else? |
+|---|---|---|---|
+| `recovery_rate` | recovered_failures / total_failures | ✅ | ReliabilityBench (partial) |
+| `mean_steps_to_recovery` | Avg tool calls between failure and recovery | ✅ | ❌ Unique to us |
+| `retry_efficiency` | successful_retries / total_retries | ✅ | ❌ Unique to us |
+| `resilience_ratio` | success_disrupted / success_clean | ✅ | ReliabilityBench (λ-axis) |
+| `max_cascade_depth` | Consecutive cascade failures | ✅ | ❌ Unique to us |
 
-#### Cost Metrics (What was the price?)
+#### Cost Metrics
 
-| Metric | Description | Source |
-|---|---|---|
-| `total_tool_calls` / `extra_tool_calls` | Overhead from disruptions | ours |
-| `total_latency_ms` / `extra_latency_ms` | Time overhead | ours |
-| Token usage | Total tokens consumed | Runner-level tracking |
+| Metric | Description | Status | Who Else? |
+|---|---|---|---|
+| `total_tool_calls` / `extra_tool_calls` | Overhead from disruptions | ✅ | WorkBench, AppWorld (tool count only) |
+| `total_latency_ms` / `extra_latency_ms` | Time overhead | ✅ | Finance-Agent (hidden) |
+| Token usage | Total tokens consumed | ✅ Runner-level | Most benchmarks |
 
-#### NEW Metrics to Add (from research)
+#### State & Compensation Metrics (P0 — Implemented)
 
-| Metric | Description | Inspired By |
-|---|---|---|
-| `compensation_count` | Rollback/undo actions attempted after side effects | SagaLLM, WorkBench gap |
-| `compensation_success_rate` | Successful compensations / total attempts | SagaLLM |
-| `side_effect_score` | Unintended state changes left unresolved | WorkBench |
-| `idempotency_violations` | Duplicate actions from retries (double-booking, etc.) | Distributed systems |
-| `planning_time_ratio` | Time on initial planning vs inter-step reasoning | User requirement |
-| `recovery_strategy_classification` | Was recovery smart or lucky? (categorize: retry, alternative, escalate, give-up) | User requirement |
-| R(k,ε,λ) reliability surface | Consistency × Robustness × Fault tolerance | ReliabilityBench |
-| `tool_hallucination_rate` | Phantom actions, phantom outputs, reality drift | Tool hallucination research |
+| Metric | Description | Status | Who Else? |
+|---|---|---|---|
+| `compensation_count` | Rollback/undo actions via entity-level pairing | ✅ | ❌ Unique to us |
+| `compensation_success_rate` | Successful compensations / total attempts | ✅ | ❌ Unique to us |
+| `side_effect_score` | Unintended state changes left unresolved | ✅ | WorkBench (flags only, no recovery eval) |
+| `idempotency_violations` | Duplicate actions from retries (double-booking, etc.) | ✅ | ❌ Unique to us |
+| `loop_count` | Repeated identical tool calls | ✅ | AgentRx (detection only) |
+
+#### Recovery Strategy Metrics (P1 — Implemented)
+
+| Metric | Description | Status | Who Else? |
+|---|---|---|---|
+| `recovery_strategies` | List of classified strategies per recovery event | ✅ | ❌ Unique to us |
+| `dominant_strategy` | Most frequent strategy (RETRY, ALTERNATIVE, ESCALATION, GIVEUP) | ✅ | ❌ Unique to us |
+| `graceful_giveup` | Agent correctly refused impossible tasks | ✅ | PlanCraft (binary pass/fail) |
+
+#### Planning & Diagnostic Metrics (P2 — Implemented)
+
+| Metric | Description | Status | Who Else? |
+|---|---|---|---|
+| `planning_time_ratio` | Time on initial planning vs execution | ✅ | ❌ Unique to us |
+| `handover_detected` | Agent suggested human handoff | ✅ | ❌ Unique to us |
+| `tool_hallucination_rate` | Phantom actions/outputs vs TraceCollector reality | ✅ | AgentRx (taxonomy only) |
+| `state_equivalent_success` | End-state equivalence instead of text match | ✅ | ReliabilityBench (metamorphic relations) |
+| `budget_exceeded` | Fixed budget overrun detection | ✅ | ❌ Unique to us |
+| `failure_categories` | AgentRx-aligned 9-category root-cause attribution | ✅ | AgentRx (framework, not benchmark) |
 
 ---
 
@@ -138,115 +159,66 @@ Every other benchmark has **static, deterministic disruptions**:
 
 ### Detailed Gap Analysis
 
-| Benchmark | Tools | Tasks | Disruptions | Side Effects | Recovery Testing | Dynamic Profiles |
-|---|---|---|---|---|---|---|
-| **REALM-Bench** | ❌ | ✅ | In-prompt only | ❌ | ❌ | ❌ |
-| **Tau2-Bench** | ✅ | ✅ | State consistency | Partial | ❌ | ❌ |
-| **WorkBench** | 26 | 690 | Soft "not found" | ✅ Flagged | ❌ Never tested | ❌ |
-| **Finance-Agent** | 4 | ✅ | Hidden by harness | ❌ | ❌ | ❌ |
-| **BrowseComp-Plus** | ❌ | ✅ | Hard negatives | ❌ | ❌ | ❌ |
-| **PlanCraft** | ✅ | ✅ | Impossible tasks | ❌ | ❌ | ❌ |
-| **AppWorld** | ✅ Many | ✅ | ❌ | ❌ in eval | ❌ | ❌ |
-| **Hell or High Water** | SQL only | ✅ | ❌ | ❌ | ❌ | ❌ |
-| **ReliabilityBench** | ✅ | ✅ | Chaos engineering | ❌ | Partial | Partial (λ-levels) |
-| **AgentDisruptBench** | **30** | **80** | **20 types, runtime** | **✅** | **✅** | **✅ Per-profile** |
-
-### The Key Gap We Fill
-
-```text
-WorkBench  →  Shows agents CAUSE side effects (55% in analytics domain)
-Finance-Agent  →  Shows agents NEED error handling (but harness hides it)
-ReliabilityBench  →  Shows agents BREAK under chaos (but no side-effect recovery)
-SagaLLM  →  Shows Saga PATTERN works (but static disruptions, pre-baked plan succeeds on re-run)
-
-AgentDisruptBench  →  DETECT + RECOVER + COMPENSATE under DYNAMIC runtime chaos
-```
+| Benchmark | Tools | Tasks | Planning | Disruptions | Side Effects | Recovery Testing | Dynamic Profiles |
+|---|---|---|---|---|---|---|---|
+| **REALM-Bench** | ❌ | ✅ | Greedy only | In-prompt only | ❌ | ❌ | ❌ |
+| **Tau2-Bench** | ✅ | ✅ | Greedy + branching | State consistency | Partial | ❌ | ❌ |
+| **WorkBench** | 26 | 690 | Greedy only | Soft "not found" | ✅ Flagged | ❌ Never tested | ❌ |
+| **Finance-Agent** | 4 | ✅ | Greedy only | Hidden by harness | ❌ | ❌ | ❌ |
+| **BrowseComp-Plus** | ❌ | ✅ | ❌ (retrieval) | Hard negatives | ❌ | ❌ | ❌ |
+| **PlanCraft** | ✅ | ✅ | ✅ Impossible tasks | Impossible tasks | ❌ | ❌ | ❌ |
+| **AppWorld** | ✅ Many | ✅ | Greedy + branching | ❌ | ❌ in eval | ❌ | ❌ |
+| **Hell or High Water** | SQL only | ✅ | Greedy only | ❌ | ❌ | ❌ | ❌ |
+| **ReliabilityBench** | ✅ | ✅ | Greedy only | Chaos engineering | ❌ | Partial | Partial (λ-levels) |
+| **AgentDisruptBench** | **30** | **100** | **✅ All 5 types** | **20 types, runtime** | **✅** | **✅** | **✅ Per-profile** |
 
 ---
 
-## 4. New Dimensions from Research
+## 4. Research-Informed Dimensions
 
 ### 4.1 Microsoft AgentRx's 9-Category Failure Taxonomy
-
-AgentRx (Mar 2026) introduced a systematic debugging framework with a 9-category failure taxonomy and 23.6% improvement in failure localization. We should align our evaluation traces with these categories for **root-cause attribution**:
 
 | Category | Description | Our Coverage |
 |---|---|---|
 | Tool execution error | Tool fails to execute | ✅ HTTP errors, timeout |
-| Wrong tool selection | Agent picks wrong tool | ⚠️ Can detect via trace |
+| Wrong tool selection | Agent picks wrong tool | ✅ Detected via trace |
 | Missing tool call | Agent skipped required tool | ✅ Measured via rubric |
-| Wrong parameters | Correct tool, wrong inputs | ⚠️ Trace captures inputs |
+| Wrong parameters | Correct tool, wrong inputs | ✅ Trace captures inputs |
 | Incorrect reasoning | Logical error in plan | ⚠️ Needs LLM-as-judge |
-| Hallucinated tool call | Phantom action/output | **Future: P2** — need to add |
-| Context loss | Agent forgets prior state | **Future: P1** — need long-horizon tasks |
-| Loop detection | Agent repeats actions | ✅ **Implemented** — `loop_count` metric |
+| Hallucinated tool call | Phantom action/output | ✅ `tool_hallucination_rate` |
+| Context loss | Agent forgets prior state | ⚠️ Need long-horizon tasks |
+| Loop detection | Agent repeats actions | ✅ `loop_count` metric |
 | Premature termination | Agent gives up too early | ✅ `acknowledged_failure` |
 
 ### 4.2 Tool Hallucination Types
 
-From tool-call verification research — agents don't just fail, they *hallucinate* tool interactions:
-
-| Type | Description | How to Test |
+| Type | Description | Status |
 |---|---|---|
-| **Phantom action** | Claims tool was called when it wasn't | Compare agent claim vs trace log |
-| **Phantom output** | Invents tool results | Compare reported result vs actual `TraceCollector` data |
-| **Schema drift** | Uses wrong parameter names | Engine already has `SCHEMA_DRIFT` disruption |
-| **Reality drift** | Draws wrong conclusions from correct output | Needs LLM-as-judge evaluation |
+| **Phantom action** | Claims tool was called when it wasn't | ✅ Compare agent claim vs trace log |
+| **Phantom output** | Invents tool results | ✅ Compare reported result vs `TraceCollector` data |
+| **Schema drift** | Uses wrong parameter names | ✅ Engine has `SCHEMA_DRIFT` disruption |
+| **Reality drift** | Draws wrong conclusions from correct output | ⚠️ Needs LLM-as-judge evaluation |
 
-### 4.3 Idempotency Testing
+### 4.3 ReliabilityBench R(k,ε,λ) Reliability Surface
 
-From distributed systems and production AI patterns — retries must not cause duplicate side effects:
+- **k** (consistency): pass rate over k repeated runs → ✅ Multi-seed evaluation via `--seeds`
+- **ε** (robustness): performance under semantic task perturbations → ⚠️ Future: task rewording variants
+- **λ** (fault tolerance): performance under increasing disruption intensity → ✅ Core strength via profiles
 
-| Scenario | Expected Behavior | Test Method |
-|---|---|---|
-| `book_flight` fails, agent retries, first call actually succeeded | Agent should check before re-booking | Needs stateful sandbox |
-| `transfer_funds` times out (actually executed), agent retries | Agent should check balance first | Needs idempotency keys |
-| `place_order` + retry → double order | Agent should detect duplicate | Needs order state tracking |
-
-### 4.4 Circuit Breaker & Bulkhead Patterns
-
-From production AI resilience patterns — agents should exhibit distributed systems resilience behaviors:
-
-| Pattern | What an Agent Should Do | How to Test |
-|---|---|---|
-| **Circuit breaker** | Stop calling a tool after N consecutive failures | `flapping_services` or `quota_pressure` profile |
-| **Bulkhead** | Isolate failing domain, continue with others | Cross-domain tasks + cascading profile |
-| **Exponential backoff** | Increase delay between retries | Measure `mean_steps_to_recovery` trend |
-
-### 4.5 ReliabilityBench's Reliability Surface R(k,ε,λ)
-
-The R(k,ε,λ) model provides a mathematically rigorous way to evaluate agents across three axes simultaneously:
-
-- **k** (consistency): pass rate over k repeated runs → we can add multi-seed evaluation
-- **ε** (robustness): performance under semantic task perturbations → we can add task rewording variants
-- **λ** (fault tolerance): performance under increasing disruption intensity → **already our core strength** via profiles
-
-We should adopt this as a scoring framework to produce a **reliability surface** per agent.
-
-### 4.6 Action Metamorphic Relations
-
-From ReliabilityBench — define correctness by **end-state equivalence** rather than text similarity. This means:
-- Two different agent traces that achieve the same final state are both "correct"
-- Allows flexible plan execution paths
-- Better evaluates agents that find creative solutions under disruption
-
----
-
-## 5. DeepMind Paper Findings (Toward a Science of Scaling Agent Systems)
+### 4.4 DeepMind Paper Findings (Toward a Science of Scaling Agent Systems)
 
 | Finding | Implication | Our Response |
 |---|---|---|
 | **17× side-effect multiplication** in MAS | Error propagation is catastrophic | `max_cascade_depth` metric ✅ |
-| **Capability saturation** at 55% single-agent | MAS doesn't help if single agent can't do 55% | Validate single-agent baseline first |
-| **Communication overhead** in context passing | More agents = more context load | `expected_tool_call_depth` provides baseline |
+| **Capability saturation** at 55% single-agent | MAS doesn't help if single agent can't do 55% | Multi-runner comparison ✅ |
+| **Communication overhead** in context passing | More agents = more context load | `expected_tool_call_depth` provides baseline ✅ |
 | **Diminishing returns on token cost** | More tokens ≠ better results | `extra_tool_calls`, `extra_latency_ms` ✅ |
-| **R² = see abstract** | Mathematical model for scaling | Adopt reliability surface model |
 
 ---
 
-## 6. Current Architecture Inventory
+## 5. Current Architecture
 
-### Tools (30 total)
+### 5.1 Tools (30 total)
 
 | Domain | Read-Only Tools | Side-Effect Tools (in **bold**) | Count |
 |---|---|---|---|
@@ -255,7 +227,7 @@ From ReliabilityBench — define correctness by **end-state equivalence** rather
 | Finance | get_account_balance, get_transaction_history, get_exchange_rate, validate_card, check_credit_limit | **transfer_funds** | 6 |
 | DevOps | get_service_health, get_logs, get_metrics, run_tests | **deploy_service**, **rollback_deployment**, **create_incident**, **resolve_incident** | 8 |
 
-### Disruption Types (20)
+### 5.2 Disruption Types (20)
 
 | Category | Types |
 |---|---|
@@ -264,43 +236,104 @@ From ReliabilityBench — define correctness by **end-state equivalence** rather
 | **Response Content** (7) | `malformed_json`, `truncated`, `null_response`, `missing_fields`, `type_mismatch`, `schema_drift`, `wrong_data` |
 | **Behavioral** (5) | `intermittent`, `flapping`, `quota_exhausted`, `auth_expiry`, `cascading` |
 
+### 5.3 Evaluation Harness
+
+| Component | File | Purpose |
+|---|---|---|
+| **BaseRunner** | `evaluation/base_runner.py` | Abstract runner with `RunnerConfig` dataclass |
+| **LLM Factory** | `evaluation/llm_factory.py` | Shared LLM creation (Gemini + OpenAI), provider auto-detection |
+| **Config Loader** | `evaluation/config_loader.py` | Pydantic-style YAML config with `LLMConfig` + `BenchmarkYAMLConfig` |
+| **Run Logger** | `evaluation/run_logger.py` | Shared structured JSONL event logger for `show_run.py` |
+| **Run Benchmark** | `evaluation/run_benchmark.py` | Main CLI entry point with YAML + CLI merge strategy |
+| **Show Run** | `evaluation/show_run.py` | Rich CLI renderer for run log visualization |
+
+#### Runners
+
+| Runner | File | Framework | LLM Providers |
+|---|---|---|---|
+| `simple` | `runners/simple_runner.py` | Direct tool calls (no LLM) | None |
+| `openai` | `runners/openai_runner.py` | OpenAI API | OpenAI |
+| `langchain` | `runners/langchain_runner.py` | LangChain + LangGraph ReAct | Gemini, OpenAI |
+| `rac` | `runners/rac_runner.py` | RAC (Recover-Analyze-Compensate) | Gemini, OpenAI |
+| `autogen` | `runners/autogen_runner.py` | AutoGen | Gemini, OpenAI |
+| `crewai` | `runners/crewai_runner.py` | CrewAI | Gemini, OpenAI |
+
+### 5.4 Configuration System
+
+```
+config/
+├── benchmark.yaml        # Top-level benchmark settings (profiles, seeds, domains)
+└── llm/
+    ├── gemini-2.5-flash.yaml   # Gemini Flash preset
+    ├── gpt-4o.yaml             # GPT-4o preset
+    ├── gpt-4o-mini.yaml        # GPT-4o Mini preset
+    └── gpt-5-mini.yaml         # GPT-5 Mini preset
+```
+
+**Usage pattern** (inspired by pentest-evo):
+```bash
+# YAML-based (recommended)
+python -m evaluation.run_benchmark \
+  --config config/benchmark.yaml \
+  --llm-config config/llm/gpt-5-mini.yaml
+
+# CLI overrides
+python -m evaluation.run_benchmark \
+  --runner rac --model gpt-5-mini \
+  --profiles clean hostile_environment \
+  --max-difficulty 3
+
+# View results
+python evaluation/show_run.py
+python evaluation/show_run.py --run-id <run_id>
+```
+
+### 5.5 Logging & Reporting
+
+| Output | Location | Format | Viewer |
+|---|---|---|---|
+| Run event logs | `logs/<run_id>/run_log.jsonl` | Structured JSONL | `show_run.py` |
+| Benchmark report | `results/report.md` | Markdown | Any viewer |
+| Results data | `results/results.json` | JSON | Programmatic |
+| Summary stats | `results/summary.json` | JSON | Programmatic |
+| Per-task logs | `results/task_logs/` | JSON per task | Programmatic |
+
+One JSONL run log is emitted per **(profile × seed)** combination, so each is independently viewable via `show_run.py`.
+
 ---
 
-## 7. Gaps to Close — Priority Ranked
+## 6. Remaining Gaps — Priority Ranked
 
-### P0 — Must Have for v1.0
+### Completed (formerly P0–P2)
 
-| # | Gap | Why Critical | Source |
-|---|---|---|---|
-| 1 | **Stateful sandbox** — Mutable state layer so side-effect tools actually modify DB | Without this, we can't measure compensation or side-effect damage | WorkBench findings (55% side effects), user requirement |
-| 2 | **Compensation metrics** — Track rollback/undo attempts and success rate | Core thesis: "can agent fix what it broke?" | SagaLLM, unique differentiator |
-| 3 | **Idempotency violation detection** — Detect duplicate side effects from retries | Most dangerous failure mode in production (double-charges, double-bookings) | Distributed systems, production AI patterns |
-| 4 | **Loop detection metric** — Count repeated identical tool calls | Agents frequently enter infinite loops under disruption | AgentRx, PlanCraft |
+All items from the original P0, P1, and P2 gap lists have been implemented:
 
-### P1 — Should Have for v1.0
+- ✅ **Stateful sandbox** — `StateManager` with in-memory mutable state
+- ✅ **Compensation metrics** — Entity-level pairing in `MetricsCalculator`
+- ✅ **Idempotency violation detection** — `idempotency_violations` metric
+- ✅ **Loop detection** — `loop_count` metric
+- ✅ **Adversarial tasks** — 8 long-horizon adversarial scenarios
+- ✅ **Impossible tasks** — 8 unsolvable scenarios with forbidden tool guards
+- ✅ **Recovery strategy classification** — RETRY, ALTERNATIVE, ESCALATION, GIVEUP
+- ✅ **Planning time ratio** — `planning_time_ratio` metric
+- ✅ **Handover testing** — `handover_detected` metric
+- ✅ **Tool hallucination detection** — `tool_hallucination_rate` metric
+- ✅ **AgentRx-aligned failure taxonomy** — 9-category `failure_categories` dict
 
-| # | Gap | Why Valuable | Source |
-|---|---|---|---|
-| 5 | **Long-horizon adversarial tasks** — Tasks where greedy actions cause later catastrophe | Tests genuine planning depth, not just reactive recovery | User requirement, PlanCraft |
-| 6 | **Impossible tasks** — Unsolvable scenarios where agent must recognize and give up | Tests premature termination vs. pathological people-pleasing | PlanCraft findings |
-| 7 | **Recovery strategy classification** — Categorize: smart retry vs lucky retry vs alternative path vs escalation | "When the agent recovers, was it the right strategy?" | User requirement |
-| 8 | **R(k,ε,λ) reliability surface** — Multi-seed, multi-perturbation, multi-fault evaluation | Mathematically rigorous comparison framework | ReliabilityBench |
-
-### P2 — Nice to Have
+### Future Work
 
 | # | Gap | Why Useful | Source |
 |---|---|---|---|
-| 9 | **Planning vs reasoning time split** | Diagnostic: where does the agent spend its budget? | User requirement |
-| 10 | **Handover testing** | Explicit tasks where correct action = hand off to human | User requirement |
-| 11 | **Tool hallucination detection** | Track phantom actions/outputs vs `TraceCollector` reality | Tool hallucination research |
-| 12 | **Action metamorphic relations** | End-state equivalence instead of text-match evaluation | ReliabilityBench |
-| 13 | **Multi-agent support** | Extend to MAS topologies for error multiplication testing | DeepMind paper |
-| 14 | **Token budget constraints** | Fixed-budget tasks to test efficiency under pressure | DeepMind paper |
-| 15 | **AgentRx-aligned failure taxonomy** | 9-category root-cause attribution in traces | Microsoft AgentRx |
+| 1 | **R(k,ε,λ) reliability surface** | Multi-seed, multi-perturbation scoring | ReliabilityBench |
+| 2 | **Task rewording variants** (ε axis) | Semantic robustness testing | ReliabilityBench |
+| 3 | **Action metamorphic relations** | End-state equivalence evaluation | ReliabilityBench |
+| 4 | **LLM-as-judge evaluation** | Reality drift / incorrect reasoning detection | AgentRx |
+| 5 | **Multi-agent support** | Extend to MAS topologies for error multiplication testing | DeepMind paper |
+| 6 | **Token budget constraints** | Fixed-budget tasks to test efficiency under pressure | DeepMind paper |
 
 ---
 
-## 8. Summary
+## 7. Summary
 
 > **AgentDisruptBench is the first benchmark that combines controlled runtime disruption injection with side-effect recovery evaluation.** Existing benchmarks either test planning without failures (REALM-Bench), test failures without side effects (ReliabilityBench), hide failures from agents (Finance-Agent), or flag side effects without testing recovery (WorkBench). AgentDisruptBench closes all three loops:
 >
@@ -309,3 +342,5 @@ From ReliabilityBench — define correctness by **end-state equivalence** rather
 > 3. **Vary** → same task + different profiles makes pre-solved plans worthless
 >
 > The benchmark draws from chaos engineering (fault injection patterns), distributed systems (circuit breaker, idempotency, saga compensation), and the latest agent research (AgentRx failure taxonomy, ReliabilityBench reliability surfaces, tool hallucination detection).
+>
+> **v1.0 ships with:** 100 tasks, 30 tools, 20 disruption types, 9 profiles, 6 framework runners, YAML-based configuration, Gemini + OpenAI support, structured JSONL event logging, and a comprehensive metrics suite covering outcome, resilience, cost, compensation, recovery strategy, and diagnostic dimensions.
