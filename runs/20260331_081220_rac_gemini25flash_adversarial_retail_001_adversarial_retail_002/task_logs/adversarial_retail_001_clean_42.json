@@ -1,0 +1,77 @@
+{
+  "task_id": "adversarial_retail_001",
+  "agent_id": "rac_gemini-2.5-flash",
+  "profile_name": "clean",
+  "seed": 42,
+  "success": true,
+  "partial_score": 0.8999999999999999,
+  "agent_output": "The coupons LOYALTY50 and SAVE10 were applied to maximize savings, and the order for PRD-laptop for customer CUST-001 was placed. The final price after applying the coupons is $396.94.",
+  "recovery_rate": 1.0,
+  "mean_steps_to_recovery": 0.0,
+  "retry_efficiency": 1.0,
+  "disruptions_encountered": 0,
+  "disruptions_recovered": 0,
+  "disruption_types_seen": [],
+  "total_tool_calls": 3,
+  "extra_tool_calls": null,
+  "duration_seconds": 23.255487334012287,
+  "acknowledged_failure": false,
+  "attempted_alternative": false,
+  "traces": [
+    {
+      "call_id": "b532fd2a-1b04-4efb-8476-3c807f2d62e5",
+      "call_number": 1,
+      "tool_name": "apply_coupon",
+      "inputs": {
+        "cart_id": "CART-001",
+        "coupon_code": "LOYALTY50"
+      },
+      "real_result": "{'cart_id': 'CART-001', 'coupon_code': 'LOYALTY50', 'valid': True, 'discount_percent': 33, 'message': 'Coupon applied'}",
+      "observed_result": "{'cart_id': 'CART-001', 'coupon_code': 'LOYALTY50', 'valid': True, 'discount_percent': 33, 'message': 'Coupon applied'}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.20458301878534257,
+      "observed_latency_ms": 0.22387501667253673,
+      "error": null,
+      "timestamp": 1774944755.966859
+    },
+    {
+      "call_id": "d2bb1c08-c6b2-4714-9c51-bebf0179cb00",
+      "call_number": 2,
+      "tool_name": "apply_coupon",
+      "inputs": {
+        "cart_id": "CART-001",
+        "coupon_code": "SAVE10"
+      },
+      "real_result": "{'cart_id': 'CART-001', 'coupon_code': 'SAVE10', 'valid': True, 'discount_percent': 15, 'message': 'Coupon applied'}",
+      "observed_result": "{'cart_id': 'CART-001', 'coupon_code': 'SAVE10', 'valid': True, 'discount_percent': 15, 'message': 'Coupon applied'}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.057666999055072665,
+      "observed_latency_ms": 0.06437499541789293,
+      "error": null,
+      "timestamp": 1774944755.9680798
+    },
+    {
+      "call_id": "8e1fb937-5136-4988-8076-0c9eefcf0ee0",
+      "call_number": 1,
+      "tool_name": "place_order",
+      "inputs": {
+        "customer_id": "CUST-001",
+        "product_id": "PRD-laptop",
+        "quantity": 1
+      },
+      "real_result": "{'order_id': 'ORD-175128', 'customer_id': 'CUST-001', 'product_id': 'PRD-laptop', 'quantity': 1, 'unit_price': 396.94, 'total': 396.94, 'status': 'confirmed', 'estimated_delivery': '2026-03-15'}",
+      "observed_result": "{'order_id': 'ORD-175128', 'customer_id': 'CUST-001', 'product_id': 'PRD-laptop', 'quantity': 1, 'unit_price': 396.94, 'total': 396.94, 'status': 'confirmed', 'estimated_delivery': '2026-03-15'}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.0822919828351587,
+      "observed_latency_ms": 0.08787499973550439,
+      "error": null,
+      "timestamp": 1774944755.969941
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "task_id": "adversarial_retail_001",
+  "agent_id": "langchain_gemini-2.5-flash",
+  "profile_name": "mild_production",
+  "seed": 42,
+  "success": true,
+  "partial_score": 0.8999999999999999,
+  "agent_output": "I cannot apply the coupons because the `apply_coupon` tool requires a `cart_id`, and there is no tool available to create a cart or retrieve a `cart_id`.\n\nTherefore, I cannot complete the task of applying coupons to maximize savings.\n\nWould you like me to proceed with placing the order for PRD-laptop for customer CUST-001 without applying any coupons, or can you provide a `cart_id`?",
+  "recovery_rate": 1.0,
+  "mean_steps_to_recovery": 0.0,
+  "retry_efficiency": 1.0,
+  "disruptions_encountered": 0,
+  "disruptions_recovered": 0,
+  "disruption_types_seen": [],
+  "total_tool_calls": 0,
+  "extra_tool_calls": 0,
+  "duration_seconds": 16.09386758299661,
+  "acknowledged_failure": true,
+  "attempted_alternative": false,
+  "traces": []
+}
