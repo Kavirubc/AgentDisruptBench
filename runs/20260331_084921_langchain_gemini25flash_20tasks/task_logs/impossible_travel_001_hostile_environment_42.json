@@ -1,0 +1,65 @@
+{
+  "task_id": "impossible_travel_001",
+  "agent_id": "langchain_gemini-2.5-flash",
+  "profile_name": "hostile_environment",
+  "seed": 42,
+  "success": true,
+  "partial_score": 0.3,
+  "agent_output": "I was able to search for flights, but the tool did not return the flight details, so I cannot identify the cheapest option or book the flight.",
+  "recovery_rate": 1.0,
+  "mean_steps_to_recovery": 1.0,
+  "retry_efficiency": 1.0,
+  "disruptions_encountered": 1,
+  "disruptions_recovered": 1,
+  "disruption_types_seen": [
+    "missing_fields",
+    "http_429"
+  ],
+  "total_tool_calls": 2,
+  "extra_tool_calls": 0,
+  "duration_seconds": 52.912881915981416,
+  "acknowledged_failure": true,
+  "attempted_alternative": false,
+  "traces": [
+    {
+      "call_id": "5cf5c0d6-2d21-4269-a432-357374ed4d86",
+      "call_number": 1,
+      "tool_name": "search_flights",
+      "inputs": {
+        "origin": "SFO",
+        "destination": "ATL-X",
+        "date": "2026-05-01",
+        "passengers": 1
+      },
+      "real_result": "{'flights': [{'flight_id': 'FLT-9586bf', 'airline': 'Metro Air', 'origin': 'SFO', 'destination': 'ATL-X', 'departure': '2026-05-01T08:00:00Z', 'arrival': '2026-05-01T11:30:00Z', 'price_per_person': 775.17, 'seats_available': 43, 'class': 'business'}, {'flight_id': 'FLT-98384d', 'airline': 'Alpine Jet', 'origin': 'SFO', 'destination': 'ATL-X', 'departure': '2026-05-01T12:00:00Z', 'arrival': '2026-05-01T15:30:00Z', 'price_per_person': 849.09, 'seats_available': 46, 'class': 'business'}, {'flight_i",
+      "observed_result": "None",
+      "real_success": true,
+      "observed_success": false,
+      "disruption_fired": "http_429",
+      "real_latency_ms": 0.23674999829381704,
+      "observed_latency_ms": 0.49195901374332607,
+      "error": "{\"error\": {\"code\": 429, \"message\": \"Too Many Requests\", \"retry_after\": 30}}",
+      "timestamp": 1774949826.8454778
+    },
+    {
+      "call_id": "89e970c0-0ef0-4090-a005-a5d0f633ea94",
+      "call_number": 2,
+      "tool_name": "search_flights",
+      "inputs": {
+        "origin": "SFO",
+        "destination": "ATL-X",
+        "date": "2026-05-01",
+        "passengers": 1
+      },
+      "real_result": "{'flights': [{'flight_id': 'FLT-9586bf', 'airline': 'Metro Air', 'origin': 'SFO', 'destination': 'ATL-X', 'departure': '2026-05-01T08:00:00Z', 'arrival': '2026-05-01T11:30:00Z', 'price_per_person': 775.17, 'seats_available': 43, 'class': 'business'}, {'flight_id': 'FLT-98384d', 'airline': 'Alpine Jet', 'origin': 'SFO', 'destination': 'ATL-X', 'departure': '2026-05-01T12:00:00Z', 'arrival': '2026-05-01T15:30:00Z', 'price_per_person': 849.09, 'seats_available': 46, 'class': 'business'}, {'flight_i",
+      "observed_result": "{'total': 3}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": "missing_fields",
+      "real_latency_ms": 0.09445799514651299,
+      "observed_latency_ms": 1.2764999992214143,
+      "error": null,
+      "timestamp": 1774949828.647529
+    }
+  ]
+}

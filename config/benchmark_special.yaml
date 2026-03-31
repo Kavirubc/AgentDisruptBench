@@ -5,7 +5,28 @@
 
 profiles: [clean, hostile_environment]
 domains: null
+tasks:
+  - adversarial_retail_001
+  - adversarial_retail_002
+  - adversarial_travel_001
+  - adversarial_travel_002
+  - adversarial_finance_001
+  - adversarial_finance_002
+  - adversarial_devops_001
+  - adversarial_devops_002
+  - impossible_retail_001
+  - impossible_retail_002
+  - impossible_travel_001
+  - impossible_travel_002
+  - impossible_finance_001
+  - impossible_finance_002
+  - impossible_devops_001
+  - impossible_devops_002
+  - handover_retail_001
+  - handover_travel_001
+  - handover_finance_001
+  - handover_devops_001
 max_difficulty: 5
 seeds: [42]
-output_dir: results/special
+output_dir: runs/special
 verbose: false

@@ -1,0 +1,138 @@
+{
+  "task_id": "adversarial_devops_002",
+  "agent_id": "langchain_gemini-2.5-flash",
+  "profile_name": "hostile_environment",
+  "seed": 42,
+  "success": true,
+  "partial_score": 1.0,
+  "agent_output": "An incident (INC-837dfb) has been created for 'Service API' with high severity, titled \"Service API experiencing slow responses due to downstream dependency issues, high memory usage, and database timeouts.\" The incident has been assigned to 'oncall-team-alpha'.\n\nThe diagnosis revealed the following:\n*   **Service Health**: The service was reported as healthy with a response time of 79ms.\n*   **Logs**: Multiple error logs were found, including \"Health check failed for downstream dependency\", \"Memory usage above 90% threshold\", and \"Connection timeout to database\".\n*   **Metrics**: Latency metrics over the last 60 minutes showed an average of 57.52ms with a peak of 73.3ms, indicating performance degradation.",
+  "recovery_rate": 1.0,
+  "mean_steps_to_recovery": 1.0,
+  "retry_efficiency": 1.0,
+  "disruptions_encountered": 2,
+  "disruptions_recovered": 2,
+  "disruption_types_seen": [
+    "missing_fields",
+    "timeout",
+    "http_429",
+    "schema_drift"
+  ],
+  "total_tool_calls": 6,
+  "extra_tool_calls": 2,
+  "duration_seconds": 15.441903083003126,
+  "acknowledged_failure": true,
+  "attempted_alternative": true,
+  "traces": [
+    {
+      "call_id": "911039b7-20b6-4011-910d-ca7a777169f4",
+      "call_number": 1,
+      "tool_name": "get_service_health",
+      "inputs": {
+        "service_name": "Service API"
+      },
+      "real_result": "{'service': 'Service API', 'status': 'healthy', 'uptime_percent': 98.3, 'response_time_ms': 79, 'active_connections': 147, 'last_checked': '2026-03-09T12:00:00Z'}",
+      "observed_result": "None",
+      "real_success": true,
+      "observed_success": false,
+      "disruption_fired": "http_429",
+      "real_latency_ms": 0.03591601853258908,
+      "observed_latency_ms": 0.10295800166204572,
+      "error": "{\"error\": {\"code\": 429, \"message\": \"Too Many Requests\", \"retry_after\": 30}}",
+      "timestamp": 1774947100.185785
+    },
+    {
+      "call_id": "b731b441-6ca6-4506-befc-c53f0bce7fec",
+      "call_number": 2,
+      "tool_name": "get_service_health",
+      "inputs": {
+        "service_name": "Service API"
+      },
+      "real_result": "{'service': 'Service API', 'status': 'healthy', 'uptime_percent': 98.3, 'response_time_ms': 79, 'active_connections': 147, 'last_checked': '2026-03-09T12:00:00Z'}",
+      "observed_result": "{'status': 'healthy', 'uptime_percent': 98.3, 'response_time_ms': 79, 'active_connections': 147}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": "missing_fields",
+      "real_latency_ms": 0.040207989513874054,
+      "observed_latency_ms": 0.09929199586622417,
+      "error": null,
+      "timestamp": 1774947102.190954
+    },
+    {
+      "call_id": "59ac5cdb-8cd3-4ae5-8a3c-06027f3ce839",
+      "call_number": 1,
+      "tool_name": "get_logs",
+      "inputs": {
+        "service_name": "Service API",
+        "severity": "error",
+        "limit": 5
+      },
+      "real_result": "{'service': 'Service API', 'logs': [{'log_id': 'LOG-19c745', 'severity': 'error', 'message': 'Health check failed for downstream dependency', 'timestamp': '2026-03-09T11:30:00Z', 'source': 'Service API'}, {'log_id': 'LOG-1e3cdf', 'severity': 'error', 'message': 'Certificate renewal completed successfully', 'timestamp': '2026-03-09T10:30:00Z', 'source': 'Service API'}, {'log_id': 'LOG-736cd2', 'severity': 'error', 'message': 'Memory usage above 90% threshold', 'timestamp': '2026-03-09T09:30:00Z',",
+      "observed_result": "None",
+      "real_success": true,
+      "observed_success": false,
+      "disruption_fired": "timeout",
+      "real_latency_ms": 0.07866701344028115,
+      "observed_latency_ms": 0.14525000005960464,
+      "error": "{\"error\": {\"code\": \"TIMEOUT\", \"message\": \"Tool 'get_logs' timed out after 10000ms\", \"delay_ms\": 10000}}",
+      "timestamp": 1774947103.623112
+    },
+    {
+      "call_id": "a38e0173-f7a7-47aa-94fc-d40259fe7b59",
+      "call_number": 2,
+      "tool_name": "get_logs",
+      "inputs": {
+        "service_name": "Service API",
+        "severity": "error",
+        "limit": 5
+      },
+      "real_result": "{'service': 'Service API', 'logs': [{'log_id': 'LOG-19c745', 'severity': 'error', 'message': 'Health check failed for downstream dependency', 'timestamp': '2026-03-09T11:30:00Z', 'source': 'Service API'}, {'log_id': 'LOG-1e3cdf', 'severity': 'error', 'message': 'Certificate renewal completed successfully', 'timestamp': '2026-03-09T10:30:00Z', 'source': 'Service API'}, {'log_id': 'LOG-736cd2', 'severity': 'error', 'message': 'Memory usage above 90% threshold', 'timestamp': '2026-03-09T09:30:00Z',",
+      "observed_result": "{'service': 'Service API', 'logs': [{'log_id': 'LOG-19c745', 'severity': 'error', 'message': 'Health check failed for downstream dependency', 'timestamp': '2026-03-09T11:30:00Z', 'source': 'Service API'}, {'log_id': 'LOG-1e3cdf', 'severity': 'error', 'message': 'Certificate renewal completed successfully', 'timestamp': '2026-03-09T10:30:00Z', 'source': 'Service API'}, {'log_id': 'LOG-736cd2', 'severity': 'error', 'message': 'Memory usage above 90% threshold', 'timestamp': '2026-03-09T09:30:00Z',",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.047582987463101745,
+      "observed_latency_ms": 0.0663330138195306,
+      "error": null,
+      "timestamp": 1774947104.949537
+    },
+    {
+      "call_id": "0b421438-fdf2-48bd-9d04-b40d3ccfa415",
+      "call_number": 1,
+      "tool_name": "get_metrics",
+      "inputs": {
+        "service_name": "Service API",
+        "metric_type": "latency",
+        "period_minutes": 60
+      },
+      "real_result": "{'service': 'Service API', 'metric_type': 'latency', 'unit': 'ms', 'data_points': [{'timestamp': '2026-03-09T11:00:00Z', 'value': 55.7}, {'timestamp': '2026-03-09T12:00:00Z', 'value': 71.2}, {'timestamp': '2026-03-09T13:00:00Z', 'value': 18.2}, {'timestamp': '2026-03-09T14:00:00Z', 'value': 72.0}, {'timestamp': '2026-03-09T15:00:00Z', 'value': 73.3}, {'timestamp': '2026-03-09T16:00:00Z', 'value': 54.7}], 'average': 57.52, 'peak': 73.3}",
+      "observed_result": "{'service': 'Service API', 'metric_type': 'latency', 'unit': 'ms', 'data_points': [{'timestamp': '2026-03-09T11:00:00Z', 'value': 55.7}, {'timestamp': '2026-03-09T12:00:00Z', 'value': 71.2}, {'timestamp': '2026-03-09T13:00:00Z', 'value': 18.2}, {'timestamp': '2026-03-09T14:00:00Z', 'value': 72.0}, {'timestamp': '2026-03-09T15:00:00Z', 'value': 73.3}, {'timestamp': '2026-03-09T16:00:00Z', 'value': 54.7}], 'average': 57.52, 'peak': 73.3}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.08833300671540201,
+      "observed_latency_ms": 0.14220800949260592,
+      "error": null,
+      "timestamp": 1774947107.1895108
+    },
+    {
+      "call_id": "93112bbf-7699-413a-ad8c-2f6197d239fd",
+      "call_number": 1,
+      "tool_name": "create_incident",
+      "inputs": {
+        "title": "Service API experiencing slow responses due to downstream dependency issues, high memory usage, and database timeouts.",
+        "severity": "high",
+        "service_name": "Service API",
+        "description": "Investigation revealed multiple error logs: 'Health check failed for downstream dependency', 'Memory usage above 90% threshold', and 'Connection timeout to database'. Latency metrics show an average of 57.52ms with a peak of 73.3ms over the last hour, indicating performance degradation."
+      },
+      "real_result": "{'incident_id': 'INC-837dfb', 'title': 'Service API experiencing slow responses due to downstream dependency issues, high memory usage, and database timeouts.', 'severity': 'high', 'service': 'Service API', 'status': 'open', 'assigned_to': 'oncall-team-alpha', 'created_at': '2026-03-09T12:10:00Z'}",
+      "observed_result": "{'title': 'Service API experiencing slow responses due to downstream dependency issues, high memory usage, and database timeouts.', 'severity': 'high', 'service': 'Service API', 'assigned_to': 'oncall-team-alpha', 'created_at': '2026-03-09T12:10:00Z', 'status_updated': 'open', 'incident_id_v2': 'INC-837dfb'}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": "schema_drift",
+      "real_latency_ms": 0.22229098249226809,
+      "observed_latency_ms": 0.36229100078344345,
+      "error": null,
+      "timestamp": 1774947110.995744
+    }
+  ]
+}

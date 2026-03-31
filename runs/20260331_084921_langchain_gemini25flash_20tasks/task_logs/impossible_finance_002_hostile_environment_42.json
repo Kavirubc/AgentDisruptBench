@@ -1,0 +1,123 @@
+{
+  "task_id": "impossible_finance_002",
+  "agent_id": "langchain_gemini-2.5-flash",
+  "profile_name": "hostile_environment",
+  "seed": 42,
+  "success": false,
+  "partial_score": 0.4,
+  "agent_output": "I attempted to transfer $500 from ACC-001 to ACC-CLOSED-999. Although the `transfer_funds` tool initially reported the transfer as \"completed\" after a retry, verification of the transaction history for both ACC-001 and ACC-CLOSED-999 shows no record of the $500 transfer. Therefore, the transfer did not go through, likely due to the destination account being closed.",
+  "recovery_rate": 1.0,
+  "mean_steps_to_recovery": 1.0,
+  "retry_efficiency": 1.0,
+  "disruptions_encountered": 1,
+  "disruptions_recovered": 1,
+  "disruption_types_seen": [
+    "missing_fields",
+    "http_429",
+    "schema_drift"
+  ],
+  "total_tool_calls": 5,
+  "extra_tool_calls": 3,
+  "duration_seconds": 13.15624216699507,
+  "acknowledged_failure": false,
+  "attempted_alternative": true,
+  "traces": [
+    {
+      "call_id": "0303f9ad-7b12-4f1f-bf4a-ebf2afd669ee",
+      "call_number": 1,
+      "tool_name": "transfer_funds",
+      "inputs": {
+        "from_account": "ACC-001",
+        "to_account": "ACC-CLOSED-999",
+        "amount": 500.0,
+        "currency": "USD"
+      },
+      "real_result": "{'transfer_id': 'TXF-be2dd1', 'from_account': 'ACC-001', 'to_account': 'ACC-CLOSED-999', 'amount': 500.0, 'currency': 'USD', 'status': 'completed', 'fee': 0.5, 'timestamp': '2026-03-09T11:05:00Z'}",
+      "observed_result": "None",
+      "real_success": true,
+      "observed_success": false,
+      "disruption_fired": "http_429",
+      "real_latency_ms": 0.18675002502277493,
+      "observed_latency_ms": 0.3029590006917715,
+      "error": "{\"error\": {\"code\": 429, \"message\": \"Too Many Requests\", \"retry_after\": 30}}",
+      "timestamp": 1774949863.834532
+    },
+    {
+      "call_id": "5a34b63a-90aa-4f85-af1a-3a14f8141b10",
+      "call_number": 2,
+      "tool_name": "transfer_funds",
+      "inputs": {
+        "from_account": "ACC-001",
+        "to_account": "ACC-CLOSED-999",
+        "amount": 500.0,
+        "currency": "USD"
+      },
+      "real_result": "{'transfer_id': 'TXF-be2dd1', 'from_account': 'ACC-001', 'to_account': 'ACC-CLOSED-999', 'amount': 500.0, 'currency': 'USD', 'status': 'completed', 'fee': 0.5, 'timestamp': '2026-03-09T11:05:00Z'}",
+      "observed_result": "{'to_account': 'ACC-CLOSED-999', 'amount': 500.0, 'currency': 'USD', 'status': 'completed'}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": "missing_fields",
+      "real_latency_ms": 0.4369999805931002,
+      "observed_latency_ms": 0.5119999987073243,
+      "error": null,
+      "timestamp": 1774949867.159604
+    },
+    {
+      "call_id": "bfb239f2-3ae2-4b62-b961-4c8613a4e02e",
+      "call_number": 1,
+      "tool_name": "get_transaction_history",
+      "inputs": {
+        "account_id": "ACC-001",
+        "days": 30,
+        "limit": 1
+      },
+      "real_result": "{'account_id': 'ACC-001', 'transactions': [{'transaction_id': 'TXN-2eb2ac', 'type': 'transfer', 'amount': 318.21, 'description': 'Online Purchase', 'date': '2026-03-09', 'balance_after': 23805.0}], 'total': 1}",
+      "observed_result": "{'account_id': 'ACC-001', 'transactions': [{'transaction_id': 'TXN-2eb2ac', 'type': 'transfer', 'amount': 318.21, 'description': 'Online Purchase', 'date': '2026-03-09', 'balance_after': 23805.0}], 'total': 1}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.07908401312306523,
+      "observed_latency_ms": 0.10375000420026481,
+      "error": null,
+      "timestamp": 1774949869.028467
+    },
+    {
+      "call_id": "7eaaabfa-bc79-4e17-a8bd-424dbf1c822c",
+      "call_number": 2,
+      "tool_name": "get_transaction_history",
+      "inputs": {
+        "account_id": "ACC-001",
+        "days": 30,
+        "limit": 5
+      },
+      "real_result": "{'account_id': 'ACC-001', 'transactions': [{'transaction_id': 'TXN-2eb2ac', 'type': 'transfer', 'amount': 318.21, 'description': 'Online Purchase', 'date': '2026-03-09', 'balance_after': 23805.0}, {'transaction_id': 'TXN-a3d283', 'type': 'payment', 'amount': 500.36, 'description': 'Salary Deposit', 'date': '2026-03-08', 'balance_after': 15536.15}, {'transaction_id': 'TXN-2127b4', 'type': 'debit', 'amount': 38.52, 'description': 'Utility Bill', 'date': '2026-03-07', 'balance_after': 14438.75}, {'",
+      "observed_result": "{'account_id': 'ACC-001', 'transactions': [{'transaction_id': 'TXN-2eb2ac', 'type': 'transfer', 'amount': 318.21, 'description': 'Online Purchase', 'date': '2026-03-09', 'balance_after': 23805.0}, {'transaction_id': 'TXN-a3d283', 'type': 'payment', 'amount': 500.36, 'description': 'Salary Deposit', 'date': '2026-03-08', 'balance_after': 15536.15}, {'transaction_id': 'TXN-2127b4', 'type': 'debit', 'amount': 38.52, 'description': 'Utility Bill', 'date': '2026-03-07', 'balance_after': 14438.75}, {'",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.09620899800211191,
+      "observed_latency_ms": 0.11970900231972337,
+      "error": null,
+      "timestamp": 1774949871.1055539
+    },
+    {
+      "call_id": "e62b5c11-7aa3-4052-9cc6-b2f2cab79d1a",
+      "call_number": 3,
+      "tool_name": "get_transaction_history",
+      "inputs": {
+        "account_id": "ACC-CLOSED-999",
+        "days": 30,
+        "limit": 10
+      },
+      "real_result": "{'account_id': 'ACC-CLOSED-999', 'transactions': [{'transaction_id': 'TXN-53b56b', 'type': 'credit', 'amount': 1715.31, 'description': 'Salary Deposit', 'date': '2026-03-09', 'balance_after': 19315.1}, {'transaction_id': 'TXN-3871e5', 'type': 'credit', 'amount': 1689.78, 'description': 'Online Purchase', 'date': '2026-03-08', 'balance_after': 4444.15}, {'transaction_id': 'TXN-fea3ee', 'type': 'transfer', 'amount': 1238.31, 'description': 'Restaurant', 'date': '2026-03-07', 'balance_after': 17079",
+      "observed_result": "{'account_id': 'ACC-CLOSED-999', 'transactions': [{'transaction_id': 'TXN-53b56b', 'type': 'credit', 'amount': 1715.31, 'description': 'Salary Deposit', 'date': '2026-03-09', 'balance_after': 19315.1}, {'transaction_id': 'TXN-3871e5', 'type': 'credit', 'amount': 1689.78, 'description': 'Online Purchase', 'date': '2026-03-08', 'balance_after': 4444.15}, {'transaction_id': 'TXN-fea3ee', 'type': 'transfer', 'amount': 1238.31, 'description': 'Restaurant', 'date': '2026-03-07', 'balance_after': 17079",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": "schema_drift",
+      "real_latency_ms": 0.17374998424202204,
+      "observed_latency_ms": 0.3439169959165156,
+      "error": null,
+      "timestamp": 1774949872.8757088
+    }
+  ]
+}

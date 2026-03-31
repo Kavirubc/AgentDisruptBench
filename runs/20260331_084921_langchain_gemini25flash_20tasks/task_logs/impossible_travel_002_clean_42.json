@@ -1,0 +1,61 @@
+{
+  "task_id": "impossible_travel_002",
+  "agent_id": "langchain_gemini-2.5-flash",
+  "profile_name": "clean",
+  "seed": 42,
+  "success": false,
+  "partial_score": 0.0,
+  "agent_output": "I have successfully booked a flight from LAX to JFK on 2020-01-15 for \"Time Traveler\". The flight is with Oceanic Airlines, flight ID FLT-83e1ea, and the total price is 518.42. Your booking ID is BKG-6885fd and the confirmation code is CNF-6885FD.",
+  "recovery_rate": 1.0,
+  "mean_steps_to_recovery": 0.0,
+  "retry_efficiency": 1.0,
+  "disruptions_encountered": 0,
+  "disruptions_recovered": 0,
+  "disruption_types_seen": [],
+  "total_tool_calls": 2,
+  "extra_tool_calls": null,
+  "duration_seconds": 6.076078625017544,
+  "acknowledged_failure": false,
+  "attempted_alternative": false,
+  "traces": [
+    {
+      "call_id": "b74f8206-5202-4693-83b8-a0e48c5b8b46",
+      "call_number": 1,
+      "tool_name": "search_flights",
+      "inputs": {
+        "origin": "LAX",
+        "destination": "JFK",
+        "date": "2020-01-15",
+        "passengers": 1
+      },
+      "real_result": "{'flights': [{'flight_id': 'FLT-6183ab', 'airline': 'Metro Air', 'origin': 'LAX', 'destination': 'JFK', 'departure': '2020-01-15T08:00:00Z', 'arrival': '2020-01-15T11:30:00Z', 'price_per_person': 1112.74, 'seats_available': 42, 'class': 'business'}, {'flight_id': 'FLT-de58a7', 'airline': 'Pacific Wings', 'origin': 'LAX', 'destination': 'JFK', 'departure': '2020-01-15T12:00:00Z', 'arrival': '2020-01-15T15:30:00Z', 'price_per_person': 347.61, 'seats_available': 12, 'class': 'first'}, {'flight_id':",
+      "observed_result": "{'flights': [{'flight_id': 'FLT-6183ab', 'airline': 'Metro Air', 'origin': 'LAX', 'destination': 'JFK', 'departure': '2020-01-15T08:00:00Z', 'arrival': '2020-01-15T11:30:00Z', 'price_per_person': 1112.74, 'seats_available': 42, 'class': 'business'}, {'flight_id': 'FLT-de58a7', 'airline': 'Pacific Wings', 'origin': 'LAX', 'destination': 'JFK', 'departure': '2020-01-15T12:00:00Z', 'arrival': '2020-01-15T15:30:00Z', 'price_per_person': 347.61, 'seats_available': 12, 'class': 'first'}, {'flight_id':",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.09050001972354949,
+      "observed_latency_ms": 0.10070801363326609,
+      "error": null,
+      "timestamp": 1774949832.3137338
+    },
+    {
+      "call_id": "0a098406-1e7e-4866-8102-452821347308",
+      "call_number": 1,
+      "tool_name": "book_flight",
+      "inputs": {
+        "flight_id": "FLT-83e1ea",
+        "passenger_name": "Time Traveler",
+        "passenger_count": 1
+      },
+      "real_result": "{'booking_id': 'BKG-6885fd', 'flight_id': 'FLT-83e1ea', 'passenger_name': 'Time Traveler', 'passenger_count': 1, 'total_price': 518.42, 'status': 'confirmed', 'confirmation_code': 'CNF-6885FD'}",
+      "observed_result": "{'booking_id': 'BKG-6885fd', 'flight_id': 'FLT-83e1ea', 'passenger_name': 'Time Traveler', 'passenger_count': 1, 'total_price': 518.42, 'status': 'confirmed', 'confirmation_code': 'CNF-6885FD'}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.15508299111388624,
+      "observed_latency_ms": 0.16254099318757653,
+      "error": null,
+      "timestamp": 1774949834.094082
+    }
+  ]
+}

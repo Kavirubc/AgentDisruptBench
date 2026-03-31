@@ -1,0 +1,75 @@
+{
+  "task_id": "adversarial_finance_002",
+  "agent_id": "langchain_gemini-2.5-flash",
+  "profile_name": "clean",
+  "seed": 42,
+  "success": false,
+  "partial_score": 0.7,
+  "agent_output": "The current exchange rate for USD to EUR is 1 USD = 2.37 EUR.\nThe current exchange rate for USD to GBP is 1 USD = 2.15 GBP.\n\nYour available USD balance is 10763.75 USD.\n\nTo cover both payments, you would need 10000 USD for the EUR conversion and 5000 USD for the GBP conversion, totaling 15000 USD.\n\nUnfortunately, your available USD balance of 10763.75 USD is insufficient to cover both payments in full. Please let me know how you would like to proceed.",
+  "recovery_rate": 1.0,
+  "mean_steps_to_recovery": 0.0,
+  "retry_efficiency": 1.0,
+  "disruptions_encountered": 0,
+  "disruptions_recovered": 0,
+  "disruption_types_seen": [],
+  "total_tool_calls": 3,
+  "extra_tool_calls": null,
+  "duration_seconds": 9.85140391701134,
+  "acknowledged_failure": false,
+  "attempted_alternative": false,
+  "traces": [
+    {
+      "call_id": "6ec87fc2-df81-4b3d-a223-d4d6c1ba5c06",
+      "call_number": 1,
+      "tool_name": "get_exchange_rate",
+      "inputs": {
+        "base_currency": "USD",
+        "target_currency": "GBP"
+      },
+      "real_result": "{'base_currency': 'USD', 'target_currency': 'GBP', 'rate': 2.15, 'inverse_rate': 0.465116, 'timestamp': '2026-03-09T12:00:00Z', 'source': 'ECB'}",
+      "observed_result": "{'base_currency': 'USD', 'target_currency': 'GBP', 'rate': 2.15, 'inverse_rate': 0.465116, 'timestamp': '2026-03-09T12:00:00Z', 'source': 'ECB'}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.022208987502381206,
+      "observed_latency_ms": 0.027542002499103546,
+      "error": null,
+      "timestamp": 1774947062.7565892
+    },
+    {
+      "call_id": "46f3406e-137b-40f3-b0cd-11a9d6981a0e",
+      "call_number": 2,
+      "tool_name": "get_exchange_rate",
+      "inputs": {
+        "base_currency": "USD",
+        "target_currency": "EUR"
+      },
+      "real_result": "{'base_currency': 'USD', 'target_currency': 'EUR', 'rate': 2.37, 'inverse_rate': 0.421941, 'timestamp': '2026-03-09T12:00:00Z', 'source': 'ECB'}",
+      "observed_result": "{'base_currency': 'USD', 'target_currency': 'EUR', 'rate': 2.37, 'inverse_rate': 0.421941, 'timestamp': '2026-03-09T12:00:00Z', 'source': 'ECB'}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.009874987881630659,
+      "observed_latency_ms": 0.01320798764936626,
+      "error": null,
+      "timestamp": 1774947062.7572632
+    },
+    {
+      "call_id": "90562a05-5c33-4525-9929-109ec3162546",
+      "call_number": 1,
+      "tool_name": "get_account_balance",
+      "inputs": {
+        "account_id": "USD_account"
+      },
+      "real_result": "{'account_id': 'USD_account', 'balance': 17734.66, 'currency': 'USD', 'available_balance': 10763.75, 'pending_transactions': 1, 'last_updated': '2026-03-09T11:00:00Z'}",
+      "observed_result": "{'account_id': 'USD_account', 'balance': 17734.66, 'currency': 'USD', 'available_balance': 10763.75, 'pending_transactions': 1, 'last_updated': '2026-03-09T11:00:00Z'}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.0439999857917428,
+      "observed_latency_ms": 0.05199998850002885,
+      "error": null,
+      "timestamp": 1774947064.25482
+    }
+  ]
+}

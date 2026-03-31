@@ -1,0 +1,118 @@
+{
+  "task_id": "impossible_retail_001",
+  "agent_id": "langchain_gemini-2.5-flash",
+  "profile_name": "hostile_environment",
+  "seed": 42,
+  "success": true,
+  "partial_score": 0.0,
+  "agent_output": "[Agent error: [Errno 54] Connection reset by peer]",
+  "recovery_rate": 1.0,
+  "mean_steps_to_recovery": 1.3333333333333333,
+  "retry_efficiency": 0.75,
+  "disruptions_encountered": 3,
+  "disruptions_recovered": 3,
+  "disruption_types_seen": [
+    "http_429",
+    "http_500",
+    "missing_fields",
+    "timeout",
+    "wrong_data"
+  ],
+  "total_tool_calls": 5,
+  "extra_tool_calls": 4,
+  "duration_seconds": 240.65800695802318,
+  "acknowledged_failure": true,
+  "attempted_alternative": false,
+  "traces": [
+    {
+      "call_id": "7172ded4-cd99-4ba9-b0a6-56d48ab65712",
+      "call_number": 1,
+      "tool_name": "search_products",
+      "inputs": {
+        "query": "Quantum Flux Capacitor QFC-9000",
+        "max_results": 5
+      },
+      "real_result": "{'products': [{'product_id': 'PRD-6023fd', 'name': 'Smart Thermostat', 'price': 68.31, 'currency': 'USD', 'in_stock': True, 'rating': 4.1}, {'product_id': 'PRD-c6483e', 'name': 'Wireless Sensor Kit', 'price': 169.74, 'currency': 'USD', 'in_stock': True, 'rating': 3.7}, {'product_id': 'PRD-5888b2', 'name': 'Portable Battery Pack', 'price': 188.69, 'currency': 'USD', 'in_stock': False, 'rating': 3.6}, {'product_id': 'PRD-bfa21e', 'name': 'USB-C Hub', 'price': 153.35, 'currency': 'USD', 'in_stock':",
+      "observed_result": "None",
+      "real_success": true,
+      "observed_success": false,
+      "disruption_fired": "http_429",
+      "real_latency_ms": 0.09762498666532338,
+      "observed_latency_ms": 0.17749998369254172,
+      "error": "{\"error\": {\"code\": 429, \"message\": \"Too Many Requests\", \"retry_after\": 30}}",
+      "timestamp": 1774947235.077665
+    },
+    {
+      "call_id": "2cadbd6e-c49a-4785-914d-849384ddbce2",
+      "call_number": 2,
+      "tool_name": "search_products",
+      "inputs": {
+        "query": "Quantum Flux Capacitor QFC-9000",
+        "max_results": 5
+      },
+      "real_result": "{'products': [{'product_id': 'PRD-6023fd', 'name': 'Smart Thermostat', 'price': 68.31, 'currency': 'USD', 'in_stock': True, 'rating': 4.1}, {'product_id': 'PRD-c6483e', 'name': 'Wireless Sensor Kit', 'price': 169.74, 'currency': 'USD', 'in_stock': True, 'rating': 3.7}, {'product_id': 'PRD-5888b2', 'name': 'Portable Battery Pack', 'price': 188.69, 'currency': 'USD', 'in_stock': False, 'rating': 3.6}, {'product_id': 'PRD-bfa21e', 'name': 'USB-C Hub', 'price': 153.35, 'currency': 'USD', 'in_stock':",
+      "observed_result": "{'total': 5, 'query': 'Quantum Flux Capacitor QFC-9000'}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": "missing_fields",
+      "real_latency_ms": 0.10929099516943097,
+      "observed_latency_ms": 0.2610000083222985,
+      "error": null,
+      "timestamp": 1774947236.6484191
+    },
+    {
+      "call_id": "2fbfc438-280d-46b8-9099-5013d9cdeda3",
+      "call_number": 3,
+      "tool_name": "search_products",
+      "inputs": {
+        "query": "Quantum Flux Capacitor QFC-9000",
+        "max_results": 1
+      },
+      "real_result": "{'products': [{'product_id': 'PRD-6023fd', 'name': 'Smart Thermostat', 'price': 68.31, 'currency': 'USD', 'in_stock': True, 'rating': 4.1}], 'total': 1, 'query': 'Quantum Flux Capacitor QFC-9000'}",
+      "observed_result": "None",
+      "real_success": true,
+      "observed_success": false,
+      "disruption_fired": "timeout",
+      "real_latency_ms": 0.08275001891888678,
+      "observed_latency_ms": 0.14958300744183362,
+      "error": "{\"error\": {\"code\": \"TIMEOUT\", \"message\": \"Tool 'search_products' timed out after 10000ms\", \"delay_ms\": 10000}}",
+      "timestamp": 1774947238.248289
+    },
+    {
+      "call_id": "52eee735-ea34-41cf-9f10-e545f9a49dac",
+      "call_number": 4,
+      "tool_name": "search_products",
+      "inputs": {
+        "query": "Quantum Flux Capacitor QFC-9000",
+        "max_results": 1
+      },
+      "real_result": "{'products': [{'product_id': 'PRD-6023fd', 'name': 'Smart Thermostat', 'price': 68.31, 'currency': 'USD', 'in_stock': True, 'rating': 4.1}], 'total': 1, 'query': 'Quantum Flux Capacitor QFC-9000'}",
+      "observed_result": "None",
+      "real_success": true,
+      "observed_success": false,
+      "disruption_fired": "http_500",
+      "real_latency_ms": 0.06541699985973537,
+      "observed_latency_ms": 0.12445801985450089,
+      "error": "{\"error\": {\"code\": 500, \"message\": \"Internal Server Error\"}}",
+      "timestamp": 1774947239.5971682
+    },
+    {
+      "call_id": "30f8a99f-c617-4c3f-abb8-60f743654aa2",
+      "call_number": 5,
+      "tool_name": "search_products",
+      "inputs": {
+        "query": "Quantum Flux Capacitor QFC-9000",
+        "max_results": 1
+      },
+      "real_result": "{'products': [{'product_id': 'PRD-6023fd', 'name': 'Smart Thermostat', 'price': 68.31, 'currency': 'USD', 'in_stock': True, 'rating': 4.1}], 'total': 1, 'query': 'Quantum Flux Capacitor QFC-9000'}",
+      "observed_result": "{'products': [{'product_id': 'PRD-6023fd [MODIFIED]', 'name': 'WRONG_Smart Thermostat', 'price': 36.36, 'currency': 'USD [MODIFIED]', 'in_stock': False, 'rating': -52.84}], 'total': 564, 'query': '0009-CFQ roticapaC xulF mutnauQ'}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": "wrong_data",
+      "real_latency_ms": 0.06879097782075405,
+      "observed_latency_ms": 0.2874999772757292,
+      "error": null,
+      "timestamp": 1774947241.032408
+    }
+  ]
+}

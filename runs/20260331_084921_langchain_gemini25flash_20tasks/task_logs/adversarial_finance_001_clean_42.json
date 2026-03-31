@@ -1,0 +1,62 @@
+{
+  "task_id": "adversarial_finance_001",
+  "agent_id": "langchain_gemini-2.5-flash",
+  "profile_name": "clean",
+  "seed": 42,
+  "success": false,
+  "partial_score": 0.6000000000000001,
+  "agent_output": "I have successfully completed the following transfers:\n1. Transferred $4000 from checking account (ACC-001) to savings account (ACC-002).\n2. Transferred $1000 from savings account (ACC-002) to investment account (ACC-003).",
+  "recovery_rate": 1.0,
+  "mean_steps_to_recovery": 0.0,
+  "retry_efficiency": 1.0,
+  "disruptions_encountered": 0,
+  "disruptions_recovered": 0,
+  "disruption_types_seen": [],
+  "total_tool_calls": 2,
+  "extra_tool_calls": null,
+  "duration_seconds": 5.832962790998863,
+  "acknowledged_failure": false,
+  "attempted_alternative": false,
+  "traces": [
+    {
+      "call_id": "7b474390-9a19-472e-902f-332d8c4ff378",
+      "call_number": 1,
+      "tool_name": "transfer_funds",
+      "inputs": {
+        "from_account": "ACC-001",
+        "to_account": "ACC-002",
+        "amount": 4000.0,
+        "currency": "USD"
+      },
+      "real_result": "{'transfer_id': 'TXF-0ba577', 'from_account': 'ACC-001', 'to_account': 'ACC-002', 'amount': 4000.0, 'currency': 'USD', 'status': 'completed', 'fee': 4.0, 'timestamp': '2026-03-09T11:05:00Z'}",
+      "observed_result": "{'transfer_id': 'TXF-0ba577', 'from_account': 'ACC-001', 'to_account': 'ACC-002', 'amount': 4000.0, 'currency': 'USD', 'status': 'completed', 'fee': 4.0, 'timestamp': '2026-03-09T11:05:00Z'}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.0772500061430037,
+      "observed_latency_ms": 0.08870800957083702,
+      "error": null,
+      "timestamp": 1774947050.571918
+    },
+    {
+      "call_id": "b3be879f-bd3a-4033-b934-f0020fc6c230",
+      "call_number": 2,
+      "tool_name": "transfer_funds",
+      "inputs": {
+        "from_account": "ACC-002",
+        "to_account": "ACC-003",
+        "amount": 1000.0,
+        "currency": "USD"
+      },
+      "real_result": "{'transfer_id': 'TXF-bb7856', 'from_account': 'ACC-002', 'to_account': 'ACC-003', 'amount': 1000.0, 'currency': 'USD', 'status': 'completed', 'fee': 1.0, 'timestamp': '2026-03-09T11:05:00Z'}",
+      "observed_result": "{'transfer_id': 'TXF-bb7856', 'from_account': 'ACC-002', 'to_account': 'ACC-003', 'amount': 1000.0, 'currency': 'USD', 'status': 'completed', 'fee': 1.0, 'timestamp': '2026-03-09T11:05:00Z'}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.12429198250174522,
+      "observed_latency_ms": 0.13320898870006204,
+      "error": null,
+      "timestamp": 1774947052.109875
+    }
+  ]
+}
