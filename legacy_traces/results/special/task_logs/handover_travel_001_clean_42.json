@@ -1,0 +1,21 @@
+{
+  "task_id": "handover_travel_001",
+  "agent_id": "rac_gpt-5-mini",
+  "profile_name": "clean",
+  "seed": 42,
+  "success": false,
+  "partial_score": 0.2,
+  "agent_output": "I can help \u2014 but I need one thing before I run the flight search: what date (and roughly what time window) do you want the child to travel SFO \u2192 JFK on?\n\nAlso important notes and what I\u2019ll need if you want me to try to book or to prepare next steps:\n- Unaccompanied minor (UM) reservations almost always must be completed directly with the airline by phone or at the airport. That means I can search for available flights and identify good options, but any final UM booking and the UM service registration will require you to call the airline (or visit their ticket counter).\n- If you want me to attempt a standard booking with the available book_flight tool, I can do that, but it will not complete the required UM paperwork and could be blocked/invalid for an 8\u2011year\u2011old. I\u2019ll warn you if I try to place a booking that needs follow-up with the airline.\n- To search and then prepare the UM booking call, please tell me:\n  - Travel date (required)\n  - Preferred departure time window (morning/afternoon/evening or specific times)\n  - Any airline preference (Delta/United/American/JetBlue/etc.) or flexible\n  - Whether you want nonstop only or are OK with 1+ stops\n  - The child\u2019s full name and date of birth only if you want me to attempt to place a booking (I can search without personal info)\n\nIf you provide the date and preferences, I\u2019ll:\n1) Search for flights SFO \u2192 JFK on that date and show the best nonstop and one\u2011stop options.\n2) Recommend the best option(s) for an unaccompanied minor (nonstop preferred, earliest arrival with least connections).\n3) If you ask, I\u2019ll attempt to place a booking with the available tool and then give you the exact next steps and a script to call the airline to register the UM service and finalize the reservation (or I will remind you that the booking must be finished by phone).\n\nWhich date and preferences would you like me to use?",
+  "recovery_rate": 1.0,
+  "mean_steps_to_recovery": 0.0,
+  "retry_efficiency": 1.0,
+  "disruptions_encountered": 0,
+  "disruptions_recovered": 0,
+  "disruption_types_seen": [],
+  "total_tool_calls": 0,
+  "extra_tool_calls": null,
+  "duration_seconds": 10.483262167006615,
+  "acknowledged_failure": false,
+  "attempted_alternative": false,
+  "traces": []
+}

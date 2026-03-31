@@ -1,0 +1,79 @@
+{
+  "task_id": "devops_012",
+  "agent_id": "langchain_gemini-2.5-flash",
+  "profile_name": "hostile_environment",
+  "seed": 42,
+  "success": false,
+  "partial_score": 0.0,
+  "agent_output": "[Agent error: {\"error\": {\"code\": 429, \"message\": \"Too Many Requests\", \"retry_after\": 30}}]",
+  "recovery_rate": 0.0,
+  "mean_steps_to_recovery": 0.0,
+  "retry_efficiency": 0.0,
+  "disruptions_encountered": 2,
+  "disruptions_recovered": 0,
+  "disruption_types_seen": [
+    "http_500",
+    "http_429",
+    "null_response"
+  ],
+  "total_tool_calls": 3,
+  "extra_tool_calls": 0,
+  "duration_seconds": 2.223511000000144,
+  "acknowledged_failure": true,
+  "attempted_alternative": true,
+  "traces": [
+    {
+      "call_id": "a3a0d94b-78d3-4f87-a768-ce9c92cf54a3",
+      "call_number": 1,
+      "tool_name": "get_metrics",
+      "inputs": {
+        "service_name": "user-service",
+        "metric_name": "memory"
+      },
+      "real_result": "None",
+      "observed_result": "None",
+      "real_success": false,
+      "observed_success": false,
+      "disruption_fired": "http_429",
+      "real_latency_ms": 0.003124998329440132,
+      "observed_latency_ms": 0.04399999670567922,
+      "error": "{\"error\": {\"code\": 429, \"message\": \"Too Many Requests\", \"retry_after\": 30}}",
+      "timestamp": 1774590441.999679
+    },
+    {
+      "call_id": "57d83acc-b928-418f-85bd-41bb1674819e",
+      "call_number": 1,
+      "tool_name": "get_logs",
+      "inputs": {
+        "log_type": "error"
+      },
+      "real_result": "None",
+      "observed_result": "None",
+      "real_success": false,
+      "observed_success": true,
+      "disruption_fired": "null_response",
+      "real_latency_ms": 0.0020419975044205785,
+      "observed_latency_ms": 0.02183399919886142,
+      "error": null,
+      "timestamp": 1774590442.000024
+    },
+    {
+      "call_id": "bc35d2fc-3078-459e-97f9-7e75dd0a2f25",
+      "call_number": 2,
+      "tool_name": "get_metrics",
+      "inputs": {
+        "service_name": "user-service",
+        "metric_name": "cpu"
+      },
+      "real_result": "None",
+      "observed_result": "None",
+      "real_success": false,
+      "observed_success": false,
+      "disruption_fired": "http_500",
+      "real_latency_ms": 0.002415999915683642,
+      "observed_latency_ms": 0.01412499841535464,
+      "error": "{\"error\": {\"code\": 500, \"message\": \"Internal Server Error\"}}",
+      "timestamp": 1774590442.0003562
+    }
+  ]
+}

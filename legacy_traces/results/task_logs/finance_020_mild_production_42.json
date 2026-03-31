@@ -1,0 +1,165 @@
+{
+  "task_id": "finance_020",
+  "agent_id": "langchain_gemini-2.5-flash",
+  "profile_name": "mild_production",
+  "seed": 42,
+  "success": false,
+  "partial_score": 0.08,
+  "agent_output": "[Agent error: FinanceTools.validate_card() got an unexpected keyword argument 'account_id']",
+  "recovery_rate": 0.5,
+  "mean_steps_to_recovery": 4.0,
+  "retry_efficiency": 0.5,
+  "disruptions_encountered": 2,
+  "disruptions_recovered": 1,
+  "disruption_types_seen": [
+    "http_429",
+    "latency"
+  ],
+  "total_tool_calls": 8,
+  "extra_tool_calls": 4,
+  "duration_seconds": 4.592308582999976,
+  "acknowledged_failure": true,
+  "attempted_alternative": true,
+  "traces": [
+    {
+      "call_id": "0997f2ce-5821-49c3-afd4-06592caaca4f",
+      "call_number": 1,
+      "tool_name": "get_account_balance",
+      "inputs": {
+        "account_id": "ACC-001122"
+      },
+      "real_result": "{'account_id': 'ACC-001122', 'balance': 47215.58, 'currency': 'USD', 'available_balance': 9901.67, 'pending_transactions': 1, 'last_updated': '2026-03-09T11:00:00Z'}",
+      "observed_result": "None",
+      "real_success": true,
+      "observed_success": false,
+      "disruption_fired": "http_429",
+      "real_latency_ms": 0.04374999844003469,
+      "observed_latency_ms": 0.0903330001165159,
+      "error": "{\"error\": {\"code\": 429, \"message\": \"Too Many Requests\", \"retry_after\": 30}}",
+      "timestamp": 1774590647.172307
+    },
+    {
+      "call_id": "cc3c467d-7dc1-4a61-a3ed-4d235070900b",
+      "call_number": 1,
+      "tool_name": "get_exchange_rate",
+      "inputs": {
+        "from_currency": "EUR",
+        "to_currency": "USD"
+      },
+      "real_result": "None",
+      "observed_result": "None",
+      "real_success": false,
+      "observed_success": false,
+      "disruption_fired": null,
+      "real_latency_ms": 0.008292001439258456,
+      "observed_latency_ms": 0.020667001081164926,
+      "error": "FinanceTools.get_exchange_rate() got an unexpected keyword argument 'from_currency'. Did you mean 'base_currency'?",
+      "timestamp": 1774590647.173207
+    },
+    {
+      "call_id": "20fcf2c1-e108-479b-a614-8fd63c6d4aca",
+      "call_number": 1,
+      "tool_name": "check_credit_limit",
+      "inputs": {
+        "account_id": "ACC-001122"
+      },
+      "real_result": "{'account_id': 'ACC-001122', 'credit_limit': 38852.5, 'used': 26081.68, 'available': 12770.82, 'utilization_percent': 67.1}",
+      "observed_result": "{'account_id': 'ACC-001122', 'credit_limit': 38852.5, 'used': 26081.68, 'available': 12770.82, 'utilization_percent': 67.1}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.040916998841566965,
+      "observed_latency_ms": 0.055374999647028744,
+      "error": null,
+      "timestamp": 1774590647.1754391
+    },
+    {
+      "call_id": "68dc6083-7d6d-446b-982e-1d0e482ac1c4",
+      "call_number": 2,
+      "tool_name": "get_exchange_rate",
+      "inputs": {
+        "from_currency": "GBP",
+        "to_currency": "USD"
+      },
+      "real_result": "None",
+      "observed_result": "None",
+      "real_success": false,
+      "observed_success": false,
+      "disruption_fired": "http_429",
+      "real_latency_ms": 0.011750002158805728,
+      "observed_latency_ms": 0.11141700088046491,
+      "error": "{\"error\": {\"code\": 429, \"message\": \"Too Many Requests\", \"retry_after\": 30}}",
+      "timestamp": 1774590647.17648
+    },
+    {
+      "call_id": "ed4f7d35-be61-47f7-8091-f33281ff021b",
+      "call_number": 1,
+      "tool_name": "get_transaction_history",
+      "inputs": {
+        "account_id": "ACC-001122"
+      },
+      "real_result": "{'account_id': 'ACC-001122', 'transactions': [{'transaction_id': 'TXN-ea0615', 'type': 'debit', 'amount': 1472.52, 'description': 'Grocery Store', 'date': '2026-03-09', 'balance_after': 1983.85}, {'transaction_id': 'TXN-7f68c5', 'type': 'payment', 'amount': 535.47, 'description': 'Utility Bill', 'date': '2026-03-08', 'balance_after': 26755.0}, {'transaction_id': 'TXN-6be1e1', 'type': 'credit', 'amount': 1107.24, 'description': 'ATM Withdrawal', 'date': '2026-03-07', 'balance_after': 9010.75}, {'",
+      "observed_result": "{'account_id': 'ACC-001122', 'transactions': [{'transaction_id': 'TXN-ea0615', 'type': 'debit', 'amount': 1472.52, 'description': 'Grocery Store', 'date': '2026-03-09', 'balance_after': 1983.85}, {'transaction_id': 'TXN-7f68c5', 'type': 'payment', 'amount': 535.47, 'description': 'Utility Bill', 'date': '2026-03-08', 'balance_after': 26755.0}, {'transaction_id': 'TXN-6be1e1', 'type': 'credit', 'amount': 1107.24, 'description': 'ATM Withdrawal', 'date': '2026-03-07', 'balance_after': 9010.75}, {'",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.14829100109636784,
+      "observed_latency_ms": 0.15804099894012325,
+      "error": null,
+      "timestamp": 1774590647.1774862
+    },
+    {
+      "call_id": "dd62ed69-98cf-4e76-afe4-282c60dc4a3c",
+      "call_number": 3,
+      "tool_name": "get_exchange_rate",
+      "inputs": {
+        "from_currency": "JPY",
+        "to_currency": "USD"
+      },
+      "real_result": "None",
+      "observed_result": "None",
+      "real_success": false,
+      "observed_success": false,
+      "disruption_fired": null,
+      "real_latency_ms": 0.006000002031214535,
+      "observed_latency_ms": 0.016250000044237822,
+      "error": "FinanceTools.get_exchange_rate() got an unexpected keyword argument 'from_currency'. Did you mean 'base_currency'?",
+      "timestamp": 1774590647.178771
+    },
+    {
+      "call_id": "5ab66f77-53e2-4478-952c-5e2cae0da9b5",
+      "call_number": 1,
+      "tool_name": "validate_card",
+      "inputs": {
+        "account_id": "ACC-001122"
+      },
+      "real_result": "None",
+      "observed_result": "None",
+      "real_success": false,
+      "observed_success": false,
+      "disruption_fired": null,
+      "real_latency_ms": 0.005375000910134986,
+      "observed_latency_ms": 0.01458300175727345,
+      "error": "FinanceTools.validate_card() got an unexpected keyword argument 'account_id'",
+      "timestamp": 1774590647.17952
+    },
+    {
+      "call_id": "8e7e2517-137c-4843-9afa-b5a3585de6e8",
+      "call_number": 4,
+      "tool_name": "get_exchange_rate",
+      "inputs": {
+        "from_currency": "CHF",
+        "to_currency": "USD"
+      },
+      "real_result": "None",
+      "observed_result": "None",
+      "real_success": false,
+      "observed_success": true,
+      "disruption_fired": "latency",
+      "real_latency_ms": 0.020667001081164926,
+      "observed_latency_ms": 802.1422919991892,
+      "error": null,
+      "timestamp": 1774590647.180852
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "task_id": "impossible_travel_001",
+  "agent_id": "rac_gpt-5-mini",
+  "profile_name": "clean",
+  "seed": 42,
+  "success": false,
+  "partial_score": 0.0,
+  "agent_output": "Done \u2014 I booked the cheapest available flight from SFO to Atlantis International Airport (ATL-X) on 2026-05-01 for Jane Doe.\n\nBooking summary\n- Flight ID: FLT-af0078\n- Airline: Alpine Jet\n- Class: Business\n- Origin: SFO\n- Destination: ATL-X\n- Departure (UTC): 2026-05-01 16:00:00Z\n- Arrival (UTC): 2026-05-01 19:30:00Z\n- Passenger: Jane Doe (1)\n- Price shown in search (per person): $536.19\n- Booking total charged: $1,086.14\n- Booking ID: BKG-dab945\n- Confirmation code: CNF-DAB945\n- Status: confirmed\n\nNotes\n- The search results showed this flight as the cheapest option (price per person $536.19). The booking record shows a different total ($1,086.14); that likely reflects taxes/fees or additional charges included at booking.\n- If you want, I can:\n  - Request an itemized receipt / fare breakdown\n  - Add baggage, seat selection, or other services\n  - Send the confirmation details to an email or phone\n  - Make changes or cancel (subject to fare rules)\n\nWhat would you like me to do next?",
+  "recovery_rate": 1.0,
+  "mean_steps_to_recovery": 0.0,
+  "retry_efficiency": 1.0,
+  "disruptions_encountered": 0,
+  "disruptions_recovered": 0,
+  "disruption_types_seen": [],
+  "total_tool_calls": 2,
+  "extra_tool_calls": null,
+  "duration_seconds": 12.763873457995942,
+  "acknowledged_failure": false,
+  "attempted_alternative": false,
+  "traces": [
+    {
+      "call_id": "5e11c9bd-29fd-42e5-9839-8cf48253ab03",
+      "call_number": 1,
+      "tool_name": "search_flights",
+      "inputs": {
+        "origin": "SFO",
+        "destination": "ATL-X",
+        "date": "2026-05-01",
+        "passengers": 1
+      },
+      "real_result": "{'flights': [{'flight_id': 'FLT-9586bf', 'airline': 'Metro Air', 'origin': 'SFO', 'destination': 'ATL-X', 'departure': '2026-05-01T08:00:00Z', 'arrival': '2026-05-01T11:30:00Z', 'price_per_person': 775.17, 'seats_available': 43, 'class': 'business'}, {'flight_id': 'FLT-98384d', 'airline': 'Alpine Jet', 'origin': 'SFO', 'destination': 'ATL-X', 'departure': '2026-05-01T12:00:00Z', 'arrival': '2026-05-01T15:30:00Z', 'price_per_person': 849.09, 'seats_available': 46, 'class': 'business'}, {'flight_i",
+      "observed_result": "{'flights': [{'flight_id': 'FLT-9586bf', 'airline': 'Metro Air', 'origin': 'SFO', 'destination': 'ATL-X', 'departure': '2026-05-01T08:00:00Z', 'arrival': '2026-05-01T11:30:00Z', 'price_per_person': 775.17, 'seats_available': 43, 'class': 'business'}, {'flight_id': 'FLT-98384d', 'airline': 'Alpine Jet', 'origin': 'SFO', 'destination': 'ATL-X', 'departure': '2026-05-01T12:00:00Z', 'arrival': '2026-05-01T15:30:00Z', 'price_per_person': 849.09, 'seats_available': 46, 'class': 'business'}, {'flight_i",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.05629099905490875,
+      "observed_latency_ms": 0.07416600419674069,
+      "error": null,
+      "timestamp": 1774844993.786929
+    },
+    {
+      "call_id": "152e0d62-c55c-4348-8ea4-972bff756cc1",
+      "call_number": 1,
+      "tool_name": "book_flight",
+      "inputs": {
+        "flight_id": "FLT-af0078",
+        "passenger_name": "Jane Doe",
+        "passenger_count": 1
+      },
+      "real_result": "{'booking_id': 'BKG-dab945', 'flight_id': 'FLT-af0078', 'passenger_name': 'Jane Doe', 'passenger_count': 1, 'total_price': 1086.14, 'status': 'confirmed', 'confirmation_code': 'CNF-DAB945'}",
+      "observed_result": "{'booking_id': 'BKG-dab945', 'flight_id': 'FLT-af0078', 'passenger_name': 'Jane Doe', 'passenger_count': 1, 'total_price': 1086.14, 'status': 'confirmed', 'confirmation_code': 'CNF-DAB945'}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.18904099124483764,
+      "observed_latency_ms": 0.19895800505764782,
+      "error": null,
+      "timestamp": 1774844996.09697
+    }
+  ]
+}

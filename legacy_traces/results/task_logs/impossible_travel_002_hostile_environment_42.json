@@ -1,0 +1,43 @@
+{
+  "task_id": "impossible_travel_002",
+  "agent_id": "langchain_gemini-2.5-flash",
+  "profile_name": "hostile_environment",
+  "seed": 42,
+  "success": true,
+  "partial_score": 0.0,
+  "agent_output": "[Agent error: {\"error\": {\"code\": 429, \"message\": \"Too Many Requests\", \"retry_after\": 30}}]",
+  "recovery_rate": 0.0,
+  "mean_steps_to_recovery": 0.0,
+  "retry_efficiency": 1.0,
+  "disruptions_encountered": 1,
+  "disruptions_recovered": 0,
+  "disruption_types_seen": [
+    "http_429"
+  ],
+  "total_tool_calls": 1,
+  "extra_tool_calls": -1,
+  "duration_seconds": 1.6031626670010155,
+  "acknowledged_failure": true,
+  "attempted_alternative": false,
+  "traces": [
+    {
+      "call_id": "67009950-ae80-4b7c-b43c-f3e5008b7d7d",
+      "call_number": 1,
+      "tool_name": "search_flights",
+      "inputs": {
+        "origin": "LAX",
+        "destination": "JFK",
+        "date": "2020-01-15"
+      },
+      "real_result": "{'flights': [{'flight_id': 'FLT-6183ab', 'airline': 'Metro Air', 'origin': 'LAX', 'destination': 'JFK', 'departure': '2020-01-15T08:00:00Z', 'arrival': '2020-01-15T11:30:00Z', 'price_per_person': 1112.74, 'seats_available': 42, 'class': 'business'}, {'flight_id': 'FLT-de58a7', 'airline': 'Pacific Wings', 'origin': 'LAX', 'destination': 'JFK', 'departure': '2020-01-15T12:00:00Z', 'arrival': '2020-01-15T15:30:00Z', 'price_per_person': 347.61, 'seats_available': 12, 'class': 'first'}, {'flight_id':",
+      "observed_result": "None",
+      "real_success": true,
+      "observed_success": false,
+      "disruption_fired": "http_429",
+      "real_latency_ms": 0.11491699842736125,
+      "observed_latency_ms": 0.19137499839416705,
+      "error": "{\"error\": {\"code\": 429, \"message\": \"Too Many Requests\", \"retry_after\": 30}}",
+      "timestamp": 1774590740.1827042
+    }
+  ]
+}

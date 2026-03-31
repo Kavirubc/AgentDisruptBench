@@ -1,0 +1,41 @@
+{
+  "task_id": "finance_009",
+  "agent_id": "langchain_gemini-2.5-flash",
+  "profile_name": "clean",
+  "seed": 42,
+  "success": false,
+  "partial_score": 0.0,
+  "agent_output": "[Agent error: FinanceTools.validate_card() got an unexpected keyword argument 'expiration_date']",
+  "recovery_rate": 1.0,
+  "mean_steps_to_recovery": 0.0,
+  "retry_efficiency": 1.0,
+  "disruptions_encountered": 0,
+  "disruptions_recovered": 0,
+  "disruption_types_seen": [],
+  "total_tool_calls": 1,
+  "extra_tool_calls": null,
+  "duration_seconds": 2.0211831249980605,
+  "acknowledged_failure": true,
+  "attempted_alternative": false,
+  "traces": [
+    {
+      "call_id": "672f6519-e834-491d-9890-64423d794063",
+      "call_number": 1,
+      "tool_name": "validate_card",
+      "inputs": {
+        "card_number": "5500000000000004",
+        "expiration_date": "06/28",
+        "cvv": "456"
+      },
+      "real_result": "None",
+      "observed_result": "None",
+      "real_success": false,
+      "observed_success": false,
+      "disruption_fired": null,
+      "real_latency_ms": 0.010374998964834958,
+      "observed_latency_ms": 0.017832997400546446,
+      "error": "FinanceTools.validate_card() got an unexpected keyword argument 'expiration_date'",
+      "timestamp": 1774590561.3123379
+    }
+  ]
+}

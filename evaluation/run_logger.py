@@ -45,14 +45,21 @@ class RunLogger:
         log.close()
     """
 
-    def __init__(self, output_dir: str = "logs") -> None:
-        ts = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
-        short_id = uuid.uuid4().hex[:6]
-        self.run_id = f"{ts}_{short_id}"
-        self.run_dir = Path(output_dir) / self.run_id
+    def __init__(self, output_dir: str = "logs", run_dir: Path | None = None) -> None:
+        if run_dir is not None:
+            # Use the explicit directory provided by the caller
+            self.run_dir = run_dir
+            self.run_id = run_dir.name
+        else:
+            # Legacy behaviour: generate a timestamped subfolder
+            ts = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+            short_id = uuid.uuid4().hex[:6]
+            self.run_id = f"{ts}_{short_id}"
+            self.run_dir = Path(output_dir) / self.run_id
         self.run_dir.mkdir(parents=True, exist_ok=True)
         self._log_path = self.run_dir / "run_log.jsonl"
         self._f = open(self._log_path, "w")
+
 
     def emit(self, event_type: str, payload: dict[str, Any]) -> None:
         """Append a structured event to the log.

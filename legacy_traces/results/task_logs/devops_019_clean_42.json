@@ -1,0 +1,112 @@
+{
+  "task_id": "devops_019",
+  "agent_id": "langchain_gemini-2.5-flash",
+  "profile_name": "clean",
+  "seed": 42,
+  "success": false,
+  "partial_score": 0.15,
+  "agent_output": "[Agent error: DevopsTools.rollback_deployment() got an unexpected keyword argument 'service_name']",
+  "recovery_rate": 1.0,
+  "mean_steps_to_recovery": 0.0,
+  "retry_efficiency": 1.0,
+  "disruptions_encountered": 0,
+  "disruptions_recovered": 0,
+  "disruption_types_seen": [],
+  "total_tool_calls": 5,
+  "extra_tool_calls": null,
+  "duration_seconds": 7.651080415998877,
+  "acknowledged_failure": true,
+  "attempted_alternative": false,
+  "traces": [
+    {
+      "call_id": "851732e9-5cdc-454b-8cc7-bd183ec8bece",
+      "call_number": 1,
+      "tool_name": "get_service_health",
+      "inputs": {
+        "service_name": "payment-service"
+      },
+      "real_result": "{'service': 'payment-service', 'status': 'healthy', 'uptime_percent': 95.7, 'response_time_ms': 212, 'active_connections': 223, 'last_checked': '2026-03-09T12:00:00Z'}",
+      "observed_result": "{'service': 'payment-service', 'status': 'healthy', 'uptime_percent': 95.7, 'response_time_ms': 212, 'active_connections': 223, 'last_checked': '2026-03-09T12:00:00Z'}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.034041997423628345,
+      "observed_latency_ms": 0.041749997762963176,
+      "error": null,
+      "timestamp": 1774590488.645087
+    },
+    {
+      "call_id": "a9005ce9-6a21-40ba-b995-c2594efe4ae1",
+      "call_number": 1,
+      "tool_name": "deploy_service",
+      "inputs": {
+        "service_name": "payment-service",
+        "version": "v6.0.0",
+        "environment": "staging"
+      },
+      "real_result": "{'deployment_id': 'DEP-427896', 'service': 'payment-service', 'version': 'v6.0.0', 'environment': 'staging', 'status': 'success', 'instances_updated': 3, 'rollback_version': 'v18.8.0', 'timestamp': '2026-03-09T12:05:00Z'}",
+      "observed_result": "{'deployment_id': 'DEP-427896', 'service': 'payment-service', 'version': 'v6.0.0', 'environment': 'staging', 'status': 'success', 'instances_updated': 3, 'rollback_version': 'v18.8.0', 'timestamp': '2026-03-09T12:05:00Z'}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.08416600030614063,
+      "observed_latency_ms": 0.09108299855142832,
+      "error": null,
+      "timestamp": 1774590490.378658
+    },
+    {
+      "call_id": "ad111c26-cad0-4915-8b54-2a478e4121ee",
+      "call_number": 1,
+      "tool_name": "run_tests",
+      "inputs": {
+        "service_name": "payment-service",
+        "test_suite": "full"
+      },
+      "real_result": "{'service': 'payment-service', 'test_suite': 'full', 'total_tests': 79, 'passed': 78, 'failed': 1, 'skipped': 0, 'duration_seconds': 39.8, 'coverage_percent': 77.8}",
+      "observed_result": "{'service': 'payment-service', 'test_suite': 'full', 'total_tests': 79, 'passed': 78, 'failed': 1, 'skipped': 0, 'duration_seconds': 39.8, 'coverage_percent': 77.8}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.040499999158782884,
+      "observed_latency_ms": 0.04891700154985301,
+      "error": null,
+      "timestamp": 1774590491.915293
+    },
+    {
+      "call_id": "161c3101-f94c-4670-a7eb-b8e6a1f79194",
+      "call_number": 1,
+      "tool_name": "get_metrics",
+      "inputs": {
+        "service_name": "payment-service"
+      },
+      "real_result": "{'service': 'payment-service', 'metric_type': 'cpu', 'unit': 'percent', 'data_points': [{'timestamp': '2026-03-09T11:00:00Z', 'value': 48.1}, {'timestamp': '2026-03-09T12:00:00Z', 'value': 56.5}, {'timestamp': '2026-03-09T13:00:00Z', 'value': 27.3}, {'timestamp': '2026-03-09T14:00:00Z', 'value': 43.9}, {'timestamp': '2026-03-09T15:00:00Z', 'value': 22.5}, {'timestamp': '2026-03-09T16:00:00Z', 'value': 18.4}], 'average': 36.12, 'peak': 56.5}",
+      "observed_result": "{'service': 'payment-service', 'metric_type': 'cpu', 'unit': 'percent', 'data_points': [{'timestamp': '2026-03-09T11:00:00Z', 'value': 48.1}, {'timestamp': '2026-03-09T12:00:00Z', 'value': 56.5}, {'timestamp': '2026-03-09T13:00:00Z', 'value': 27.3}, {'timestamp': '2026-03-09T14:00:00Z', 'value': 43.9}, {'timestamp': '2026-03-09T15:00:00Z', 'value': 22.5}, {'timestamp': '2026-03-09T16:00:00Z', 'value': 18.4}], 'average': 36.12, 'peak': 56.5}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.07929200000944547,
+      "observed_latency_ms": 0.09166699965135194,
+      "error": null,
+      "timestamp": 1774590492.9088042
+    },
+    {
+      "call_id": "bea88bcc-d1e9-40a4-9633-51f234099f34",
+      "call_number": 1,
+      "tool_name": "rollback_deployment",
+      "inputs": {
+        "service_name": "payment-service",
+        "version": "v18.8.0",
+        "environment": "staging"
+      },
+      "real_result": "None",
+      "observed_result": "None",
+      "real_success": false,
+      "observed_success": false,
+      "disruption_fired": null,
+      "real_latency_ms": 0.009250001312466338,
+      "observed_latency_ms": 0.01750000228639692,
+      "error": "DevopsTools.rollback_deployment() got an unexpected keyword argument 'service_name'",
+      "timestamp": 1774590494.7894762
+    }
+  ]
+}

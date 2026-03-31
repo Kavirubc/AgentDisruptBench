@@ -1,0 +1,37 @@
+{
+  "task_id": "retail_002",
+  "agent_id": "langchain_gemini-2.5-flash",
+  "profile_name": "clean",
+  "seed": 42,
+  "success": false,
+  "partial_score": 0.6,
+  "agent_output": "[Agent error: RetailTools.check_inventory() missing 1 required keyword-only argument: 'product_id']",
+  "recovery_rate": 1.0,
+  "mean_steps_to_recovery": 0.0,
+  "retry_efficiency": 1.0,
+  "disruptions_encountered": 0,
+  "disruptions_recovered": 0,
+  "disruption_types_seen": [],
+  "total_tool_calls": 1,
+  "extra_tool_calls": null,
+  "duration_seconds": 1.9070780409965664,
+  "acknowledged_failure": true,
+  "attempted_alternative": false,
+  "traces": [
+    {
+      "call_id": "d9d8e9aa-36ea-40af-85e4-cc2634bfaaed",
+      "call_number": 1,
+      "tool_name": "check_inventory",
+      "inputs": {},
+      "real_result": "None",
+      "observed_result": "None",
+      "real_success": false,
+      "observed_success": false,
+      "disruption_fired": null,
+      "real_latency_ms": 0.012582982890307903,
+      "observed_latency_ms": 0.028416048735380173,
+      "error": "RetailTools.check_inventory() missing 1 required keyword-only argument: 'product_id'",
+      "timestamp": 1773066163.892522
+    }
+  ]
+}

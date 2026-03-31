@@ -37,8 +37,10 @@ from __future__ import annotations
 
 import argparse
 import os
+import re
 import sys
 import time
+from pathlib import Path
 
 # Ensure project root is on path
 project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -94,11 +96,48 @@ def _load_runner(name: str, runner_config: RunnerConfig):
         sys.exit(1)
 
 
-def _emit_run_logs(results, runner_name, model, task_registry, config):
+def _make_run_dir_name(runner_name: str, model: str, task_ids: list[str] | None,
+                       domains: list[str] | None) -> str:
+    """Generate a descriptive run directory name.
+
+    Format: YYYYMMDD_HHMM_{runner}_{model}_{scope}
+    Examples:
+        20260331_1258_langchain_gpt5mini_adversarial_retail
+        20260331_1300_simple_gpt4o_retail
+        20260331_1305_openai_gpt4o_all_100tasks
+    """
+    from datetime import datetime, timezone
+    ts = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+
+    # Sanitise model name: gpt-5-mini → gpt5mini
+    safe_model = re.sub(r'[^a-zA-Z0-9]', '', model)
+
+    # Build scope segment
+    if task_ids and len(task_ids) <= 4:
+        scope = "_".join(task_ids)
+    elif task_ids:
+        scope = f"{len(task_ids)}tasks"
+    elif domains:
+        scope = "_".join(domains)
+    else:
+        scope = "all"
+
+    # Truncate scope to keep folder names readable
+    if len(scope) > 60:
+        scope = scope[:57] + "etc"
+
+    return f"{ts}_{runner_name}_{safe_model}_{scope}"
+
+
+def _emit_run_logs(results, runner_name, model, task_registry, config,
+                   run_dir: Path | None = None):
     """Emit structured JSONL run logs for show_run.py.
 
     Creates one run log per (profile × seed) combination so each
     is independently viewable via ``python evaluation/show_run.py``.
+
+    If *run_dir* is provided, all logs go into that directory.
+    Otherwise falls back to creating timestamped folders under ``logs/``.
     """
     from itertools import groupby
 
@@ -111,7 +150,7 @@ def _emit_run_logs(results, runner_name, model, task_registry, config):
     run_ids = []
     for (profile, seed), group in groupby(sorted_results, key=keyfunc):
         group_results = list(group)
-        run_log = RunLogger(output_dir="logs")
+        run_log = RunLogger(run_dir=run_dir) if run_dir else RunLogger(output_dir="logs")
         run_ids.append(run_log.run_id)
 
         # Emit run_started
@@ -280,6 +319,9 @@ Examples:
   # OpenAI GPT-4o on retail tasks
   python -m evaluation.run_benchmark --runner openai --model gpt-4o --domains retail
 
+  # Only run specific tasks
+  python -m evaluation.run_benchmark -t adversarial_retail_001,adversarial_retail_002 --runner rac
+
   # YAML-based configuration (recommended)
   python -m evaluation.run_benchmark --config config/benchmark.yaml --llm-config config/llm/gpt-4o.yaml
 
@@ -343,6 +385,12 @@ Examples:
     )
 
     # Task selection
+    parser.add_argument(
+        "--tasks", "-t",
+        nargs="+",
+        default=None,
+        help="Run specific task IDs (comma-separated or multiple args)",
+    )
     parser.add_argument(
         "--task-dir",
         default=None,
@@ -418,6 +466,14 @@ Examples:
     cli_provided_seeds = "--seeds" in sys.argv or "-s" in sys.argv
     cli_provided_difficulty = "--max-difficulty" in sys.argv
     cli_provided_output = "--output-dir" in sys.argv or "-o" in sys.argv
+    cli_provided_tasks = "--tasks" in sys.argv or "-t" in sys.argv
+
+    if cli_provided_tasks and args.tasks:
+        cli_tasks = []
+        for t in args.tasks:
+            cli_tasks.extend([x.strip() for x in t.split(",") if x.strip()])
+    else:
+        cli_tasks = None
 
     profiles = (
         args.profiles if cli_provided_profiles
@@ -428,6 +484,11 @@ Examples:
         args.domains if cli_provided_domains
         else yaml_bench.domains if yaml_bench
         else args.domains
+    )
+    tasks = (
+        cli_tasks if cli_provided_tasks
+        else yaml_bench.tasks if yaml_bench and hasattr(yaml_bench, 'tasks')
+        else cli_tasks
     )
     max_difficulty = (
         args.max_difficulty if cli_provided_difficulty
@@ -471,14 +532,25 @@ Examples:
         profiles=profiles,
         seeds=seeds,
         domains=domains,
+        task_ids=tasks,
         max_difficulty=max_difficulty,
         agent_id=agent_id,
         output_dir=output_dir,
     )
     print(f"  → Profiles:       {config.profiles}")
     print(f"  → Domains:        {domains or 'all'}")
+    if tasks:
+        print(f"  → Task IDs:       {len(tasks)} tasks specified")
     print(f"  → Max difficulty:  {max_difficulty}")
     print(f"  → Seeds:           {seeds}")
+
+    # Create consolidated run directory
+    run_dir_name = _make_run_dir_name(
+        runner_name, runner_config.model, tasks, domains,
+    )
+    run_dir = Path("runs") / run_dir_name
+    run_dir.mkdir(parents=True, exist_ok=True)
+    print(f"\n  📁 Run directory: {run_dir}")
 
     # Run benchmark
     print("\n[4/5] Running benchmark...")
@@ -495,20 +567,20 @@ Examples:
 
     print(f"  → {len(results)} runs completed in {elapsed:.1f}s")
 
-    # Generate report
+    # Generate report — all outputs go into the consolidated run directory
     print("\n[5/5] Generating report...")
-    reporter = Reporter(output_dir=output_dir)
+    reporter = Reporter(output_dir=str(run_dir))
     paths = reporter.generate(results)
     for name, path in paths.items():
         print(f"  → {name}: {path}")
 
-    # Emit structured JSONL logs for show_run.py
+    # Emit structured JSONL logs into the SAME run directory
     run_ids = _emit_run_logs(
         results, runner_name, runner_config.model,
         task_registry, config,
+        run_dir=run_dir,
     )
-    for rid in run_ids:
-        print(f"  → run_log: logs/{rid}/run_log.jsonl")
+    print(f"  → run_log: {run_dir}/run_log.jsonl")
 
     # Summary
     print("\n" + "=" * 60)
@@ -518,6 +590,7 @@ Examples:
     print(f"  Successful:   {success_count}/{len(results)}")
     print(f"  Success rate: {success_count / max(len(results), 1) * 100:.1f}%")
     print(f"  Duration:     {elapsed:.1f}s")
+    print(f"  Output:       {run_dir}")
 
     # Runner stats
     stats = runner.stats
@@ -529,9 +602,8 @@ Examples:
     print("=" * 60)
 
     # Hint for viewing logs
-    if run_ids:
-        print("\n  💡 View latest: python evaluation/show_run.py")
-        print(f"  💡 View specific: python evaluation/show_run.py --run-id {run_ids[-1]}\n")
+    print(f"\n  💡 View latest: python evaluation/show_run.py")
+    print(f"  💡 View specific: python evaluation/show_run.py --run-id {run_dir_name}\n")
 
     # Cleanup
     runner.teardown()

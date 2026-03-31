@@ -1,0 +1,60 @@
+{
+  "task_id": "travel_004",
+  "agent_id": "langchain_gemini-2.5-flash",
+  "profile_name": "clean",
+  "seed": 42,
+  "success": false,
+  "partial_score": 0.0,
+  "agent_output": "5000 USD is equivalent to 5350 EUR with an exchange rate of 1.07.\n5000 USD is equivalent to 13450 GBP with an exchange rate of 2.69.",
+  "recovery_rate": 1.0,
+  "mean_steps_to_recovery": 0.0,
+  "retry_efficiency": 1.0,
+  "disruptions_encountered": 0,
+  "disruptions_recovered": 0,
+  "disruption_types_seen": [],
+  "total_tool_calls": 2,
+  "extra_tool_calls": null,
+  "duration_seconds": 4.92223762499998,
+  "acknowledged_failure": false,
+  "attempted_alternative": false,
+  "traces": [
+    {
+      "call_id": "bed972ef-e0d7-486c-be31-72dc7b2d6e5a",
+      "call_number": 1,
+      "tool_name": "currency_convert",
+      "inputs": {
+        "amount": 5000,
+        "from_currency": "USD",
+        "to_currency": "EUR"
+      },
+      "real_result": "{'from_currency': 'USD', 'to_currency': 'EUR', 'amount': 5000, 'rate': 1.07, 'converted_amount': 5350.0, 'timestamp': '2026-03-09T12:00:00Z'}",
+      "observed_result": "{'from_currency': 'USD', 'to_currency': 'EUR', 'amount': 5000, 'rate': 1.07, 'converted_amount': 5350.0, 'timestamp': '2026-03-09T12:00:00Z'}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.03566699888324365,
+      "observed_latency_ms": 0.044124997657490894,
+      "error": null,
+      "timestamp": 1774590950.779291
+    },
+    {
+      "call_id": "8942a514-6607-4d8e-b0d3-678ef812fe7f",
+      "call_number": 2,
+      "tool_name": "currency_convert",
+      "inputs": {
+        "amount": 5000,
+        "from_currency": "USD",
+        "to_currency": "GBP"
+      },
+      "real_result": "{'from_currency': 'USD', 'to_currency': 'GBP', 'amount': 5000, 'rate': 2.69, 'converted_amount': 13450.0, 'timestamp': '2026-03-09T12:00:00Z'}",
+      "observed_result": "{'from_currency': 'USD', 'to_currency': 'GBP', 'amount': 5000, 'rate': 2.69, 'converted_amount': 13450.0, 'timestamp': '2026-03-09T12:00:00Z'}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.030499999411404133,
+      "observed_latency_ms": 0.03787500099861063,
+      "error": null,
+      "timestamp": 1774590952.2105541
+    }
+  ]
+}

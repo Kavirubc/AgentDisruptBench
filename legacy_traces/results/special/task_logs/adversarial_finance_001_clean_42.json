@@ -1,0 +1,147 @@
+{
+  "task_id": "adversarial_finance_001",
+  "agent_id": "rac_gpt-5-mini",
+  "profile_name": "clean",
+  "seed": 42,
+  "success": true,
+  "partial_score": 1.0,
+  "agent_output": "Done \u2014 I completed the transfers as you requested, moving only $4,000 from checking (ACC-001) to savings (ACC-002) so the subsequent $1,000 transfer from savings to investments (ACC-003) would not push savings below the $5,000 minimum.\n\nSummary of actions and results\n\n1) Initial balances (retrieved before transfers)\n- ACC-001 (checking): $41,257.52 (USD) \u2014 last updated 2026-03-09T11:00:00Z\n- ACC-002 (savings): $34,231.60 (USD) \u2014 last updated 2026-03-09T11:00:00Z\n\n2) Transfer: checking \u2192 savings\n- Amount: $4,000.00\n- From: ACC-001\n- To: ACC-002\n- Transfer ID: TXF-0ba577\n- Status: completed\n- Fee: $4.00\n- Timestamp: 2026-03-09T11:05:00Z\n\n3) Transfer: savings \u2192 investment\n- Amount: $1,000.00\n- From: ACC-002\n- To: ACC-003\n- Transfer ID: TXF-bb7856\n- Status: completed\n- Fee: $1.00\n- Timestamp: 2026-03-09T11:05:00Z\n\nExpected balances after these transfers (based on the initial balances and recorded fees)\n- ACC-001: 41,257.52 - 4,000.00 - 4.00 = $37,253.52\n- ACC-002: 34,231.60 + 4,000.00 - 1,000.00 - 1.00 = $37,230.60\n- ACC-003: +$1,000.00 (no prior balance available from the system)\n\nNote about account balance queries\n- After the transfers I requested balances again; the balance API returned the same pre-transfer snapshot (last_updated 2026-03-09T11:00:00Z). The transfer operations themselves returned completed statuses and transfer IDs above, so the moves succeeded even if the balance snapshot hasn't yet been updated in the balance API. If you want, I can re-check balances again in a few minutes or immediately to get the refreshed balances.\n\nAnything else you want me to do (e.g., re-check balances now, cancel a transfer, or move a different amount)?",
+  "recovery_rate": 1.0,
+  "mean_steps_to_recovery": 0.0,
+  "retry_efficiency": 1.0,
+  "disruptions_encountered": 0,
+  "disruptions_recovered": 0,
+  "disruption_types_seen": [],
+  "total_tool_calls": 7,
+  "extra_tool_calls": null,
+  "duration_seconds": 50.74771291599609,
+  "acknowledged_failure": false,
+  "attempted_alternative": false,
+  "traces": [
+    {
+      "call_id": "2fcdd9b3-8d81-4b82-8083-500437a5ba59",
+      "call_number": 1,
+      "tool_name": "get_account_balance",
+      "inputs": {
+        "account_id": "ACC-001"
+      },
+      "real_result": "{'account_id': 'ACC-001', 'balance': 41257.52, 'currency': 'USD', 'available_balance': 12249.94, 'pending_transactions': 2, 'last_updated': '2026-03-09T11:00:00Z'}",
+      "observed_result": "{'account_id': 'ACC-001', 'balance': 41257.52, 'currency': 'USD', 'available_balance': 12249.94, 'pending_transactions': 2, 'last_updated': '2026-03-09T11:00:00Z'}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.09420800779480487,
+      "observed_latency_ms": 0.11291701230220497,
+      "error": null,
+      "timestamp": 1774844328.2092319
+    },
+    {
+      "call_id": "1ad42042-b90e-4294-86f4-1c78b00d2263",
+      "call_number": 2,
+      "tool_name": "get_account_balance",
+      "inputs": {
+        "account_id": "ACC-002"
+      },
+      "real_result": "{'account_id': 'ACC-002', 'balance': 34231.6, 'currency': 'USD', 'available_balance': 42588.87, 'pending_transactions': 0, 'last_updated': '2026-03-09T11:00:00Z'}",
+      "observed_result": "{'account_id': 'ACC-002', 'balance': 34231.6, 'currency': 'USD', 'available_balance': 42588.87, 'pending_transactions': 0, 'last_updated': '2026-03-09T11:00:00Z'}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.02995799877680838,
+      "observed_latency_ms": 0.03404199378564954,
+      "error": null,
+      "timestamp": 1774844329.400237
+    },
+    {
+      "call_id": "e3a56eef-5c3e-42cc-8f75-342cb4ceb369",
+      "call_number": 1,
+      "tool_name": "transfer_funds",
+      "inputs": {
+        "from_account": "ACC-001",
+        "to_account": "ACC-002",
+        "amount": 4000.0,
+        "currency": "USD"
+      },
+      "real_result": "{'transfer_id': 'TXF-0ba577', 'from_account': 'ACC-001', 'to_account': 'ACC-002', 'amount': 4000.0, 'currency': 'USD', 'status': 'completed', 'fee': 4.0, 'timestamp': '2026-03-09T11:05:00Z'}",
+      "observed_result": "{'transfer_id': 'TXF-0ba577', 'from_account': 'ACC-001', 'to_account': 'ACC-002', 'amount': 4000.0, 'currency': 'USD', 'status': 'completed', 'fee': 4.0, 'timestamp': '2026-03-09T11:05:00Z'}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.24520799343008548,
+      "observed_latency_ms": 0.2672910050023347,
+      "error": null,
+      "timestamp": 1774844335.497071
+    },
+    {
+      "call_id": "2480c0e6-7c60-4dab-a251-01c44bc48274",
+      "call_number": 3,
+      "tool_name": "get_account_balance",
+      "inputs": {
+        "account_id": "ACC-002"
+      },
+      "real_result": "{'account_id': 'ACC-002', 'balance': 34231.6, 'currency': 'USD', 'available_balance': 42588.87, 'pending_transactions': 0, 'last_updated': '2026-03-09T11:00:00Z'}",
+      "observed_result": "{'account_id': 'ACC-002', 'balance': 34231.6, 'currency': 'USD', 'available_balance': 42588.87, 'pending_transactions': 0, 'last_updated': '2026-03-09T11:00:00Z'}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.06299999949987978,
+      "observed_latency_ms": 0.07287498738151044,
+      "error": null,
+      "timestamp": 1774844336.590375
+    },
+    {
+      "call_id": "9eb4a23f-4c8f-46d5-acba-edc053db52c0",
+      "call_number": 2,
+      "tool_name": "transfer_funds",
+      "inputs": {
+        "from_account": "ACC-002",
+        "to_account": "ACC-003",
+        "amount": 1000.0,
+        "currency": "USD"
+      },
+      "real_result": "{'transfer_id': 'TXF-bb7856', 'from_account': 'ACC-002', 'to_account': 'ACC-003', 'amount': 1000.0, 'currency': 'USD', 'status': 'completed', 'fee': 1.0, 'timestamp': '2026-03-09T11:05:00Z'}",
+      "observed_result": "{'transfer_id': 'TXF-bb7856', 'from_account': 'ACC-002', 'to_account': 'ACC-003', 'amount': 1000.0, 'currency': 'USD', 'status': 'completed', 'fee': 1.0, 'timestamp': '2026-03-09T11:05:00Z'}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.10279199341312051,
+      "observed_latency_ms": 0.1110419980250299,
+      "error": null,
+      "timestamp": 1774844341.395206
+    },
+    {
+      "call_id": "ee65a73c-76bb-43f1-b70a-cd741fc744cc",
+      "call_number": 4,
+      "tool_name": "get_account_balance",
+      "inputs": {
+        "account_id": "ACC-002"
+      },
+      "real_result": "{'account_id': 'ACC-002', 'balance': 34231.6, 'currency': 'USD', 'available_balance': 42588.87, 'pending_transactions': 0, 'last_updated': '2026-03-09T11:00:00Z'}",
+      "observed_result": "{'account_id': 'ACC-002', 'balance': 34231.6, 'currency': 'USD', 'available_balance': 42588.87, 'pending_transactions': 0, 'last_updated': '2026-03-09T11:00:00Z'}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.0399169948650524,
+      "observed_latency_ms": 0.04699999408330768,
+      "error": null,
+      "timestamp": 1774844342.355985
+    },
+    {
+      "call_id": "644f783e-6ce0-4a32-9ed5-ec85a59fcd66",
+      "call_number": 5,
+      "tool_name": "get_account_balance",
+      "inputs": {
+        "account_id": "ACC-001"
+      },
+      "real_result": "{'account_id': 'ACC-001', 'balance': 41257.52, 'currency': 'USD', 'available_balance': 12249.94, 'pending_transactions': 2, 'last_updated': '2026-03-09T11:00:00Z'}",
+      "observed_result": "{'account_id': 'ACC-001', 'balance': 41257.52, 'currency': 'USD', 'available_balance': 12249.94, 'pending_transactions': 2, 'last_updated': '2026-03-09T11:00:00Z'}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.04850000550504774,
+      "observed_latency_ms": 0.05900001269765198,
+      "error": null,
+      "timestamp": 1774844348.406902
+    }
+  ]
+}

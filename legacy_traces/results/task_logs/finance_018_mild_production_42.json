@@ -1,0 +1,41 @@
+{
+  "task_id": "finance_018",
+  "agent_id": "langchain_gemini-2.5-flash",
+  "profile_name": "mild_production",
+  "seed": 42,
+  "success": false,
+  "partial_score": 0.0,
+  "agent_output": "[Agent error: {\"error\": {\"code\": 429, \"message\": \"Too Many Requests\", \"retry_after\": 30}}]",
+  "recovery_rate": 0.0,
+  "mean_steps_to_recovery": 0.0,
+  "retry_efficiency": 1.0,
+  "disruptions_encountered": 1,
+  "disruptions_recovered": 0,
+  "disruption_types_seen": [
+    "http_429"
+  ],
+  "total_tool_calls": 1,
+  "extra_tool_calls": -1,
+  "duration_seconds": 2.022717415999068,
+  "acknowledged_failure": true,
+  "attempted_alternative": false,
+  "traces": [
+    {
+      "call_id": "a0802c53-7965-4ad3-bd2d-2c73d3d8c7fa",
+      "call_number": 1,
+      "tool_name": "get_account_balance",
+      "inputs": {
+        "account_id": "ACC-001122"
+      },
+      "real_result": "{'account_id': 'ACC-001122', 'balance': 47215.58, 'currency': 'USD', 'available_balance': 9901.67, 'pending_transactions': 1, 'last_updated': '2026-03-09T11:00:00Z'}",
+      "observed_result": "None",
+      "real_success": true,
+      "observed_success": false,
+      "disruption_fired": "http_429",
+      "real_latency_ms": 0.04370800161268562,
+      "observed_latency_ms": 0.10070799908135086,
+      "error": "{\"error\": {\"code\": 429, \"message\": \"Too Many Requests\", \"retry_after\": 30}}",
+      "timestamp": 1774590622.5576918
+    }
+  ]
+}

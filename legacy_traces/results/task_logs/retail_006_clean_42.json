@@ -1,0 +1,37 @@
+{
+  "task_id": "retail_006",
+  "agent_id": "langchain_gemini-2.5-flash",
+  "profile_name": "clean",
+  "seed": 42,
+  "success": false,
+  "partial_score": 0.5,
+  "agent_output": "[Agent error: RetailTools.get_order_status() missing 1 required keyword-only argument: 'order_id']",
+  "recovery_rate": 1.0,
+  "mean_steps_to_recovery": 0.0,
+  "retry_efficiency": 1.0,
+  "disruptions_encountered": 0,
+  "disruptions_recovered": 0,
+  "disruption_types_seen": [],
+  "total_tool_calls": 1,
+  "extra_tool_calls": null,
+  "duration_seconds": 1.383522374999302,
+  "acknowledged_failure": true,
+  "attempted_alternative": false,
+  "traces": [
+    {
+      "call_id": "de2f1061-dedd-4a79-889d-eb45af0e4cbe",
+      "call_number": 1,
+      "tool_name": "get_order_status",
+      "inputs": {},
+      "real_result": "None",
+      "observed_result": "None",
+      "real_success": false,
+      "observed_success": false,
+      "disruption_fired": null,
+      "real_latency_ms": 0.013624998246086761,
+      "observed_latency_ms": 0.0289999989036005,
+      "error": "RetailTools.get_order_status() missing 1 required keyword-only argument: 'order_id'",
+      "timestamp": 1774590799.0232372
+    }
+  ]
+}

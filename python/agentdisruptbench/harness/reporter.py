@@ -21,6 +21,7 @@ Convention:
 
 from __future__ import annotations
 
+import csv
 import json
 import logging
 from dataclasses import asdict
@@ -39,6 +40,7 @@ class Reporter:
     Produces:
     - ``report.md``  : Markdown report with tables and summaries.
     - ``results.json``: Machine-readable JSON with all metrics.
+    - ``results.csv`` : Detailed flat-file report for spreadsheet analysis.
     - ``summary.json``: Aggregate statistics per profile.
     """
 
@@ -59,6 +61,7 @@ class Reporter:
 
         paths["report.md"] = self._write_markdown(results)
         paths["results.json"] = self._write_json(results)
+        paths["results.csv"] = self._write_csv(results)
         paths["summary.json"] = self._write_summary(results)
         paths["task_logs"] = self._write_task_logs(results)
 
@@ -150,6 +153,59 @@ class Reporter:
             json.dumps(data, indent=2, default=str), encoding="utf-8"
         )
         logger.info("json_results_written path=%s count=%d", path, len(data))
+        return str(path)
+
+    # -- CSV results -------------------------------------------------------
+
+    def _write_csv(self, results: list[BenchmarkResult]) -> str:
+        """Write detailed results as a flat CSV for analysis."""
+        path = self._output_dir / "results.csv"
+
+        headers = [
+            "Task ID", "Domain", "Difficulty", "Profile", "Seed",
+            "Success", "Partial Score", "Duration (s)", 
+            "Prompt Tokens", "Completion Tokens", "Total Tokens",
+            "Runner", "Environment",
+            "Recovery Rate", "Disruptions Encountered", "Disruptions Recovered",
+            "Extra Tool Calls", "Total Tool Calls",
+            "State Score", "Compensations", "Idempotency Violations",
+            "Loop Count", "Hallucination Rate", "Handover Detected",
+            "Task Description"
+        ]
+
+        with open(path, "w", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=headers)
+            writer.writeheader()
+            for r in results:
+                writer.writerow({
+                    "Task ID": r.task_id,
+                    "Domain": r.task_domain,
+                    "Difficulty": r.task_difficulty,
+                    "Profile": r.profile_name,
+                    "Seed": r.seed,
+                    "Success": r.success,
+                    "Partial Score": round(r.partial_score, 4),
+                    "Duration (s)": round(r.duration_seconds, 2),
+                    "Prompt Tokens": r.prompt_tokens,
+                    "Completion Tokens": r.completion_tokens,
+                    "Total Tokens": r.token_usage,
+                    "Runner": r.runner_name or "N/A",
+                    "Environment": r.agent_id,
+                    "Recovery Rate": round(r.recovery_rate, 4),
+                    "Disruptions Encountered": r.disruptions_encountered,
+                    "Disruptions Recovered": r.disruptions_recovered,
+                    "Extra Tool Calls": r.extra_tool_calls if r.extra_tool_calls is not None else 0,
+                    "Total Tool Calls": r.total_tool_calls,
+                    "State Score": round(r.side_effect_score, 4),
+                    "Compensations": r.compensation_count,
+                    "Idempotency Violations": r.idempotency_violations,
+                    "Loop Count": r.loop_count,
+                    "Hallucination Rate": round(r.tool_hallucination_rate, 4),
+                    "Handover Detected": r.handover_detected,
+                    "Task Description": r.task_description
+                })
+
+        logger.info("csv_results_written path=%s count=%d", path, len(results))
         return str(path)
 
     # -- Summary JSON ------------------------------------------------------

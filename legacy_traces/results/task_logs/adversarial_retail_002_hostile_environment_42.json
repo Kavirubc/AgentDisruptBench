@@ -1,0 +1,156 @@
+{
+  "task_id": "adversarial_retail_002",
+  "agent_id": "simple_gpt-4o",
+  "profile_name": "hostile_environment",
+  "seed": 42,
+  "success": true,
+  "partial_score": 0.8,
+  "agent_output": "[search_products] FAIL: {\"error\": {\"code\": 429, \"message\": \"Too Many Requests\", \"retry_after\": 30}}\n[search_products] RETRY OK: {\"total\": 3, \"query\": \"blue widget\"}\n[check_inventory] FAIL: {\"error\": {\"code\": \"TIMEOUT\", \"message\": \"Tool 'check_inventory' timed out after 10000ms\", \"delay_ms\": 10000}}\n[check_inventory] RETRY FAIL: {\"error\": {\"code\": 500, \"message\": \"Internal Server Error\"}}\n[update_cart] OK: {\"cart_id\": \"CART-001 [MODIFIED]\", \"action\": \"WRONG_add\", \"product_id\": \"321cba-DRP\", \"quantity\": -430, \"cart_total\": 203.63, \"item_count\": 966}\n[place_order] FAIL: {\"error\": {\"code\": 429, \"message\": \"Too Many Requests\", \"retry_after\": 30}}\n[place_order] RETRY OK: {\"product_id\": \"PRD-abc123\", \"total\": 317.05, \"status\": \"confirmed\", \"estimated_delivery\": \"2026-03-15\", \"customer_id_new\": \"C-8821\", \"quantity_beta\": 1, \"order_id_new\": \"ORD-6c41ab\", \"unit_price_beta\": 317.05}",
+  "recovery_rate": 0.5,
+  "mean_steps_to_recovery": 1.0,
+  "retry_efficiency": 0.6666666666666666,
+  "disruptions_encountered": 4,
+  "disruptions_recovered": 2,
+  "disruption_types_seen": [
+    "timeout",
+    "schema_drift",
+    "http_500",
+    "missing_fields",
+    "http_429",
+    "wrong_data"
+  ],
+  "total_tool_calls": 7,
+  "extra_tool_calls": 3,
+  "duration_seconds": 0.0003583329962566495,
+  "acknowledged_failure": true,
+  "attempted_alternative": true,
+  "traces": [
+    {
+      "call_id": "085669dc-48ed-45fc-8e85-6dfd529b7b97",
+      "call_number": 1,
+      "tool_name": "search_products",
+      "inputs": {
+        "query": "blue widget",
+        "max_results": 3
+      },
+      "real_result": "{'products': [{'product_id': 'PRD-368ceb', 'name': 'Green Sprocket', 'price': 255.07, 'currency': 'USD', 'in_stock': False, 'rating': 4.9}, {'product_id': 'PRD-1c69f1', 'name': 'Gold Bracket', 'price': 261.36, 'currency': 'USD', 'in_stock': True, 'rating': 4.2}, {'product_id': 'PRD-d1c179', 'name': 'Wireless Sensor Kit', 'price': 381.6, 'currency': 'USD', 'in_stock': True, 'rating': 4.0}], 'total': 3, 'query': 'blue widget'}",
+      "observed_result": "None",
+      "real_success": true,
+      "observed_success": false,
+      "disruption_fired": "http_429",
+      "real_latency_ms": 0.024083987227641046,
+      "observed_latency_ms": 0.03766699228435755,
+      "error": "{\"error\": {\"code\": 429, \"message\": \"Too Many Requests\", \"retry_after\": 30}}",
+      "timestamp": 1774850826.321171
+    },
+    {
+      "call_id": "eed85a24-9ce6-42a1-94ba-ae1902b0855d",
+      "call_number": 2,
+      "tool_name": "search_products",
+      "inputs": {
+        "query": "blue widget",
+        "max_results": 3
+      },
+      "real_result": "{'products': [{'product_id': 'PRD-368ceb', 'name': 'Green Sprocket', 'price': 255.07, 'currency': 'USD', 'in_stock': False, 'rating': 4.9}, {'product_id': 'PRD-1c69f1', 'name': 'Gold Bracket', 'price': 261.36, 'currency': 'USD', 'in_stock': True, 'rating': 4.2}, {'product_id': 'PRD-d1c179', 'name': 'Wireless Sensor Kit', 'price': 381.6, 'currency': 'USD', 'in_stock': True, 'rating': 4.0}], 'total': 3, 'query': 'blue widget'}",
+      "observed_result": "{'total': 3, 'query': 'blue widget'}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": "missing_fields",
+      "real_latency_ms": 0.012250005966052413,
+      "observed_latency_ms": 0.04100000660400838,
+      "error": null,
+      "timestamp": 1774850826.3212202
+    },
+    {
+      "call_id": "2f99b3b2-f05d-4420-b7eb-4c9088fff7fd",
+      "call_number": 1,
+      "tool_name": "check_inventory",
+      "inputs": {
+        "product_id": "PRD-abc123"
+      },
+      "real_result": "{'product_id': 'PRD-abc123', 'warehouse': 'default', 'quantity_available': 47, 'reserved': 7, 'restock_date': None}",
+      "observed_result": "None",
+      "real_success": true,
+      "observed_success": false,
+      "disruption_fired": "timeout",
+      "real_latency_ms": 0.002959000994451344,
+      "observed_latency_ms": 0.010959003702737391,
+      "error": "{\"error\": {\"code\": \"TIMEOUT\", \"message\": \"Tool 'check_inventory' timed out after 10000ms\", \"delay_ms\": 10000}}",
+      "timestamp": 1774850826.321273
+    },
+    {
+      "call_id": "b2afaef2-d613-4709-83bd-ffbf0f72fae6",
+      "call_number": 2,
+      "tool_name": "check_inventory",
+      "inputs": {
+        "product_id": "PRD-abc123"
+      },
+      "real_result": "{'product_id': 'PRD-abc123', 'warehouse': 'default', 'quantity_available': 47, 'reserved': 7, 'restock_date': None}",
+      "observed_result": "None",
+      "real_success": true,
+      "observed_success": false,
+      "disruption_fired": "http_500",
+      "real_latency_ms": 0.0020000006770715117,
+      "observed_latency_ms": 0.006667003617621958,
+      "error": "{\"error\": {\"code\": 500, \"message\": \"Internal Server Error\"}}",
+      "timestamp": 1774850826.32129
+    },
+    {
+      "call_id": "532967f6-bd2a-4dfc-b937-2aa97ec2ec7f",
+      "call_number": 1,
+      "tool_name": "update_cart",
+      "inputs": {
+        "cart_id": "CART-001",
+        "product_id": "PRD-abc123",
+        "quantity": 1
+      },
+      "real_result": "{'cart_id': 'CART-001', 'action': 'add', 'product_id': 'PRD-abc123', 'quantity': 1, 'cart_total': 272.53, 'item_count': 6}",
+      "observed_result": "{'cart_id': 'CART-001 [MODIFIED]', 'action': 'WRONG_add', 'product_id': '321cba-DRP', 'quantity': -430, 'cart_total': 203.63, 'item_count': 966}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": "wrong_data",
+      "real_latency_ms": 0.017333004507236183,
+      "observed_latency_ms": 0.034666009014472365,
+      "error": null,
+      "timestamp": 1774850826.3213031
+    },
+    {
+      "call_id": "574f3004-a64c-484f-8ca3-f847e68250e7",
+      "call_number": 1,
+      "tool_name": "place_order",
+      "inputs": {
+        "customer_id": "C-8821",
+        "product_id": "PRD-abc123",
+        "quantity": 1
+      },
+      "real_result": "{'order_id': 'ORD-6c41ab', 'customer_id': 'C-8821', 'product_id': 'PRD-abc123', 'quantity': 1, 'unit_price': 317.05, 'total': 317.05, 'status': 'confirmed', 'estimated_delivery': '2026-03-15'}",
+      "observed_result": "None",
+      "real_success": true,
+      "observed_success": false,
+      "disruption_fired": "http_429",
+      "real_latency_ms": 0.01737500133458525,
+      "observed_latency_ms": 0.02170799416489899,
+      "error": "{\"error\": {\"code\": 429, \"message\": \"Too Many Requests\", \"retry_after\": 30}}",
+      "timestamp": 1774850826.3213482
+    },
+    {
+      "call_id": "d18662f9-1e2c-4388-ab06-915ff46cbbe8",
+      "call_number": 2,
+      "tool_name": "place_order",
+      "inputs": {
+        "customer_id": "C-8821",
+        "product_id": "PRD-abc123",
+        "quantity": 1
+      },
+      "real_result": "{'order_id': 'ORD-6c41ab', 'customer_id': 'C-8821', 'product_id': 'PRD-abc123', 'quantity': 1, 'unit_price': 317.05, 'total': 317.05, 'status': 'confirmed', 'estimated_delivery': '2026-03-15'}",
+      "observed_result": "{'product_id': 'PRD-abc123', 'total': 317.05, 'status': 'confirmed', 'estimated_delivery': '2026-03-15', 'customer_id_new': 'C-8821', 'quantity_beta': 1, 'order_id_new': 'ORD-6c41ab', 'unit_price_beta': 317.05}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": "schema_drift",
+      "real_latency_ms": 0.08679198799654841,
+      "observed_latency_ms": 0.10370899690315127,
+      "error": null,
+      "timestamp": 1774850826.321375
+    }
+  ]
+}

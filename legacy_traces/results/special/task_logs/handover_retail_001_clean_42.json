@@ -1,0 +1,40 @@
+{
+  "task_id": "handover_retail_001",
+  "agent_id": "rac_gpt-5-mini",
+  "profile_name": "clean",
+  "seed": 42,
+  "success": false,
+  "partial_score": 0.2,
+  "agent_output": "Summary\n- Customer CUST-020 has had 3 payment attempts decline on the same card. The card is valid and has sufficient funds, so repeated declines likely come from the card issuer or from a fraud/AVS/3D Secure check rather than lack of funds.\n- I checked for a gift-card payment option (searched \"gift card\") and did not find a gift-card product to offer as an alternate.\n\nRecommended next steps (priority order)\n1. Stop retrying the same card. Re-attempting repeatedly can trigger additional fraud blocks with the issuer.\n2. Ask the customer to verify the card details you used: full card number, expiry, CVV, and billing address (including ZIP/postal code). Small mismatches often cause AVS declines.\n3. Have the customer contact their bank/issuer (or call on their behalf, if policy allows). Tell them:\n   - The merchant name\n   - Approximate timestamps of the declines\n   - That transactions are being declined despite sufficient funds\n   Ask the issuer whether they placed a fraud hold or whether additional authentication (3D Secure/OTP) is required.\n4. Offer alternative payment options right away: a different credit/debit card, PayPal/Apple Pay/Google Pay (if supported), bank transfer/ACH, or an invoice/manual payment. If you offer to hold/reserve the item, state how long you can reserve it and any internal policy.\n5. If quick resolution is needed and the customer authorizes it, take the payment by phone (manual authorization) or provide a secure one-time payment link or invoice \u2014 whichever your platform supports.\n6. If the issue persists, escalate to the payments/finance team with the following info to investigate:\n   - Customer ID (CUST-020)\n   - Exact timestamps (with timezone) of each decline\n   - Payment method type (card brand), BIN (first 6) and last 4 digits\n   - Merchant/gateway transaction reference(s) and any gateway decline codes or messages\n   - IP address/session ID of the checkout (if available)\n   - Product(s) attempted and order total\n   These details let the payments team pull gateway logs and the acquirer response.\n\nSuggested message to send the customer\n- Short, friendly template:\n  \"I'm sorry you're seeing declines \u2014 I won't retry the same card to avoid further blocks. Please double-check the card number, expiry, CVV and billing address, and ask your bank to confirm why transactions from our merchant are being declined (share the time of the attempts). If you prefer, you can try another payment method (another card, PayPal/Apple Pay, or bank transfer). If you'd like, I can hold the item for X hours while you resolve this or we can send a secure payment link/phone-pay option. Which would you prefer?\"\n\nIf you want me to act now\n- I can:\n  - Attempt to place the order if you provide an alternate payment method and product_id/quantity.\n  - Generate a wording for escalation to payments with the exact fields to collect.\n  - Hold/reserve an item if you tell me which product to reserve and your hold policy.\n\nWhich of the above would you like me to do next?",
+  "recovery_rate": 1.0,
+  "mean_steps_to_recovery": 0.0,
+  "retry_efficiency": 1.0,
+  "disruptions_encountered": 0,
+  "disruptions_recovered": 0,
+  "disruption_types_seen": [],
+  "total_tool_calls": 1,
+  "extra_tool_calls": null,
+  "duration_seconds": 24.585506625007838,
+  "acknowledged_failure": true,
+  "attempted_alternative": false,
+  "traces": [
+    {
+      "call_id": "608b7de7-b833-43a4-8119-5d3e73a51665",
+      "call_number": 1,
+      "tool_name": "search_products",
+      "inputs": {
+        "query": "gift card",
+        "max_results": 5
+      },
+      "real_result": "{'products': [{'product_id': 'PRD-ec9ce2', 'name': 'Precision Caliper', 'price': 226.27, 'currency': 'USD', 'in_stock': False, 'rating': 3.5}, {'product_id': 'PRD-d504a8', 'name': 'USB-C Hub', 'price': 112.02, 'currency': 'USD', 'in_stock': False, 'rating': 4.6}, {'product_id': 'PRD-8c0c2b', 'name': 'Green Sprocket', 'price': 387.49, 'currency': 'USD', 'in_stock': True, 'rating': 3.3}, {'product_id': 'PRD-9a21c1', 'name': 'Green Sprocket', 'price': 180.08, 'currency': 'USD', 'in_stock': True, 'r",
+      "observed_result": "{'products': [{'product_id': 'PRD-ec9ce2', 'name': 'Precision Caliper', 'price': 226.27, 'currency': 'USD', 'in_stock': False, 'rating': 3.5}, {'product_id': 'PRD-d504a8', 'name': 'USB-C Hub', 'price': 112.02, 'currency': 'USD', 'in_stock': False, 'rating': 4.6}, {'product_id': 'PRD-8c0c2b', 'name': 'Green Sprocket', 'price': 387.49, 'currency': 'USD', 'in_stock': True, 'rating': 3.3}, {'product_id': 'PRD-9a21c1', 'name': 'Green Sprocket', 'price': 180.08, 'currency': 'USD', 'in_stock': True, 'r",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.10754200047813356,
+      "observed_latency_ms": 0.12925000919494778,
+      "error": null,
+      "timestamp": 1774844661.498312
+    }
+  ]
+}

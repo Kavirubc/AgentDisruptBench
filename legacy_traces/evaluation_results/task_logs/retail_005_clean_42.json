@@ -1,0 +1,37 @@
+{
+  "task_id": "retail_005",
+  "agent_id": "langchain_gemini-2.5-flash",
+  "profile_name": "clean",
+  "seed": 42,
+  "success": false,
+  "partial_score": 0.5,
+  "agent_output": "[Agent error: RetailTools.get_customer_profile() missing 1 required keyword-only argument: 'customer_id']",
+  "recovery_rate": 1.0,
+  "mean_steps_to_recovery": 0.0,
+  "retry_efficiency": 1.0,
+  "disruptions_encountered": 0,
+  "disruptions_recovered": 0,
+  "disruption_types_seen": [],
+  "total_tool_calls": 1,
+  "extra_tool_calls": null,
+  "duration_seconds": 1.8039522499311715,
+  "acknowledged_failure": true,
+  "attempted_alternative": false,
+  "traces": [
+    {
+      "call_id": "b149cdd3-d0a0-457b-9d39-46e65ab5676e",
+      "call_number": 1,
+      "tool_name": "get_customer_profile",
+      "inputs": {},
+      "real_result": "None",
+      "observed_result": "None",
+      "real_success": false,
+      "observed_success": false,
+      "disruption_fired": null,
+      "real_latency_ms": 0.019915984012186527,
+      "observed_latency_ms": 0.03458291757851839,
+      "error": "RetailTools.get_customer_profile() missing 1 required keyword-only argument: 'customer_id'",
+      "timestamp": 1773066177.834782
+    }
+  ]
+}

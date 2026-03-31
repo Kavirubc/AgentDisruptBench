@@ -101,6 +101,8 @@ class BaseAgentRunner(abc.ABC):
         self.config = config or RunnerConfig()
         self._is_setup = False
         self._total_tokens = 0
+        self._prompt_tokens = 0
+        self._completion_tokens = 0
         self._total_api_calls = 0
         self._total_time = 0.0
 
@@ -113,8 +115,8 @@ class BaseAgentRunner(abc.ABC):
         """Clean up resources. Override in subclasses."""
         self._is_setup = False
         logger.info(
-            "runner_teardown class=%s tokens=%d api_calls=%d",
-            type(self).__name__, self._total_tokens, self._total_api_calls,
+            "runner_teardown class=%s tokens=%d prompt=%d completion=%d api_calls=%d",
+            type(self).__name__, self._total_tokens, self._prompt_tokens, self._completion_tokens, self._total_api_calls,
         )
 
     @abc.abstractmethod
@@ -179,6 +181,8 @@ class BaseAgentRunner(abc.ABC):
             "runner": type(self).__name__,
             "model": self.config.model,
             "total_tokens": self._total_tokens,
+            "prompt_tokens": self._prompt_tokens,
+            "completion_tokens": self._completion_tokens,
             "total_api_calls": self._total_api_calls,
             "total_time": round(self._total_time, 2),
         }

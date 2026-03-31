@@ -1,0 +1,127 @@
+{
+  "task_id": "retail_018",
+  "agent_id": "langchain_gemini-2.5-flash",
+  "profile_name": "clean",
+  "seed": 42,
+  "success": false,
+  "partial_score": 0.4,
+  "agent_output": "[Agent error: RetailTools.place_order() got an unexpected keyword argument 'cart_id']",
+  "recovery_rate": 1.0,
+  "mean_steps_to_recovery": 0.0,
+  "retry_efficiency": 1.0,
+  "disruptions_encountered": 0,
+  "disruptions_recovered": 0,
+  "disruption_types_seen": [],
+  "total_tool_calls": 6,
+  "extra_tool_calls": null,
+  "duration_seconds": 11.073504625001078,
+  "acknowledged_failure": true,
+  "attempted_alternative": false,
+  "traces": [
+    {
+      "call_id": "8b5f283a-6124-4674-b29f-b3569c2b2165",
+      "call_number": 1,
+      "tool_name": "get_customer_profile",
+      "inputs": {
+        "customer_id": "C-1010"
+      },
+      "real_result": "{'customer_id': 'C-1010', 'first_name': 'Eve', 'last_name': 'Johnson', 'email': 'user4536@example.com', 'tier': 'platinum', 'total_orders': 13, 'member_since': '2024-01-15'}",
+      "observed_result": "{'customer_id': 'C-1010', 'first_name': 'Eve', 'last_name': 'Johnson', 'email': 'user4536@example.com', 'tier': 'platinum', 'total_orders': 13, 'member_since': '2024-01-15'}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.032290998206008226,
+      "observed_latency_ms": 0.039874998037703335,
+      "error": null,
+      "timestamp": 1774590895.7747588
+    },
+    {
+      "call_id": "87eb7c51-1255-42be-b911-ab249a5548eb",
+      "call_number": 1,
+      "tool_name": "search_products",
+      "inputs": {
+        "query": "wireless sensor kit"
+      },
+      "real_result": "{'products': [{'product_id': 'PRD-acb724', 'name': 'Silver Bolt', 'price': 179.14, 'currency': 'USD', 'in_stock': True, 'rating': 3.1}, {'product_id': 'PRD-bad6ec', 'name': 'Carbon Fiber Panel', 'price': 376.55, 'currency': 'USD', 'in_stock': True, 'rating': 3.3}, {'product_id': 'PRD-6cb637', 'name': 'Portable Battery Pack', 'price': 64.2, 'currency': 'USD', 'in_stock': True, 'rating': 4.8}, {'product_id': 'PRD-ca9657', 'name': 'Precision Caliper', 'price': 28.51, 'currency': 'USD', 'in_stock': ",
+      "observed_result": "{'products': [{'product_id': 'PRD-acb724', 'name': 'Silver Bolt', 'price': 179.14, 'currency': 'USD', 'in_stock': True, 'rating': 3.1}, {'product_id': 'PRD-bad6ec', 'name': 'Carbon Fiber Panel', 'price': 376.55, 'currency': 'USD', 'in_stock': True, 'rating': 3.3}, {'product_id': 'PRD-6cb637', 'name': 'Portable Battery Pack', 'price': 64.2, 'currency': 'USD', 'in_stock': True, 'rating': 4.8}, {'product_id': 'PRD-ca9657', 'name': 'Precision Caliper', 'price': 28.51, 'currency': 'USD', 'in_stock': ",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.08520800111000426,
+      "observed_latency_ms": 0.09316600335296243,
+      "error": null,
+      "timestamp": 1774590897.2513962
+    },
+    {
+      "call_id": "4ff1a750-1db3-4d17-b55c-1ab10072628b",
+      "call_number": 1,
+      "tool_name": "check_inventory",
+      "inputs": {
+        "product_id": "PRD-ca9657"
+      },
+      "real_result": "{'product_id': 'PRD-ca9657', 'warehouse': 'default', 'quantity_available': 91, 'reserved': 5, 'restock_date': None}",
+      "observed_result": "{'product_id': 'PRD-ca9657', 'warehouse': 'default', 'quantity_available': 91, 'reserved': 5, 'restock_date': None}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.0652919989079237,
+      "observed_latency_ms": 0.07391699909931049,
+      "error": null,
+      "timestamp": 1774590898.86347
+    },
+    {
+      "call_id": "b2d7bd85-d5b6-4791-965d-a4d35d92adfe",
+      "call_number": 1,
+      "tool_name": "update_cart",
+      "inputs": {
+        "cart_id": "CART-006",
+        "product_id": "PRD-ca9657",
+        "quantity": 2
+      },
+      "real_result": "{'cart_id': 'CART-006', 'action': 'add', 'product_id': 'PRD-ca9657', 'quantity': 2, 'cart_total': 415.95, 'item_count': 2}",
+      "observed_result": "{'cart_id': 'CART-006', 'action': 'add', 'product_id': 'PRD-ca9657', 'quantity': 2, 'cart_total': 415.95, 'item_count': 2}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.23662499734200537,
+      "observed_latency_ms": 0.24420799672952853,
+      "error": null,
+      "timestamp": 1774590900.597635
+    },
+    {
+      "call_id": "71b08627-11f1-42d6-8f8b-45f6fcfd542e",
+      "call_number": 1,
+      "tool_name": "apply_coupon",
+      "inputs": {
+        "cart_id": "CART-006",
+        "coupon_code": "VIP30"
+      },
+      "real_result": "{'cart_id': 'CART-006', 'coupon_code': 'VIP30', 'valid': True, 'discount_percent': 13, 'message': 'Coupon applied'}",
+      "observed_result": "{'cart_id': 'CART-006', 'coupon_code': 'VIP30', 'valid': True, 'discount_percent': 13, 'message': 'Coupon applied'}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.12433300071279518,
+      "observed_latency_ms": 0.1336250024905894,
+      "error": null,
+      "timestamp": 1774590902.4726999
+    },
+    {
+      "call_id": "8b7fa2ea-4bc5-4c1d-9bae-8209752cebba",
+      "call_number": 1,
+      "tool_name": "place_order",
+      "inputs": {
+        "cart_id": "CART-006"
+      },
+      "real_result": "None",
+      "observed_result": "None",
+      "real_success": false,
+      "observed_success": false,
+      "disruption_fired": null,
+      "real_latency_ms": 0.014000001101521775,
+      "observed_latency_ms": 0.02383299943176098,
+      "error": "RetailTools.place_order() got an unexpected keyword argument 'cart_id'",
+      "timestamp": 1774590903.9458098
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "task_id": "handover_devops_001",
+  "agent_id": "langchain_gemini-2.5-flash",
+  "profile_name": "hostile_environment",
+  "seed": 42,
+  "success": false,
+  "partial_score": 0.0,
+  "agent_output": "[Agent error: {\"error\": {\"code\": 429, \"message\": \"Too Many Requests\", \"retry_after\": 30}}]",
+  "recovery_rate": 0.0,
+  "mean_steps_to_recovery": 0.0,
+  "retry_efficiency": 1.0,
+  "disruptions_encountered": 1,
+  "disruptions_recovered": 0,
+  "disruption_types_seen": [
+    "http_429"
+  ],
+  "total_tool_calls": 1,
+  "extra_tool_calls": 0,
+  "duration_seconds": 5.737281792000431,
+  "acknowledged_failure": true,
+  "attempted_alternative": false,
+  "traces": [
+    {
+      "call_id": "ce371127-2f62-49cb-854a-82817f784a7c",
+      "call_number": 1,
+      "tool_name": "get_logs",
+      "inputs": {
+        "service_name": "auth-api"
+      },
+      "real_result": "{'service': 'auth-api', 'logs': [{'log_id': 'LOG-113228', 'severity': 'error', 'message': 'Health check failed for downstream dependency', 'timestamp': '2026-03-09T11:30:00Z', 'source': 'auth-api'}, {'log_id': 'LOG-2887de', 'severity': 'error', 'message': 'Health check failed for downstream dependency', 'timestamp': '2026-03-09T10:30:00Z', 'source': 'auth-api'}, {'log_id': 'LOG-2183e5', 'severity': 'error', 'message': 'Disk I/O latency spike detected on node-3', 'timestamp': '2026-03-09T09:30:00",
+      "observed_result": "None",
+      "real_success": true,
+      "observed_success": false,
+      "disruption_fired": "http_429",
+      "real_latency_ms": 0.060457998188212514,
+      "observed_latency_ms": 0.12279200018383563,
+      "error": "{\"error\": {\"code\": 429, \"message\": \"Too Many Requests\", \"retry_after\": 30}}",
+      "timestamp": 1774590711.190948
+    }
+  ]
+}

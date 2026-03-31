@@ -1,0 +1,77 @@
+{
+  "task_id": "devops_012",
+  "agent_id": "langchain_gemini-2.5-flash",
+  "profile_name": "mild_production",
+  "seed": 42,
+  "success": false,
+  "partial_score": 0.0,
+  "agent_output": "[Agent error: {\"error\": {\"code\": 429, \"message\": \"Too Many Requests\", \"retry_after\": 30}}]",
+  "recovery_rate": 0.0,
+  "mean_steps_to_recovery": 0.0,
+  "retry_efficiency": 0.0,
+  "disruptions_encountered": 1,
+  "disruptions_recovered": 0,
+  "disruption_types_seen": [
+    "http_429"
+  ],
+  "total_tool_calls": 3,
+  "extra_tool_calls": 0,
+  "duration_seconds": 1.7786468749982305,
+  "acknowledged_failure": true,
+  "attempted_alternative": true,
+  "traces": [
+    {
+      "call_id": "e14b2c1a-84cc-4106-b2d4-7f412117f8d2",
+      "call_number": 1,
+      "tool_name": "get_metrics",
+      "inputs": {
+        "service_name": "user-service",
+        "metric_name": "cpu"
+      },
+      "real_result": "None",
+      "observed_result": "None",
+      "real_success": false,
+      "observed_success": false,
+      "disruption_fired": "http_429",
+      "real_latency_ms": 0.014375000318977982,
+      "observed_latency_ms": 0.07795800047460943,
+      "error": "{\"error\": {\"code\": 429, \"message\": \"Too Many Requests\", \"retry_after\": 30}}",
+      "timestamp": 1774590439.766366
+    },
+    {
+      "call_id": "bd15ca8b-b252-4f70-8fb7-7a7cdf9a6dd6",
+      "call_number": 2,
+      "tool_name": "get_metrics",
+      "inputs": {
+        "service_name": "user-service",
+        "metric_name": "memory"
+      },
+      "real_result": "None",
+      "observed_result": "None",
+      "real_success": false,
+      "observed_success": false,
+      "disruption_fired": null,
+      "real_latency_ms": 0.008250000973930582,
+      "observed_latency_ms": 0.029709000955335796,
+      "error": "DevopsTools.get_metrics() got an unexpected keyword argument 'metric_name'. Did you mean 'metric_type'?",
+      "timestamp": 1774590439.767675
+    },
+    {
+      "call_id": "8276ebf0-87c0-4fb5-b009-b24b61c8b1b4",
+      "call_number": 1,
+      "tool_name": "get_logs",
+      "inputs": {
+        "log_type": "error"
+      },
+      "real_result": "None",
+      "observed_result": "None",
+      "real_success": false,
+      "observed_success": false,
+      "disruption_fired": null,
+      "real_latency_ms": 0.007041999197099358,
+      "observed_latency_ms": 0.022291998902801424,
+      "error": "DevopsTools.get_logs() got an unexpected keyword argument 'log_type'",
+      "timestamp": 1774590439.7688031
+    }
+  ]
+}

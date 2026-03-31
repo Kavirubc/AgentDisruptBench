@@ -1,0 +1,78 @@
+{
+  "task_id": "retail_009",
+  "agent_id": "langchain_gemini-2.5-flash",
+  "profile_name": "clean",
+  "seed": 42,
+  "success": true,
+  "partial_score": 1.0,
+  "agent_output": "The following actions have been completed:\n- Product PRD-aaa111 (quantity 3) has been added to CART-002. The cost for 3 units of PRD-aaa111 is 354.18.\n- Product PRD-bbb222 (quantity 1) has been added to CART-002. The cost for 1 unit of PRD-bbb222 is 104.24.\n- Coupon WELCOME10 has been applied to CART-002, providing a 17% discount.\n\nThe total cost of the items before the coupon is 354.18 + 104.24 = 458.42.\nWith a 17% discount, the final cart total is 458.42 * (1 - 0.17) = 458.42 * 0.83 = 380.4886.\n\nThe final cart total is 380.49.",
+  "recovery_rate": 1.0,
+  "mean_steps_to_recovery": 0.0,
+  "retry_efficiency": 1.0,
+  "disruptions_encountered": 0,
+  "disruptions_recovered": 0,
+  "disruption_types_seen": [],
+  "total_tool_calls": 3,
+  "extra_tool_calls": null,
+  "duration_seconds": 9.95444199999838,
+  "acknowledged_failure": false,
+  "attempted_alternative": false,
+  "traces": [
+    {
+      "call_id": "2279de1c-efc6-4189-9ec1-3ef7729288d4",
+      "call_number": 1,
+      "tool_name": "update_cart",
+      "inputs": {
+        "cart_id": "CART-002",
+        "product_id": "PRD-aaa111",
+        "quantity": 3
+      },
+      "real_result": "{'cart_id': 'CART-002', 'action': 'add', 'product_id': 'PRD-aaa111', 'quantity': 3, 'cart_total': 354.18, 'item_count': 3}",
+      "observed_result": "{'cart_id': 'CART-002', 'action': 'add', 'product_id': 'PRD-aaa111', 'quantity': 3, 'cart_total': 354.18, 'item_count': 3}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.15625000014551915,
+      "observed_latency_ms": 0.16512499860255048,
+      "error": null,
+      "timestamp": 1774590815.579486
+    },
+    {
+      "call_id": "bd8cecb6-910a-4bc1-a70e-d46899ee5043",
+      "call_number": 2,
+      "tool_name": "update_cart",
+      "inputs": {
+        "cart_id": "CART-002",
+        "product_id": "PRD-bbb222",
+        "quantity": 1
+      },
+      "real_result": "{'cart_id': 'CART-002', 'action': 'add', 'product_id': 'PRD-bbb222', 'quantity': 1, 'cart_total': 104.24, 'item_count': 4}",
+      "observed_result": "{'cart_id': 'CART-002', 'action': 'add', 'product_id': 'PRD-bbb222', 'quantity': 1, 'cart_total': 104.24, 'item_count': 4}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.14262499826145358,
+      "observed_latency_ms": 0.15949999942677096,
+      "error": null,
+      "timestamp": 1774590817.003466
+    },
+    {
+      "call_id": "5f66c249-4b47-4f7d-b119-1570827a07a1",
+      "call_number": 1,
+      "tool_name": "apply_coupon",
+      "inputs": {
+        "cart_id": "CART-002",
+        "coupon_code": "WELCOME10"
+      },
+      "real_result": "{'cart_id': 'CART-002', 'coupon_code': 'WELCOME10', 'valid': True, 'discount_percent': 17, 'message': 'Coupon applied'}",
+      "observed_result": "{'cart_id': 'CART-002', 'coupon_code': 'WELCOME10', 'valid': True, 'discount_percent': 17, 'message': 'Coupon applied'}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.07854200157453306,
+      "observed_latency_ms": 0.08595899998908862,
+      "error": null,
+      "timestamp": 1774590818.29115
+    }
+  ]
+}

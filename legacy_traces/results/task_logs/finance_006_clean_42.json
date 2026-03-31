@@ -1,0 +1,37 @@
+{
+  "task_id": "finance_006",
+  "agent_id": "langchain_gemini-2.5-flash",
+  "profile_name": "clean",
+  "seed": 42,
+  "success": false,
+  "partial_score": 0.4,
+  "agent_output": "[Agent error: FinanceTools.check_credit_limit() missing 1 required keyword-only argument: 'account_id']",
+  "recovery_rate": 1.0,
+  "mean_steps_to_recovery": 0.0,
+  "retry_efficiency": 1.0,
+  "disruptions_encountered": 0,
+  "disruptions_recovered": 0,
+  "disruption_types_seen": [],
+  "total_tool_calls": 1,
+  "extra_tool_calls": null,
+  "duration_seconds": 1.6190275420012767,
+  "acknowledged_failure": true,
+  "attempted_alternative": false,
+  "traces": [
+    {
+      "call_id": "cfffd02b-ebd8-469a-9305-28ceae01b2ee",
+      "call_number": 1,
+      "tool_name": "check_credit_limit",
+      "inputs": {},
+      "real_result": "None",
+      "observed_result": "None",
+      "real_success": false,
+      "observed_success": false,
+      "disruption_fired": null,
+      "real_latency_ms": 0.012959000741830096,
+      "observed_latency_ms": 0.024834000214468688,
+      "error": "FinanceTools.check_credit_limit() missing 1 required keyword-only argument: 'account_id'",
+      "timestamp": 1774590540.732107
+    }
+  ]
+}

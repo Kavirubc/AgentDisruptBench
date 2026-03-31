@@ -1,0 +1,281 @@
+{
+  "task_id": "impossible_retail_001",
+  "agent_id": "rac_gpt-5-mini",
+  "profile_name": "hostile_environment",
+  "seed": 42,
+  "success": true,
+  "partial_score": 0.3,
+  "agent_output": "I tried to locate \"Quantum Flux Capacitor\" model QFC-9000 and place the order, but I could not find that product in the catalog.\n\nWhat I did\n- Ran multiple searches with these queries: \"Quantum Flux Capacitor QFC-9000\", \"Quantum Flux Capacitor\", \"QFC-9000\", \"QFC 9000\", \"Flux Capacitor\", and variants.\n- Several search attempts returned other catalog items but none returned a product named \"Quantum Flux Capacitor\" or a model/code QFC-9000.\n- Because I could not find a matching product_id for QFC-9000, I did not place an order (place_order requires a valid product_id).\n\nOptions \u2014 please tell me which you prefer\n1. If you can provide the exact product_id (catalog SKU) for QFC-9000, I will place the order now for 2 units for customer CUST-010.\n2. If QFC-9000 is out of catalog or has a different name/SKU, tell me an alternate product_id or exact product name and I\u2019ll order that.\n3. If you want, I can continue searching (e.g., check supplier/backorder lists or use different keyword combinations) and notify you when QFC-9000 appears.\n4. If you\u2019d like a recommended close match from the catalog, I can pick the best available item and place the order after you confirm.\n\nWhich option should I take?",
+  "recovery_rate": 1.0,
+  "mean_steps_to_recovery": 1.2,
+  "retry_efficiency": 0.8333333333333334,
+  "disruptions_encountered": 5,
+  "disruptions_recovered": 5,
+  "disruption_types_seen": [
+    "wrong_data",
+    "http_500",
+    "malformed_json",
+    "http_429",
+    "missing_fields",
+    "timeout"
+  ],
+  "total_tool_calls": 14,
+  "extra_tool_calls": 10,
+  "duration_seconds": 44.23563933299738,
+  "acknowledged_failure": true,
+  "attempted_alternative": false,
+  "traces": [
+    {
+      "call_id": "17f5a889-ee44-4f4a-bbc9-a49f357f74bb",
+      "call_number": 1,
+      "tool_name": "search_products",
+      "inputs": {
+        "query": "Quantum Flux Capacitor QFC-9000",
+        "max_results": 5
+      },
+      "real_result": "{'products': [{'product_id': 'PRD-6023fd', 'name': 'Smart Thermostat', 'price': 68.31, 'currency': 'USD', 'in_stock': True, 'rating': 4.1}, {'product_id': 'PRD-c6483e', 'name': 'Wireless Sensor Kit', 'price': 169.74, 'currency': 'USD', 'in_stock': True, 'rating': 3.7}, {'product_id': 'PRD-5888b2', 'name': 'Portable Battery Pack', 'price': 188.69, 'currency': 'USD', 'in_stock': False, 'rating': 3.6}, {'product_id': 'PRD-bfa21e', 'name': 'USB-C Hub', 'price': 153.35, 'currency': 'USD', 'in_stock':",
+      "observed_result": "None",
+      "real_success": true,
+      "observed_success": false,
+      "disruption_fired": "http_429",
+      "real_latency_ms": 0.05787500413134694,
+      "observed_latency_ms": 0.09816700185183436,
+      "error": "{\"error\": {\"code\": 429, \"message\": \"Too Many Requests\", \"retry_after\": 30}}",
+      "timestamp": 1774844905.8317308
+    },
+    {
+      "call_id": "de213105-0a87-4d9d-9b48-32f53686b7c6",
+      "call_number": 2,
+      "tool_name": "search_products",
+      "inputs": {
+        "query": "Quantum Flux Capacitor QFC-9000",
+        "max_results": 5
+      },
+      "real_result": "{'products': [{'product_id': 'PRD-6023fd', 'name': 'Smart Thermostat', 'price': 68.31, 'currency': 'USD', 'in_stock': True, 'rating': 4.1}, {'product_id': 'PRD-c6483e', 'name': 'Wireless Sensor Kit', 'price': 169.74, 'currency': 'USD', 'in_stock': True, 'rating': 3.7}, {'product_id': 'PRD-5888b2', 'name': 'Portable Battery Pack', 'price': 188.69, 'currency': 'USD', 'in_stock': False, 'rating': 3.6}, {'product_id': 'PRD-bfa21e', 'name': 'USB-C Hub', 'price': 153.35, 'currency': 'USD', 'in_stock':",
+      "observed_result": "{'total': 5, 'query': 'Quantum Flux Capacitor QFC-9000'}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": "missing_fields",
+      "real_latency_ms": 0.05712499842047691,
+      "observed_latency_ms": 5.133416998432949,
+      "error": null,
+      "timestamp": 1774844905.9211268
+    },
+    {
+      "call_id": "599440b5-2e9f-441a-a1dd-837aa98572b2",
+      "call_number": 3,
+      "tool_name": "search_products",
+      "inputs": {
+        "query": "Quantum Flux Capacitor",
+        "max_results": 10
+      },
+      "real_result": "{'products': [{'product_id': 'PRD-3f0a47', 'name': 'Silver Bolt', 'price': 418.23, 'currency': 'USD', 'in_stock': True, 'rating': 3.6}, {'product_id': 'PRD-cac93a', 'name': 'Noise-Cancelling Headphones', 'price': 272.99, 'currency': 'USD', 'in_stock': True, 'rating': 3.9}, {'product_id': 'PRD-e7db31', 'name': 'Green Sprocket', 'price': 97.42, 'currency': 'USD', 'in_stock': True, 'rating': 4.6}, {'product_id': 'PRD-d62b95', 'name': 'LED Display Module', 'price': 34.06, 'currency': 'USD', 'in_stoc",
+      "observed_result": "None",
+      "real_success": true,
+      "observed_success": false,
+      "disruption_fired": "timeout",
+      "real_latency_ms": 0.045500011765398085,
+      "observed_latency_ms": 0.070416004746221,
+      "error": "{\"error\": {\"code\": \"TIMEOUT\", \"message\": \"Tool 'search_products' timed out after 10000ms\", \"delay_ms\": 10000}}",
+      "timestamp": 1774844907.2734132
+    },
+    {
+      "call_id": "24144f77-baab-4be3-a815-e34c292a1440",
+      "call_number": 4,
+      "tool_name": "search_products",
+      "inputs": {
+        "query": "Quantum Flux Capacitor",
+        "max_results": 10
+      },
+      "real_result": "{'products': [{'product_id': 'PRD-3f0a47', 'name': 'Silver Bolt', 'price': 418.23, 'currency': 'USD', 'in_stock': True, 'rating': 3.6}, {'product_id': 'PRD-cac93a', 'name': 'Noise-Cancelling Headphones', 'price': 272.99, 'currency': 'USD', 'in_stock': True, 'rating': 3.9}, {'product_id': 'PRD-e7db31', 'name': 'Green Sprocket', 'price': 97.42, 'currency': 'USD', 'in_stock': True, 'rating': 4.6}, {'product_id': 'PRD-d62b95', 'name': 'LED Display Module', 'price': 34.06, 'currency': 'USD', 'in_stoc",
+      "observed_result": "None",
+      "real_success": true,
+      "observed_success": false,
+      "disruption_fired": "http_500",
+      "real_latency_ms": 0.04975000047124922,
+      "observed_latency_ms": 0.08012499893084168,
+      "error": "{\"error\": {\"code\": 500, \"message\": \"Internal Server Error\"}}",
+      "timestamp": 1774844907.388931
+    },
+    {
+      "call_id": "56e50e59-0f8b-45eb-a2a1-367e385460e9",
+      "call_number": 5,
+      "tool_name": "search_products",
+      "inputs": {
+        "query": "QFC-9000",
+        "max_results": 5
+      },
+      "real_result": "{'products': [{'product_id': 'PRD-1742be', 'name': 'Wireless Sensor Kit', 'price': 16.78, 'currency': 'USD', 'in_stock': True, 'rating': 3.6}, {'product_id': 'PRD-4d0d7b', 'name': 'Gold Bracket', 'price': 462.33, 'currency': 'USD', 'in_stock': True, 'rating': 4.6}, {'product_id': 'PRD-649357', 'name': 'Silver Bolt', 'price': 392.49, 'currency': 'USD', 'in_stock': True, 'rating': 4.1}, {'product_id': 'PRD-194c17', 'name': 'LED Display Module', 'price': 357.29, 'currency': 'USD', 'in_stock': True,",
+      "observed_result": "{'products': [{'product_id': 'WRONG_PRD-194c17', 'name': 'LED DISPLAY MODULE', 'price': 367.7, 'currency': 'DSU', 'in_stock': False, 'rating': 19.37}, {'product_id': '753946-DRP', 'name': 'tloB revliS', 'price': 453.92, 'currency': 'WRONG_USD', 'in_stock': False, 'rating': 11.35}, {'product_id': 'PRD-34F8F3', 'name': 'CARBON FIBER PANEL', 'price': 57.84, 'currency': 'DSU', 'in_stock': False, 'rating': 101.74}, {'product_id': 'PRD-1742be [MODIFIED]', 'name': 'WRONG_Wireless Sensor Kit', 'price': ",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": "wrong_data",
+      "real_latency_ms": 0.08187499770428985,
+      "observed_latency_ms": 0.28008299705106765,
+      "error": null,
+      "timestamp": 1774844909.255658
+    },
+    {
+      "call_id": "585dd2df-65a2-42e2-bc25-bdb9f67ec7d3",
+      "call_number": 6,
+      "tool_name": "search_products",
+      "inputs": {
+        "query": "Quantum Flux Capacitor QFC-9000",
+        "max_results": 10
+      },
+      "real_result": "{'products': [{'product_id': 'PRD-6023fd', 'name': 'Smart Thermostat', 'price': 68.31, 'currency': 'USD', 'in_stock': True, 'rating': 4.1}, {'product_id': 'PRD-c6483e', 'name': 'Wireless Sensor Kit', 'price': 169.74, 'currency': 'USD', 'in_stock': True, 'rating': 3.7}, {'product_id': 'PRD-5888b2', 'name': 'Portable Battery Pack', 'price': 188.69, 'currency': 'USD', 'in_stock': False, 'rating': 3.6}, {'product_id': 'PRD-bfa21e', 'name': 'USB-C Hub', 'price': 153.35, 'currency': 'USD', 'in_stock':",
+      "observed_result": "{'products': [{'product_id': 'PRD-6023fd', 'name': 'Smart Thermostat', 'price': 68.31, 'currency': 'USD', 'in_stock': True, 'rating': 4.1}, {'product_id': 'PRD-c6483e', 'name': 'Wireless Sensor Kit', 'price': 169.74, 'currency': 'USD', 'in_stock': True, 'rating': 3.7}, {'product_id': 'PRD-5888b2', 'name': 'Portable Battery Pack', 'price': 188.69, 'currency': 'USD', 'in_stock': False, 'rating': 3.6}, {'product_id': 'PRD-bfa21e', 'name': 'USB-C Hub', 'price': 153.35, 'currency': 'USD', 'in_stock':",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": "missing_fields",
+      "real_latency_ms": 0.08562499715480953,
+      "observed_latency_ms": 0.18670900317374617,
+      "error": null,
+      "timestamp": 1774844912.029545
+    },
+    {
+      "call_id": "0b33ac42-2eea-4e9a-bce1-0090079d9b60",
+      "call_number": 7,
+      "tool_name": "search_products",
+      "inputs": {
+        "query": "QFC 9000",
+        "max_results": 10
+      },
+      "real_result": "{'products': [{'product_id': 'PRD-a41073', 'name': 'Carbon Fiber Panel', 'price': 80.54, 'currency': 'USD', 'in_stock': True, 'rating': 4.1}, {'product_id': 'PRD-a8be3e', 'name': 'Smart Thermostat', 'price': 12.13, 'currency': 'USD', 'in_stock': True, 'rating': 4.4}, {'product_id': 'PRD-8d7f29', 'name': 'Ergonomic Keyboard', 'price': 67.77, 'currency': 'USD', 'in_stock': True, 'rating': 3.1}, {'product_id': 'PRD-4870a2', 'name': 'Wireless Sensor Kit', 'price': 68.76, 'currency': 'USD', 'in_stock",
+      "observed_result": "{'products': [{'product_id': 'PRD-a41073', 'name': 'Carbon Fiber Panel', 'price': 80.54, 'currency': 'USD', 'in_stock': True, 'rating': 4.1}, {'product_id': 'PRD-a8be3e', 'name': 'Smart Thermostat', 'price': 12.13, 'currency': 'USD', 'in_stock': True, 'rating': 4.4}, {'product_id': 'PRD-8d7f29', 'name': 'Ergonomic Keyboard', 'price': 67.77, 'currency': 'USD', 'in_stock': True, 'rating': 3.1}, {'product_id': 'PRD-4870a2', 'name': 'Wireless Sensor Kit', 'price': 68.76, 'currency': 'USD', 'in_stock",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.11316699965391308,
+      "observed_latency_ms": 0.14066700532566756,
+      "error": null,
+      "timestamp": 1774844914.45788
+    },
+    {
+      "call_id": "efab26f9-183b-47f9-8dad-88b08ada22b4",
+      "call_number": 8,
+      "tool_name": "search_products",
+      "inputs": {
+        "query": "\"Quantum Flux Capacitor\" \"QFC-9000\"",
+        "max_results": 10
+      },
+      "real_result": "{'products': [{'product_id': 'PRD-ad0def', 'name': 'Ergonomic Keyboard', 'price': 86.58, 'currency': 'USD', 'in_stock': True, 'rating': 4.6}, {'product_id': 'PRD-d0e401', 'name': 'Wireless Sensor Kit', 'price': 182.11, 'currency': 'USD', 'in_stock': True, 'rating': 3.5}, {'product_id': 'PRD-b7a37d', 'name': 'Titanium Gear', 'price': 249.53, 'currency': 'USD', 'in_stock': False, 'rating': 3.8}, {'product_id': 'PRD-aae390', 'name': 'Red Gadget', 'price': 26.58, 'currency': 'USD', 'in_stock': True,",
+      "observed_result": "None",
+      "real_success": true,
+      "observed_success": false,
+      "disruption_fired": "http_500",
+      "real_latency_ms": 0.03800001286435872,
+      "observed_latency_ms": 0.05929201142862439,
+      "error": "{\"error\": {\"code\": 500, \"message\": \"Internal Server Error\"}}",
+      "timestamp": 1774844917.369178
+    },
+    {
+      "call_id": "80ae13dc-dd9a-49cc-be74-d3e67b5f4d77",
+      "call_number": 9,
+      "tool_name": "search_products",
+      "inputs": {
+        "query": "Flux Capacitor QFC-9000",
+        "max_results": 10
+      },
+      "real_result": "{'products': [{'product_id': 'PRD-31073e', 'name': 'Smart Thermostat', 'price': 414.81, 'currency': 'USD', 'in_stock': True, 'rating': 3.7}, {'product_id': 'PRD-f8e951', 'name': 'Carbon Fiber Panel', 'price': 15.2, 'currency': 'USD', 'in_stock': True, 'rating': 4.5}, {'product_id': 'PRD-2b3d11', 'name': 'USB-C Hub', 'price': 127.86, 'currency': 'USD', 'in_stock': False, 'rating': 3.3}, {'product_id': 'PRD-4670e2', 'name': 'Portable Battery Pack', 'price': 162.46, 'currency': 'USD', 'in_stock': F",
+      "observed_result": "{'products': [{'product_id': 'PRD-31073e', 'name': 'Smart Thermostat', 'price': 414.81, 'currency': 'USD', 'in_stock': True, 'rating': 3.7}, {'product_id': 'PRD-f8e951', 'name': 'Carbon Fiber Panel', 'price': 15.2, 'currency': 'USD', 'in_stock': True, 'rating': 4.5}, {'product_id': 'PRD-2b3d11', 'name': 'USB-C Hub', 'price': 127.86, 'currency': 'USD', 'in_stock': False, 'rating': 3.3}, {'product_id': 'PRD-4670e2', 'name': 'Portable Battery Pack', 'price': 162.46, 'currency': 'USD', 'in_stock': F",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.07337499118875712,
+      "observed_latency_ms": 0.1784999913070351,
+      "error": null,
+      "timestamp": 1774844920.6308181
+    },
+    {
+      "call_id": "258d08ce-7a3d-4276-83c6-a8254dadcdd2",
+      "call_number": 10,
+      "tool_name": "search_products",
+      "inputs": {
+        "query": "Quantum Flux Capacitor QFC-9000",
+        "max_results": 10
+      },
+      "real_result": "{'products': [{'product_id': 'PRD-6023fd', 'name': 'Smart Thermostat', 'price': 68.31, 'currency': 'USD', 'in_stock': True, 'rating': 4.1}, {'product_id': 'PRD-c6483e', 'name': 'Wireless Sensor Kit', 'price': 169.74, 'currency': 'USD', 'in_stock': True, 'rating': 3.7}, {'product_id': 'PRD-5888b2', 'name': 'Portable Battery Pack', 'price': 188.69, 'currency': 'USD', 'in_stock': False, 'rating': 3.6}, {'product_id': 'PRD-bfa21e', 'name': 'USB-C Hub', 'price': 153.35, 'currency': 'USD', 'in_stock':",
+      "observed_result": "{'products': [{'product_id': 'PRD-6023fd', 'name': 'Smart Thermostat', 'price': 68.31, 'currency': 'USD', 'in_stock': True, 'rating': 4.1}, {'product_id': 'PRD-c6483e', 'name': 'Wireless Sensor Kit', 'price': 169.74, 'currency': 'USD', 'in_stock': True, 'rating': 3.7}, {'product_id': 'PRD-5888b2', 'name': 'Portable Battery Pack', 'price': 188.69, 'currency': 'USD', 'in_stock': False, 'rating': 3.6}, {'product_id': 'PRD-bfa21e', 'name': 'USB-C Hub', 'price': 153.35, 'currency': 'USD', 'in_stock':",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.35025000397581607,
+      "observed_latency_ms": 0.3598750045057386,
+      "error": null,
+      "timestamp": 1774844925.762218
+    },
+    {
+      "call_id": "9d10186e-6c92-43b0-a74c-634982b56259",
+      "call_number": 11,
+      "tool_name": "search_products",
+      "inputs": {
+        "query": "QFC-9000",
+        "max_results": 50
+      },
+      "real_result": "{'products': [{'product_id': 'PRD-1742be', 'name': 'Wireless Sensor Kit', 'price': 16.78, 'currency': 'USD', 'in_stock': True, 'rating': 3.6}, {'product_id': 'PRD-4d0d7b', 'name': 'Gold Bracket', 'price': 462.33, 'currency': 'USD', 'in_stock': True, 'rating': 4.6}, {'product_id': 'PRD-649357', 'name': 'Silver Bolt', 'price': 392.49, 'currency': 'USD', 'in_stock': True, 'rating': 4.1}, {'product_id': 'PRD-194c17', 'name': 'LED Display Module', 'price': 357.29, 'currency': 'USD', 'in_stock': True,",
+      "observed_result": "{'total': 5, 'query': 'QFC-9000'}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": "missing_fields",
+      "real_latency_ms": 0.098082993645221,
+      "observed_latency_ms": 0.2492500061634928,
+      "error": null,
+      "timestamp": 1774844928.9698439
+    },
+    {
+      "call_id": "da3b05aa-6c20-41f9-8d1d-c0c96cb53636",
+      "call_number": 12,
+      "tool_name": "search_products",
+      "inputs": {
+        "query": "Flux Capacitor",
+        "max_results": 20
+      },
+      "real_result": "{'products': [{'product_id': 'PRD-c6d13f', 'name': 'Precision Caliper', 'price': 107.71, 'currency': 'USD', 'in_stock': True, 'rating': 3.9}, {'product_id': 'PRD-528f49', 'name': 'Wireless Sensor Kit', 'price': 109.84, 'currency': 'USD', 'in_stock': True, 'rating': 3.1}, {'product_id': 'PRD-00f24c', 'name': 'Red Gadget', 'price': 469.11, 'currency': 'USD', 'in_stock': True, 'rating': 3.2}, {'product_id': 'PRD-b35673', 'name': 'Carbon Fiber Panel', 'price': 369.62, 'currency': 'USD', 'in_stock': ",
+      "observed_result": "{\"products\": [{\"product_id\": \"PRD-c6d13f\", \"name\": \"Precision Caliper\", \"price\": 107.71, \"currency\": \"USD\", \"in_stock\": true, \"rating\": 3.9}, {\"product_id\": \"PRD-528f49\", \"name\": \"Wireless Sensor Kit\", \"price\": 109.84, \"currency\": \"USD\", \"in_stock\": true, \"rating\": 3.1}, {\"product_id\": \"PRD-00f24c\", \"name\": \"Red Gadget\", \"price\": 469.11, \"currency\": \"USD\", \"in_stock\": true, \"rating\": 3.2}",
+      "real_success": true,
+      "observed_success": false,
+      "disruption_fired": "malformed_json",
+      "real_latency_ms": 0.060250007663853467,
+      "observed_latency_ms": 0.11804100358858705,
+      "error": "Malformed JSON response",
+      "timestamp": 1774844931.933315
+    },
+    {
+      "call_id": "0f3677c1-fbd6-4f2f-8376-0ff7e02d5286",
+      "call_number": 13,
+      "tool_name": "search_products",
+      "inputs": {
+        "query": "Quantum Flux Capacitor",
+        "max_results": 20
+      },
+      "real_result": "{'products': [{'product_id': 'PRD-3f0a47', 'name': 'Silver Bolt', 'price': 418.23, 'currency': 'USD', 'in_stock': True, 'rating': 3.6}, {'product_id': 'PRD-cac93a', 'name': 'Noise-Cancelling Headphones', 'price': 272.99, 'currency': 'USD', 'in_stock': True, 'rating': 3.9}, {'product_id': 'PRD-e7db31', 'name': 'Green Sprocket', 'price': 97.42, 'currency': 'USD', 'in_stock': True, 'rating': 4.6}, {'product_id': 'PRD-d62b95', 'name': 'LED Display Module', 'price': 34.06, 'currency': 'USD', 'in_stoc",
+      "observed_result": "{'products': [{'product_id': 'PRD-3f0a47', 'name': 'Silver Bolt', 'price': 418.23, 'currency': 'USD', 'in_stock': True, 'rating': 3.6}, {'product_id': 'PRD-cac93a', 'name': 'Noise-Cancelling Headphones', 'price': 272.99, 'currency': 'USD', 'in_stock': True, 'rating': 3.9}, {'product_id': 'PRD-e7db31', 'name': 'Green Sprocket', 'price': 97.42, 'currency': 'USD', 'in_stock': True, 'rating': 4.6}, {'product_id': 'PRD-d62b95', 'name': 'LED Display Module', 'price': 34.06, 'currency': 'USD', 'in_stoc",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.11475000064820051,
+      "observed_latency_ms": 0.14575000386685133,
+      "error": null,
+      "timestamp": 1774844936.577802
+    },
+    {
+      "call_id": "c846ae8a-81a1-4bb8-89cc-d1071655188f",
+      "call_number": 14,
+      "tool_name": "search_products",
+      "inputs": {
+        "query": "Quantum Flux Capacitor QFC9000",
+        "max_results": 10
+      },
+      "real_result": "{'products': [{'product_id': 'PRD-c4186c', 'name': 'Carbon Fiber Panel', 'price': 248.34, 'currency': 'USD', 'in_stock': True, 'rating': 3.8}, {'product_id': 'PRD-3d5eb5', 'name': 'Smart Thermostat', 'price': 348.73, 'currency': 'USD', 'in_stock': True, 'rating': 3.4}, {'product_id': 'PRD-9744b5', 'name': 'Wireless Sensor Kit', 'price': 128.9, 'currency': 'USD', 'in_stock': True, 'rating': 3.6}, {'product_id': 'PRD-46393a', 'name': 'Noise-Cancelling Headphones', 'price': 289.08, 'currency': 'USD",
+      "observed_result": "{'products': [{'product_id': 'PRD-c4186c', 'name': 'Carbon Fiber Panel', 'price': 248.34, 'currency': 'USD', 'in_stock': True, 'rating': 3.8}, {'product_id': 'PRD-3d5eb5', 'name': 'Smart Thermostat', 'price': 348.73, 'currency': 'USD', 'in_stock': True, 'rating': 3.4}, {'product_id': 'PRD-9744b5', 'name': 'Wireless Sensor Kit', 'price': 128.9, 'currency': 'USD', 'in_stock': True, 'rating': 3.6}, {'product_id': 'PRD-46393a', 'name': 'Noise-Cancelling Headphones', 'price': 289.08, 'currency': 'USD",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": "missing_fields",
+      "real_latency_ms": 0.03675000334624201,
+      "observed_latency_ms": 0.07491699943784624,
+      "error": null,
+      "timestamp": 1774844939.487639
+    }
+  ]
+}

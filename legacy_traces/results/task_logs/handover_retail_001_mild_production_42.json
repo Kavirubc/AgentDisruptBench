@@ -1,0 +1,21 @@
+{
+  "task_id": "handover_retail_001",
+  "agent_id": "langchain_gemini-2.5-flash",
+  "profile_name": "mild_production",
+  "seed": 42,
+  "success": false,
+  "partial_score": 0.2,
+  "agent_output": "I cannot directly resolve payment decline issues with the available tools. The `search_products` tool is for finding products, and the `place_order` tool is for placing orders, which is the action that is currently failing for CUST-020.\n\nSince the card is valid and has sufficient funds, the issue might be with the payment gateway, a fraud detection system, or a temporary technical glitch.\n\nThe best course of action would be to:\n1. Advise Customer CUST-020 to try an alternative payment method if available.\n2. If the issue persists, recommend that Customer CUST-020 contact their bank or card issuer to inquire about any blocks or issues on their card for online transactions.\n3. Escalate the issue to a customer support representative or a technical team who can investigate payment gateway logs or contact the payment processor for more details.",
+  "recovery_rate": 1.0,
+  "mean_steps_to_recovery": 0.0,
+  "retry_efficiency": 1.0,
+  "disruptions_encountered": 0,
+  "disruptions_recovered": 0,
+  "disruption_types_seen": [],
+  "total_tool_calls": 0,
+  "extra_tool_calls": 0,
+  "duration_seconds": 3.696878499999002,
+  "acknowledged_failure": true,
+  "attempted_alternative": false,
+  "traces": []
+}
