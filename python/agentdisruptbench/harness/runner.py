@@ -45,6 +45,7 @@ class BenchmarkConfig:
         profiles:     List of profile names to evaluate.
         seeds:        List of seeds for repeated runs.
         domains:      Restrict to these domains (None = all).
+        task_ids:     Restrict to specific task IDs (None = all).
         max_difficulty: Max task difficulty to include.
         agent_id:     Identifier for the agent under test.
         output_dir:   Directory for results output.
@@ -53,6 +54,7 @@ class BenchmarkConfig:
     profiles: list[str] = field(default_factory=lambda: ["clean", "mild_production", "hostile_environment"])
     seeds: list[int] = field(default_factory=lambda: [42])
     domains: list[str] | None = None
+    task_ids: list[str] | None = None
     max_difficulty: int = 5
     agent_id: str = "default"
     output_dir: str = "results"
@@ -156,6 +158,7 @@ class BenchmarkRunner:
         """Filter tasks based on config."""
         return self._task_registry.filter(
             domain=self._config.domains[0] if self._config.domains and len(self._config.domains) == 1 else None,
+            task_ids=self._config.task_ids,
             max_difficulty=self._config.max_difficulty,
         )
 

@@ -121,6 +121,7 @@ class TaskRegistry:
     def filter(
         self,
         domain: str | None = None,
+        task_ids: list[str] | None = None,
         min_difficulty: int = 1,
         max_difficulty: int = 5,
         source: str | None = None,
@@ -130,6 +131,7 @@ class TaskRegistry:
 
         Args:
             domain:         Filter to this domain (None = all).
+            task_ids:       Filter to specific task IDs (None = all).
             min_difficulty: Minimum difficulty (inclusive).
             max_difficulty: Maximum difficulty (inclusive).
             source:         Filter by source string (None = all).
@@ -141,6 +143,8 @@ class TaskRegistry:
         results: list[Task] = []
         for t in self._tasks.values():
             if domain and t.domain != domain:
+                continue
+            if task_ids and t.task_id not in task_ids:
                 continue
             if t.difficulty < min_difficulty or t.difficulty > max_difficulty:
                 continue
