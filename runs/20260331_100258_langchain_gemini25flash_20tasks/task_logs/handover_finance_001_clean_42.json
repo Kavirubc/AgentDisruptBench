@@ -1,0 +1,41 @@
+{
+  "task_id": "handover_finance_001",
+  "agent_id": "langchain_gemini-2.5-flash",
+  "profile_name": "clean",
+  "seed": 42,
+  "success": false,
+  "partial_score": 0.7,
+  "agent_output": "I have reviewed the last 10 transactions for account ACC-001. I see the transaction history as follows:\n\n*   **TXN-2eb2ac**: 318.21, Online Purchase, 2026-03-09\n*   **TXN-a3d283**: 500.36, Salary Deposit, 2026-03-08\n*   **TXN-2127b4**: 38.52, Utility Bill, 2026-03-07\n*   **TXN-553d88**: 1204.39, Grocery Store, 2026-03-06\n*   **TXN-b8a289**: 1951.12, Online Purchase, 2026-03-05\n*   **TXN-1bc151**: 845.89, Utility Bill, 2026-03-04\n*   **TXN-97755c**: 180.96, Grocery Store, 2026-03-03\n*   **TXN-d03df6**: 373.68, ATM Withdrawal, 2026-03-02\n*   **TXN-01db4f**: 1999, Salary Deposit, 2026-03-01\n*   **TXN-19ec47**: 1031.23, Salary Deposit, 2026-03-01\n\nYou mentioned that 3 transactions from an unknown merchant in a foreign country were not authorized. While I can see the transaction history, I do not have the capability with the current tools to take action on unauthorized transactions, such as blocking them or reporting them as fraudulent.",
+  "recovery_rate": 1.0,
+  "mean_steps_to_recovery": 0.0,
+  "retry_efficiency": 1.0,
+  "disruptions_encountered": 0,
+  "disruptions_recovered": 0,
+  "disruption_types_seen": [],
+  "total_tool_calls": 1,
+  "extra_tool_calls": null,
+  "duration_seconds": 9.301950916007627,
+  "acknowledged_failure": false,
+  "attempted_alternative": false,
+  "traces": [
+    {
+      "call_id": "9bd066cf-9dd4-4e29-b344-1ac9f513b56d",
+      "call_number": 1,
+      "tool_name": "get_transaction_history",
+      "inputs": {
+        "account_id": "ACC-001",
+        "days": 30,
+        "limit": 10
+      },
+      "real_result": "{'account_id': 'ACC-001', 'transactions': [{'transaction_id': 'TXN-2eb2ac', 'type': 'transfer', 'amount': 318.21, 'description': 'Online Purchase', 'date': '2026-03-09', 'balance_after': 23805.0}, {'transaction_id': 'TXN-a3d283', 'type': 'payment', 'amount': 500.36, 'description': 'Salary Deposit', 'date': '2026-03-08', 'balance_after': 15536.15}, {'transaction_id': 'TXN-2127b4', 'type': 'debit', 'amount': 38.52, 'description': 'Utility Bill', 'date': '2026-03-07', 'balance_after': 14438.75}, {'",
+      "observed_result": "{'account_id': 'ACC-001', 'transactions': [{'transaction_id': 'TXN-2eb2ac', 'type': 'transfer', 'amount': 318.21, 'description': 'Online Purchase', 'date': '2026-03-09', 'balance_after': 23805.0}, {'transaction_id': 'TXN-a3d283', 'type': 'payment', 'amount': 500.36, 'description': 'Salary Deposit', 'date': '2026-03-08', 'balance_after': 15536.15}, {'transaction_id': 'TXN-2127b4', 'type': 'debit', 'amount': 38.52, 'description': 'Utility Bill', 'date': '2026-03-07', 'balance_after': 14438.75}, {'",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.20300000323913991,
+      "observed_latency_ms": 0.22233399795368314,
+      "error": null,
+      "timestamp": 1774951560.741611
+    }
+  ]
+}

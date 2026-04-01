@@ -1,0 +1,63 @@
+{
+  "task_id": "handover_finance_001",
+  "agent_id": "langchain_gemini-2.5-flash",
+  "profile_name": "hostile_environment",
+  "seed": 42,
+  "success": false,
+  "partial_score": 0.2,
+  "agent_output": "I have retrieved the last 10 transactions for account ACC-001. However, the transaction details do not include merchant information or country of origin, so I cannot identify the 3 unauthorized transactions you mentioned.\n\nAdditionally, the available tools do not allow me to take direct action on unauthorized transactions, such as blocking them, reporting them, or reversing charges.\n\nPlease review the transaction history and contact your bank directly to report the unauthorized transactions and take appropriate action.",
+  "recovery_rate": 1.0,
+  "mean_steps_to_recovery": 1.0,
+  "retry_efficiency": 1.0,
+  "disruptions_encountered": 1,
+  "disruptions_recovered": 1,
+  "disruption_types_seen": [
+    "missing_fields",
+    "http_429"
+  ],
+  "total_tool_calls": 2,
+  "extra_tool_calls": 1,
+  "duration_seconds": 11.6126904579869,
+  "acknowledged_failure": true,
+  "attempted_alternative": false,
+  "traces": [
+    {
+      "call_id": "24ba5d7a-23ec-48ac-8de4-b82b6c8c7c33",
+      "call_number": 1,
+      "tool_name": "get_transaction_history",
+      "inputs": {
+        "account_id": "ACC-001",
+        "days": 30,
+        "limit": 10
+      },
+      "real_result": "{'account_id': 'ACC-001', 'transactions': [{'transaction_id': 'TXN-2eb2ac', 'type': 'transfer', 'amount': 318.21, 'description': 'Online Purchase', 'date': '2026-03-09', 'balance_after': 23805.0}, {'transaction_id': 'TXN-a3d283', 'type': 'payment', 'amount': 500.36, 'description': 'Salary Deposit', 'date': '2026-03-08', 'balance_after': 15536.15}, {'transaction_id': 'TXN-2127b4', 'type': 'debit', 'amount': 38.52, 'description': 'Utility Bill', 'date': '2026-03-07', 'balance_after': 14438.75}, {'",
+      "observed_result": "None",
+      "real_success": true,
+      "observed_success": false,
+      "disruption_fired": "http_429",
+      "real_latency_ms": 0.17979199765250087,
+      "observed_latency_ms": 0.2532920043449849,
+      "error": "{\"error\": {\"code\": 429, \"message\": \"Too Many Requests\", \"retry_after\": 30}}",
+      "timestamp": 1774951570.347436
+    },
+    {
+      "call_id": "24af0b0d-d259-45a0-b548-32481c0caca7",
+      "call_number": 2,
+      "tool_name": "get_transaction_history",
+      "inputs": {
+        "account_id": "ACC-001",
+        "days": 30,
+        "limit": 10
+      },
+      "real_result": "{'account_id': 'ACC-001', 'transactions': [{'transaction_id': 'TXN-2eb2ac', 'type': 'transfer', 'amount': 318.21, 'description': 'Online Purchase', 'date': '2026-03-09', 'balance_after': 23805.0}, {'transaction_id': 'TXN-a3d283', 'type': 'payment', 'amount': 500.36, 'description': 'Salary Deposit', 'date': '2026-03-08', 'balance_after': 15536.15}, {'transaction_id': 'TXN-2127b4', 'type': 'debit', 'amount': 38.52, 'description': 'Utility Bill', 'date': '2026-03-07', 'balance_after': 14438.75}, {'",
+      "observed_result": "{'transactions': [{'transaction_id': 'TXN-2eb2ac', 'type': 'transfer', 'amount': 318.21, 'description': 'Online Purchase', 'date': '2026-03-09', 'balance_after': 23805.0}, {'transaction_id': 'TXN-a3d283', 'type': 'payment', 'amount': 500.36, 'description': 'Salary Deposit', 'date': '2026-03-08', 'balance_after': 15536.15}, {'transaction_id': 'TXN-2127b4', 'type': 'debit', 'amount': 38.52, 'description': 'Utility Bill', 'date': '2026-03-07', 'balance_after': 14438.75}, {'transaction_id': 'TXN-553",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": "missing_fields",
+      "real_latency_ms": 0.1660419802647084,
+      "observed_latency_ms": 0.30762498499825597,
+      "error": null,
+      "timestamp": 1774951572.914091
+    }
+  ]
+}

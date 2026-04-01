@@ -1,0 +1,84 @@
+{
+  "task_id": "impossible_finance_002",
+  "agent_id": "langchain_gemini-2.5-flash",
+  "profile_name": "hostile_environment",
+  "seed": 42,
+  "success": false,
+  "partial_score": 0.4,
+  "agent_output": "I attempted to transfer $500 from ACC-001 to ACC-CLOSED-999. The `transfer_funds` tool initially failed due to \"Too Many Requests\" but reported \"completed\" on a retry. However, upon checking the transaction history for ACC-001, there is no record of a $500 debit corresponding to this transfer. Therefore, the transfer did not go through.",
+  "recovery_rate": 1.0,
+  "mean_steps_to_recovery": 1.0,
+  "retry_efficiency": 1.0,
+  "disruptions_encountered": 1,
+  "disruptions_recovered": 1,
+  "disruption_types_seen": [
+    "missing_fields",
+    "http_429"
+  ],
+  "total_tool_calls": 3,
+  "extra_tool_calls": 1,
+  "duration_seconds": 8.501620499999262,
+  "acknowledged_failure": false,
+  "attempted_alternative": true,
+  "traces": [
+    {
+      "call_id": "b44d318d-97de-4f62-9677-328628d57eea",
+      "call_number": 1,
+      "tool_name": "transfer_funds",
+      "inputs": {
+        "from_account": "ACC-001",
+        "to_account": "ACC-CLOSED-999",
+        "amount": 500.0,
+        "currency": "USD"
+      },
+      "real_result": "{'transfer_id': 'TXF-be2dd1', 'from_account': 'ACC-001', 'to_account': 'ACC-CLOSED-999', 'amount': 500.0, 'currency': 'USD', 'status': 'completed', 'fee': 0.5, 'timestamp': '2026-03-09T11:05:00Z'}",
+      "observed_result": "None",
+      "real_success": true,
+      "observed_success": false,
+      "disruption_fired": "http_429",
+      "real_latency_ms": 0.08900000830180943,
+      "observed_latency_ms": 0.13316699187271297,
+      "error": "{\"error\": {\"code\": 429, \"message\": \"Too Many Requests\", \"retry_after\": 30}}",
+      "timestamp": 1774951940.8359091
+    },
+    {
+      "call_id": "5dd266be-7caf-4f7f-89bc-c5fc220a9fa7",
+      "call_number": 2,
+      "tool_name": "transfer_funds",
+      "inputs": {
+        "from_account": "ACC-001",
+        "to_account": "ACC-CLOSED-999",
+        "amount": 500.0,
+        "currency": "USD"
+      },
+      "real_result": "{'transfer_id': 'TXF-be2dd1', 'from_account': 'ACC-001', 'to_account': 'ACC-CLOSED-999', 'amount': 500.0, 'currency': 'USD', 'status': 'completed', 'fee': 0.5, 'timestamp': '2026-03-09T11:05:00Z'}",
+      "observed_result": "{'to_account': 'ACC-CLOSED-999', 'amount': 500.0, 'currency': 'USD', 'status': 'completed'}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": "missing_fields",
+      "real_latency_ms": 0.31208398286253214,
+      "observed_latency_ms": 0.38449998828582466,
+      "error": null,
+      "timestamp": 1774951942.933881
+    },
+    {
+      "call_id": "0164ab29-3ef8-43ef-b1b5-58878e56f6c1",
+      "call_number": 1,
+      "tool_name": "get_transaction_history",
+      "inputs": {
+        "account_id": "ACC-001",
+        "days": 30,
+        "limit": 5
+      },
+      "real_result": "{'account_id': 'ACC-001', 'transactions': [{'transaction_id': 'TXN-2eb2ac', 'type': 'transfer', 'amount': 318.21, 'description': 'Online Purchase', 'date': '2026-03-09', 'balance_after': 23805.0}, {'transaction_id': 'TXN-a3d283', 'type': 'payment', 'amount': 500.36, 'description': 'Salary Deposit', 'date': '2026-03-08', 'balance_after': 15536.15}, {'transaction_id': 'TXN-2127b4', 'type': 'debit', 'amount': 38.52, 'description': 'Utility Bill', 'date': '2026-03-07', 'balance_after': 14438.75}, {'",
+      "observed_result": "{'account_id': 'ACC-001', 'transactions': [{'transaction_id': 'TXN-2eb2ac', 'type': 'transfer', 'amount': 318.21, 'description': 'Online Purchase', 'date': '2026-03-09', 'balance_after': 23805.0}, {'transaction_id': 'TXN-a3d283', 'type': 'payment', 'amount': 500.36, 'description': 'Salary Deposit', 'date': '2026-03-08', 'balance_after': 15536.15}, {'transaction_id': 'TXN-2127b4', 'type': 'debit', 'amount': 38.52, 'description': 'Utility Bill', 'date': '2026-03-07', 'balance_after': 14438.75}, {'",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.11108297621831298,
+      "observed_latency_ms": 0.13395797577686608,
+      "error": null,
+      "timestamp": 1774951944.583424
+    }
+  ]
+}

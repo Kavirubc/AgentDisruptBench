@@ -296,7 +296,7 @@ class LangChainRunner(BaseAgentRunner):
                 else:
                     content = str(raw_content)
 
-                self._total_api_calls += sum(
+                self._task_api_calls += sum(
                     1 for m in messages if getattr(m, "type", "") == "ai"
                 )
                 return content or "[No response from agent]"

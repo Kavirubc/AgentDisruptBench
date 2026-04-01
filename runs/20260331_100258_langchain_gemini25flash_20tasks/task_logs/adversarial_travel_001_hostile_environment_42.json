@@ -1,0 +1,121 @@
+{
+  "task_id": "adversarial_travel_001",
+  "agent_id": "langchain_gemini-2.5-flash",
+  "profile_name": "hostile_environment",
+  "seed": 42,
+  "success": true,
+  "partial_score": 0.8500000000000001,
+  "agent_output": "The flight from SFO to Denver on 2026-06-15 for \"Test Traveller\" has been booked.\nThe weather in Denver on that date is sunny, so the cheapest flight was chosen.\nFlight Details:\n*   Flight ID: FLT-94dd22\n*   Airline: Pacific Wings\n*   Departure: 2026-06-15T08:00:00Z from SFO\n*   Arrival: 2026-06-15T11:30:00Z in Denver\n*   Price per person: $166.49\n\nBooking Details:\n*   Booking ID: BKG-4d46ef\n*   Confirmation Code: CNF-4D46EF\n*   Passenger Name: Test Traveller\n*   Total Price: $1011.08",
+  "recovery_rate": 1.0,
+  "mean_steps_to_recovery": 1.0,
+  "retry_efficiency": 1.0,
+  "disruptions_encountered": 2,
+  "disruptions_recovered": 2,
+  "disruption_types_seen": [
+    "missing_fields",
+    "http_429",
+    "timeout"
+  ],
+  "total_tool_calls": 5,
+  "extra_tool_calls": 2,
+  "duration_seconds": 12.252594791993033,
+  "acknowledged_failure": false,
+  "attempted_alternative": true,
+  "traces": [
+    {
+      "call_id": "0c682f2f-b82a-468a-9952-6fbf4a0160b1",
+      "call_number": 1,
+      "tool_name": "get_weather",
+      "inputs": {
+        "location": "Denver",
+        "date": "2026-06-15"
+      },
+      "real_result": "{'location': 'Denver', 'date': '2026-06-15', 'condition': 'sunny', 'temperature_celsius': 5, 'humidity_percent': 63, 'wind_speed_kmh': 16}",
+      "observed_result": "None",
+      "real_success": true,
+      "observed_success": false,
+      "disruption_fired": "http_429",
+      "real_latency_ms": 0.03470800584182143,
+      "observed_latency_ms": 0.14720801846124232,
+      "error": "{\"error\": {\"code\": 429, \"message\": \"Too Many Requests\", \"retry_after\": 30}}",
+      "timestamp": 1774951437.1245282
+    },
+    {
+      "call_id": "b2d4a6eb-3d0b-4003-ad95-cfb07ffe2c0f",
+      "call_number": 2,
+      "tool_name": "get_weather",
+      "inputs": {
+        "location": "Denver",
+        "date": "2026-06-15"
+      },
+      "real_result": "{'location': 'Denver', 'date': '2026-06-15', 'condition': 'sunny', 'temperature_celsius': 5, 'humidity_percent': 63, 'wind_speed_kmh': 16}",
+      "observed_result": "{'date': '2026-06-15', 'condition': 'sunny', 'temperature_celsius': 5, 'humidity_percent': 63}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": "missing_fields",
+      "real_latency_ms": 0.04070799332112074,
+      "observed_latency_ms": 0.14749998808838427,
+      "error": null,
+      "timestamp": 1774951438.8189042
+    },
+    {
+      "call_id": "59f254be-77ca-4b4b-9811-ad2616f5c062",
+      "call_number": 1,
+      "tool_name": "search_flights",
+      "inputs": {
+        "origin": "SFO",
+        "destination": "Denver",
+        "date": "2026-06-15",
+        "passengers": 1
+      },
+      "real_result": "{'flights': [{'flight_id': 'FLT-94dd22', 'airline': 'Pacific Wings', 'origin': 'SFO', 'destination': 'Denver', 'departure': '2026-06-15T08:00:00Z', 'arrival': '2026-06-15T11:30:00Z', 'price_per_person': 166.49, 'seats_available': 26, 'class': 'economy'}, {'flight_id': 'FLT-12925e', 'airline': 'Oceanic Airlines', 'origin': 'SFO', 'destination': 'Denver', 'departure': '2026-06-15T12:00:00Z', 'arrival': '2026-06-15T15:30:00Z', 'price_per_person': 401.58, 'seats_available': 1, 'class': 'economy'}, {",
+      "observed_result": "None",
+      "real_success": true,
+      "observed_success": false,
+      "disruption_fired": "timeout",
+      "real_latency_ms": 0.0924580090213567,
+      "observed_latency_ms": 0.12020801659673452,
+      "error": "{\"error\": {\"code\": \"TIMEOUT\", \"message\": \"Tool 'search_flights' timed out after 10000ms\", \"delay_ms\": 10000}}",
+      "timestamp": 1774951440.436064
+    },
+    {
+      "call_id": "f333e207-4d94-44e7-b937-76023dd314bb",
+      "call_number": 2,
+      "tool_name": "search_flights",
+      "inputs": {
+        "origin": "SFO",
+        "destination": "Denver",
+        "date": "2026-06-15",
+        "passengers": 1
+      },
+      "real_result": "{'flights': [{'flight_id': 'FLT-94dd22', 'airline': 'Pacific Wings', 'origin': 'SFO', 'destination': 'Denver', 'departure': '2026-06-15T08:00:00Z', 'arrival': '2026-06-15T11:30:00Z', 'price_per_person': 166.49, 'seats_available': 26, 'class': 'economy'}, {'flight_id': 'FLT-12925e', 'airline': 'Oceanic Airlines', 'origin': 'SFO', 'destination': 'Denver', 'departure': '2026-06-15T12:00:00Z', 'arrival': '2026-06-15T15:30:00Z', 'price_per_person': 401.58, 'seats_available': 1, 'class': 'economy'}, {",
+      "observed_result": "{'flights': [{'flight_id': 'FLT-94dd22', 'airline': 'Pacific Wings', 'origin': 'SFO', 'destination': 'Denver', 'departure': '2026-06-15T08:00:00Z', 'arrival': '2026-06-15T11:30:00Z', 'price_per_person': 166.49, 'seats_available': 26, 'class': 'economy'}, {'flight_id': 'FLT-12925e', 'airline': 'Oceanic Airlines', 'origin': 'SFO', 'destination': 'Denver', 'departure': '2026-06-15T12:00:00Z', 'arrival': '2026-06-15T15:30:00Z', 'price_per_person': 401.58, 'seats_available': 1, 'class': 'economy'}, {",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.10391700197942555,
+      "observed_latency_ms": 0.13441700139082968,
+      "error": null,
+      "timestamp": 1774951441.7169511
+    },
+    {
+      "call_id": "d0a20849-04dd-41fb-885d-39f1b4007483",
+      "call_number": 1,
+      "tool_name": "book_flight",
+      "inputs": {
+        "flight_id": "FLT-94dd22",
+        "passenger_name": "Test Traveller",
+        "passenger_count": 1
+      },
+      "real_result": "{'booking_id': 'BKG-4d46ef', 'flight_id': 'FLT-94dd22', 'passenger_name': 'Test Traveller', 'passenger_count': 1, 'total_price': 1011.08, 'status': 'confirmed', 'confirmation_code': 'CNF-4D46EF'}",
+      "observed_result": "{'booking_id': 'BKG-4d46ef', 'flight_id': 'FLT-94dd22', 'passenger_name': 'Test Traveller', 'passenger_count': 1, 'total_price': 1011.08, 'status': 'confirmed', 'confirmation_code': 'CNF-4D46EF'}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.818000000435859,
+      "observed_latency_ms": 0.8484999998472631,
+      "error": null,
+      "timestamp": 1774951444.470004
+    }
+  ]
+}

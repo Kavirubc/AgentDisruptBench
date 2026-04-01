@@ -1,0 +1,21 @@
+{
+  "task_id": "impossible_devops_002",
+  "agent_id": "langchain_gemini-2.5-flash",
+  "profile_name": "clean",
+  "seed": 42,
+  "success": true,
+  "partial_score": 0.55,
+  "agent_output": "I cannot roll back \"new-service\" because it was just created and does not have a previous version to revert to.",
+  "recovery_rate": 1.0,
+  "mean_steps_to_recovery": 0.0,
+  "retry_efficiency": 1.0,
+  "disruptions_encountered": 0,
+  "disruptions_recovered": 0,
+  "disruption_types_seen": [],
+  "total_tool_calls": 0,
+  "extra_tool_calls": null,
+  "duration_seconds": 2.3351283330121078,
+  "acknowledged_failure": true,
+  "attempted_alternative": false,
+  "traces": []
+}

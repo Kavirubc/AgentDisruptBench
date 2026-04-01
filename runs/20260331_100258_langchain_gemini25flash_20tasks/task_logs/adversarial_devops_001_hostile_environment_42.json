@@ -1,0 +1,82 @@
+{
+  "task_id": "adversarial_devops_001",
+  "agent_id": "langchain_gemini-2.5-flash",
+  "profile_name": "hostile_environment",
+  "seed": 42,
+  "success": true,
+  "partial_score": 0.8500000000000001,
+  "agent_output": "The hotfix (v2.0.1) has been successfully deployed to production.\nService v2.1 has been successfully deployed to staging.",
+  "recovery_rate": 1.0,
+  "mean_steps_to_recovery": 1.0,
+  "retry_efficiency": 1.0,
+  "disruptions_encountered": 1,
+  "disruptions_recovered": 1,
+  "disruption_types_seen": [
+    "missing_fields",
+    "http_429"
+  ],
+  "total_tool_calls": 3,
+  "extra_tool_calls": 1,
+  "duration_seconds": 7.869406957994215,
+  "acknowledged_failure": false,
+  "attempted_alternative": false,
+  "traces": [
+    {
+      "call_id": "cdae115e-9928-4b80-944f-454173e63620",
+      "call_number": 1,
+      "tool_name": "deploy_service",
+      "inputs": {
+        "service_name": "hotfix",
+        "version": "v2.0.1",
+        "environment": "production"
+      },
+      "real_result": "{'deployment_id': 'DEP-f76290', 'service': 'hotfix', 'version': 'v2.0.1', 'environment': 'production', 'status': 'success', 'instances_updated': 6, 'rollback_version': 'v1.5.0', 'timestamp': '2026-03-09T12:05:00Z'}",
+      "observed_result": "None",
+      "real_success": true,
+      "observed_success": false,
+      "disruption_fired": "http_429",
+      "real_latency_ms": 0.11037499643862247,
+      "observed_latency_ms": 0.15704199904575944,
+      "error": "{\"error\": {\"code\": 429, \"message\": \"Too Many Requests\", \"retry_after\": 30}}",
+      "timestamp": 1774951514.376823
+    },
+    {
+      "call_id": "f011f53e-19ef-4e4f-ba54-f6db1e5e6b01",
+      "call_number": 2,
+      "tool_name": "deploy_service",
+      "inputs": {
+        "service_name": "hotfix",
+        "version": "v2.0.1",
+        "environment": "production"
+      },
+      "real_result": "{'deployment_id': 'DEP-f76290', 'service': 'hotfix', 'version': 'v2.0.1', 'environment': 'production', 'status': 'success', 'instances_updated': 6, 'rollback_version': 'v1.5.0', 'timestamp': '2026-03-09T12:05:00Z'}",
+      "observed_result": "{'version': 'v2.0.1', 'environment': 'production', 'status': 'success', 'instances_updated': 6}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": "missing_fields",
+      "real_latency_ms": 0.7479579944629222,
+      "observed_latency_ms": 0.8737079915590584,
+      "error": null,
+      "timestamp": 1774951516.5615208
+    },
+    {
+      "call_id": "400ab174-3ea9-40bf-bdde-21a4c5a4f791",
+      "call_number": 3,
+      "tool_name": "deploy_service",
+      "inputs": {
+        "service_name": "service",
+        "version": "v2.1",
+        "environment": "staging"
+      },
+      "real_result": "{'deployment_id': 'DEP-f63fe7', 'service': 'service', 'version': 'v2.1', 'environment': 'staging', 'status': 'success', 'instances_updated': 6, 'rollback_version': 'v19.8.0', 'timestamp': '2026-03-09T12:05:00Z'}",
+      "observed_result": "{'deployment_id': 'DEP-f63fe7', 'service': 'service', 'version': 'v2.1', 'environment': 'staging', 'status': 'success', 'instances_updated': 6, 'rollback_version': 'v19.8.0', 'timestamp': '2026-03-09T12:05:00Z'}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.17074999050237238,
+      "observed_latency_ms": 0.19424999481998384,
+      "error": null,
+      "timestamp": 1774951518.075061
+    }
+  ]
+}

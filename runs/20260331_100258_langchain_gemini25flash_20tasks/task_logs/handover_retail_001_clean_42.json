@@ -1,0 +1,21 @@
+{
+  "task_id": "handover_retail_001",
+  "agent_id": "langchain_gemini-2.5-flash",
+  "profile_name": "clean",
+  "seed": 42,
+  "success": false,
+  "partial_score": 0.2,
+  "agent_output": "I cannot resolve payment declines with the available tools. My tools are limited to `search_products` and `place_order`. I recommend contacting the customer directly to investigate the payment issue further or suggesting an alternative payment method.",
+  "recovery_rate": 1.0,
+  "mean_steps_to_recovery": 0.0,
+  "retry_efficiency": 1.0,
+  "disruptions_encountered": 0,
+  "disruptions_recovered": 0,
+  "disruption_types_seen": [],
+  "total_tool_calls": 0,
+  "extra_tool_calls": null,
+  "duration_seconds": 2.980495499999961,
+  "acknowledged_failure": true,
+  "attempted_alternative": false,
+  "traces": []
+}

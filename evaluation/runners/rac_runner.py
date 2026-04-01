@@ -335,7 +335,7 @@ class RACRunner(BaseAgentRunner):
                 else:
                     content = str(content)
 
-                self._total_api_calls += sum(
+                self._task_api_calls += sum(
                     1 for m in messages if getattr(m, "type", "") == "ai"
                 )
 
