@@ -32,9 +32,17 @@ htmlcov/
 .ruff_cache/
 
 # ----- Results / Outputs -----
+# Legacy scattered output dirs (now in legacy_traces/)
 results/
 evaluation_results/
-*.jsonl
+
+# Track consolidated run outputs
+!runs/
+!runs/**
+!legacy_traces/
+!legacy_traces/**
+
+# Ignore loose log files but allow .jsonl inside runs/ and legacy_traces/
 *.log
 
 # ----- Environment -----

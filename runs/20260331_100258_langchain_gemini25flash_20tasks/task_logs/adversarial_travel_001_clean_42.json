@@ -1,0 +1,79 @@
+{
+  "task_id": "adversarial_travel_001",
+  "agent_id": "langchain_gemini-2.5-flash",
+  "profile_name": "clean",
+  "seed": 42,
+  "success": true,
+  "partial_score": 0.8500000000000001,
+  "agent_output": "The flight from SFO to Denver on 2026-06-15 for \"Test Traveller\" has been successfully booked. The weather in Denver on that date is sunny, so there was no need to consider a more expensive flight. The cheapest flight, FLT-94dd22 on Pacific Wings, was booked. The booking ID is BKG-4d46ef and the confirmation code is CNF-4D46EF. The total price for the booking is $1011.08.",
+  "recovery_rate": 1.0,
+  "mean_steps_to_recovery": 0.0,
+  "retry_efficiency": 1.0,
+  "disruptions_encountered": 0,
+  "disruptions_recovered": 0,
+  "disruption_types_seen": [],
+  "total_tool_calls": 3,
+  "extra_tool_calls": null,
+  "duration_seconds": 9.740977125009522,
+  "acknowledged_failure": false,
+  "attempted_alternative": false,
+  "traces": [
+    {
+      "call_id": "577bc29a-35cc-47e9-85f2-079fc804ed11",
+      "call_number": 1,
+      "tool_name": "get_weather",
+      "inputs": {
+        "location": "Denver",
+        "date": "2026-06-15"
+      },
+      "real_result": "{'location': 'Denver', 'date': '2026-06-15', 'condition': 'sunny', 'temperature_celsius': 5, 'humidity_percent': 63, 'wind_speed_kmh': 16}",
+      "observed_result": "{'location': 'Denver', 'date': '2026-06-15', 'condition': 'sunny', 'temperature_celsius': 5, 'humidity_percent': 63, 'wind_speed_kmh': 16}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.06370802293531597,
+      "observed_latency_ms": 0.07470801938325167,
+      "error": null,
+      "timestamp": 1774951427.1621099
+    },
+    {
+      "call_id": "080df6e4-01e8-4d0e-acf0-1e6de8f99d0d",
+      "call_number": 1,
+      "tool_name": "search_flights",
+      "inputs": {
+        "origin": "SFO",
+        "destination": "Denver",
+        "date": "2026-06-15",
+        "passengers": 1
+      },
+      "real_result": "{'flights': [{'flight_id': 'FLT-94dd22', 'airline': 'Pacific Wings', 'origin': 'SFO', 'destination': 'Denver', 'departure': '2026-06-15T08:00:00Z', 'arrival': '2026-06-15T11:30:00Z', 'price_per_person': 166.49, 'seats_available': 26, 'class': 'economy'}, {'flight_id': 'FLT-12925e', 'airline': 'Oceanic Airlines', 'origin': 'SFO', 'destination': 'Denver', 'departure': '2026-06-15T12:00:00Z', 'arrival': '2026-06-15T15:30:00Z', 'price_per_person': 401.58, 'seats_available': 1, 'class': 'economy'}, {",
+      "observed_result": "{'flights': [{'flight_id': 'FLT-94dd22', 'airline': 'Pacific Wings', 'origin': 'SFO', 'destination': 'Denver', 'departure': '2026-06-15T08:00:00Z', 'arrival': '2026-06-15T11:30:00Z', 'price_per_person': 166.49, 'seats_available': 26, 'class': 'economy'}, {'flight_id': 'FLT-12925e', 'airline': 'Oceanic Airlines', 'origin': 'SFO', 'destination': 'Denver', 'departure': '2026-06-15T12:00:00Z', 'arrival': '2026-06-15T15:30:00Z', 'price_per_person': 401.58, 'seats_available': 1, 'class': 'economy'}, {",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.03462500171735883,
+      "observed_latency_ms": 0.037999998312443495,
+      "error": null,
+      "timestamp": 1774951429.426528
+    },
+    {
+      "call_id": "88c355e8-020b-430c-8bc1-4ad1f6530f92",
+      "call_number": 1,
+      "tool_name": "book_flight",
+      "inputs": {
+        "flight_id": "FLT-94dd22",
+        "passenger_name": "Test Traveller",
+        "passenger_count": 1
+      },
+      "real_result": "{'booking_id': 'BKG-4d46ef', 'flight_id': 'FLT-94dd22', 'passenger_name': 'Test Traveller', 'passenger_count': 1, 'total_price': 1011.08, 'status': 'confirmed', 'confirmation_code': 'CNF-4D46EF'}",
+      "observed_result": "{'booking_id': 'BKG-4d46ef', 'flight_id': 'FLT-94dd22', 'passenger_name': 'Test Traveller', 'passenger_count': 1, 'total_price': 1011.08, 'status': 'confirmed', 'confirmation_code': 'CNF-4D46EF'}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.10812497930601239,
+      "observed_latency_ms": 0.11691698455251753,
+      "error": null,
+      "timestamp": 1774951431.665098
+    }
+  ]
+}

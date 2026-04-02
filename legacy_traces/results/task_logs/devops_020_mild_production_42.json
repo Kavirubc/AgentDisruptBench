@@ -1,0 +1,75 @@
+{
+  "task_id": "devops_020",
+  "agent_id": "langchain_gemini-2.5-flash",
+  "profile_name": "mild_production",
+  "seed": 42,
+  "success": false,
+  "partial_score": 0.0,
+  "agent_output": "[Agent error: {\"error\": {\"code\": 429, \"message\": \"Too Many Requests\", \"retry_after\": 30}}]",
+  "recovery_rate": 1.0,
+  "mean_steps_to_recovery": 1.0,
+  "retry_efficiency": 1.0,
+  "disruptions_encountered": 1,
+  "disruptions_recovered": 1,
+  "disruption_types_seen": [
+    "http_429"
+  ],
+  "total_tool_calls": 3,
+  "extra_tool_calls": -4,
+  "duration_seconds": 2.6905696249996254,
+  "acknowledged_failure": true,
+  "attempted_alternative": false,
+  "traces": [
+    {
+      "call_id": "e53ab26d-2eb0-4eb6-ba0a-8d10027093bd",
+      "call_number": 1,
+      "tool_name": "get_service_health",
+      "inputs": {
+        "service_name": "auth-service"
+      },
+      "real_result": "{'service': 'auth-service', 'status': 'degraded', 'uptime_percent': 97.5, 'response_time_ms': 93, 'active_connections': 30, 'last_checked': '2026-03-09T12:00:00Z'}",
+      "observed_result": "None",
+      "real_success": true,
+      "observed_success": false,
+      "disruption_fired": "http_429",
+      "real_latency_ms": 0.10216699956799857,
+      "observed_latency_ms": 0.1818330019887071,
+      "error": "{\"error\": {\"code\": 429, \"message\": \"Too Many Requests\", \"retry_after\": 30}}",
+      "timestamp": 1774590507.655672
+    },
+    {
+      "call_id": "9e694e66-d540-49d8-8e6a-67749c8be337",
+      "call_number": 2,
+      "tool_name": "get_service_health",
+      "inputs": {
+        "service_name": "payment-service"
+      },
+      "real_result": "{'service': 'payment-service', 'status': 'healthy', 'uptime_percent': 95.7, 'response_time_ms': 212, 'active_connections': 223, 'last_checked': '2026-03-09T12:00:00Z'}",
+      "observed_result": "{'service': 'payment-service', 'status': 'healthy', 'uptime_percent': 95.7, 'response_time_ms': 212, 'active_connections': 223, 'last_checked': '2026-03-09T12:00:00Z'}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.01933399835252203,
+      "observed_latency_ms": 0.031042000045999885,
+      "error": null,
+      "timestamp": 1774590507.656629
+    },
+    {
+      "call_id": "c6599359-29ec-4102-9751-6eac05439f2b",
+      "call_number": 3,
+      "tool_name": "get_service_health",
+      "inputs": {
+        "service_name": "user-service"
+      },
+      "real_result": "{'service': 'user-service', 'status': 'degraded', 'uptime_percent': 97.5, 'response_time_ms': 217, 'active_connections': 357, 'last_checked': '2026-03-09T12:00:00Z'}",
+      "observed_result": "{'service': 'user-service', 'status': 'degraded', 'uptime_percent': 97.5, 'response_time_ms': 217, 'active_connections': 357, 'last_checked': '2026-03-09T12:00:00Z'}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.018791000911733136,
+      "observed_latency_ms": 0.02829100048984401,
+      "error": null,
+      "timestamp": 1774590507.657392
+    }
+  ]
+}

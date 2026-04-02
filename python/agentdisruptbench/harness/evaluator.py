@@ -125,6 +125,17 @@ class Evaluator:
 
         # -- Compute metrics (now including state metrics) --
         traces = trace_collector.get_traces()
+
+        # Try to extract token metrics and runner info if agent_fn has stats
+        prompt_tokens = 0
+        completion_tokens = 0
+        runner_name = ""
+        if hasattr(self._agent_fn, "stats"):
+            stats = self._agent_fn.stats
+            prompt_tokens = stats.get("prompt_tokens", 0)
+            completion_tokens = stats.get("completion_tokens", 0)
+            runner_name = stats.get("runner", "")
+
         result = self._metrics.compute(
             task=task,
             traces=traces,
@@ -136,6 +147,9 @@ class Evaluator:
             duration_seconds=duration,
             state_diff=state_diff,
             idempotency_violations=len(state_manager.get_idempotency_violations()),
+            prompt_tokens=prompt_tokens,
+            completion_tokens=completion_tokens,
+            runner_name=runner_name,
         )
 
         logger.info(

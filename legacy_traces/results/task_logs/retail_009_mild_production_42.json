@@ -1,0 +1,43 @@
+{
+  "task_id": "retail_009",
+  "agent_id": "langchain_gemini-2.5-flash",
+  "profile_name": "mild_production",
+  "seed": 42,
+  "success": false,
+  "partial_score": 0.0,
+  "agent_output": "[Agent error: {\"error\": {\"code\": 429, \"message\": \"Too Many Requests\", \"retry_after\": 30}}]",
+  "recovery_rate": 0.0,
+  "mean_steps_to_recovery": 0.0,
+  "retry_efficiency": 1.0,
+  "disruptions_encountered": 1,
+  "disruptions_recovered": 0,
+  "disruption_types_seen": [
+    "http_429"
+  ],
+  "total_tool_calls": 1,
+  "extra_tool_calls": -2,
+  "duration_seconds": 1.7610872090008343,
+  "acknowledged_failure": true,
+  "attempted_alternative": false,
+  "traces": [
+    {
+      "call_id": "5dcf6089-7e22-4ae3-95e3-7ea58df7319a",
+      "call_number": 1,
+      "tool_name": "update_cart",
+      "inputs": {
+        "cart_id": "CART-002",
+        "product_id": "PRD-aaa111",
+        "quantity": 3
+      },
+      "real_result": "{'cart_id': 'CART-002', 'action': 'add', 'product_id': 'PRD-aaa111', 'quantity': 3, 'cart_total': 354.18, 'item_count': 3}",
+      "observed_result": "None",
+      "real_success": true,
+      "observed_success": false,
+      "disruption_fired": "http_429",
+      "real_latency_ms": 0.19837500076391734,
+      "observed_latency_ms": 0.3052499996556435,
+      "error": "{\"error\": {\"code\": 429, \"message\": \"Too Many Requests\", \"retry_after\": 30}}",
+      "timestamp": 1774590825.430136
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "task_id": "impossible_devops_002",
+  "agent_id": "langchain_gemini-2.5-flash",
+  "profile_name": "clean",
+  "seed": 42,
+  "success": true,
+  "partial_score": 0.55,
+  "agent_output": "The rollback of service \"new-service\" cannot be performed. The task description explicitly states that the service was just created with its first deployment, meaning there is no previous version to roll back to. Additionally, the `rollback_deployment` tool requires a `deployment_id`, which was not provided in the task.",
+  "recovery_rate": 1.0,
+  "mean_steps_to_recovery": 0.0,
+  "retry_efficiency": 1.0,
+  "disruptions_encountered": 0,
+  "disruptions_recovered": 0,
+  "disruption_types_seen": [],
+  "total_tool_calls": 0,
+  "extra_tool_calls": null,
+  "duration_seconds": 12.72875904099783,
+  "acknowledged_failure": true,
+  "attempted_alternative": false,
+  "traces": []
+}

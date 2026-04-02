@@ -111,15 +111,16 @@ def run_single_benchmark(
     )
     elapsed = time.time() - start
 
-    # Extract run IDs from output
+    # Extract run directory name from output
     run_ids = []
     for line in result.stdout.splitlines():
-        if "run_log: logs/" in line:
-            # e.g. "  → run_log: logs/20260325_015751_b584c7/run_log.jsonl"
-            parts = line.split("logs/")
+        if "Run directory: runs/" in line:
+            # e.g. "  📁 Run directory: runs/20260331_073153_langchain_gpt5mini_retail"
+            parts = line.split("runs/")
             if len(parts) >= 2:
-                rid = parts[1].split("/")[0]
-                run_ids.append(rid)
+                rid = parts[1].strip().rstrip("/")
+                if rid and rid not in run_ids:
+                    run_ids.append(rid)
 
     status = "✅" if result.returncode == 0 else "❌"
     print(
@@ -380,9 +381,9 @@ Examples:
         subprocess.run(compare_cmd, cwd=project_root)
     elif all_run_ids:
         print(
-            "\n  💡 Compare manually: "
-            f"python evaluation/compare_runs.py "
-            f"{' '.join(all_run_ids)}\n"
+            "\n  💡 View a run: "
+            f"python evaluation/show_run.py "
+            f"--run-id {all_run_ids[0]}\n"
         )
 
 

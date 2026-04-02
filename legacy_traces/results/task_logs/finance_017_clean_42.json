@@ -1,0 +1,75 @@
+{
+  "task_id": "finance_017",
+  "agent_id": "langchain_gemini-2.5-flash",
+  "profile_name": "clean",
+  "seed": 42,
+  "success": false,
+  "partial_score": 0.15,
+  "agent_output": "[Agent error: FinanceTools.validate_card() got an unexpected keyword argument 'expiry_date']",
+  "recovery_rate": 1.0,
+  "mean_steps_to_recovery": 0.0,
+  "retry_efficiency": 1.0,
+  "disruptions_encountered": 0,
+  "disruptions_recovered": 0,
+  "disruption_types_seen": [],
+  "total_tool_calls": 3,
+  "extra_tool_calls": null,
+  "duration_seconds": 2.8296394589997362,
+  "acknowledged_failure": true,
+  "attempted_alternative": false,
+  "traces": [
+    {
+      "call_id": "49b04305-22eb-4550-9148-d4c22f42c17e",
+      "call_number": 1,
+      "tool_name": "check_credit_limit",
+      "inputs": {
+        "account_id": "ACC-005566"
+      },
+      "real_result": "{'account_id': 'ACC-005566', 'credit_limit': 37735.3, 'used': 4554.65, 'available': 33180.65, 'utilization_percent': 12.1}",
+      "observed_result": "{'account_id': 'ACC-005566', 'credit_limit': 37735.3, 'used': 4554.65, 'available': 33180.65, 'utilization_percent': 12.1}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.04074999742442742,
+      "observed_latency_ms": 0.04883399742539041,
+      "error": null,
+      "timestamp": 1774590612.3744152
+    },
+    {
+      "call_id": "273c8374-7f58-4d2b-b442-080e1b0d2c85",
+      "call_number": 1,
+      "tool_name": "validate_card",
+      "inputs": {
+        "card_number": "5500000000000004",
+        "expiry_date": "12/27",
+        "cvv": "321"
+      },
+      "real_result": "None",
+      "observed_result": "None",
+      "real_success": false,
+      "observed_success": false,
+      "disruption_fired": null,
+      "real_latency_ms": 0.02066699744318612,
+      "observed_latency_ms": 0.025374996766913682,
+      "error": "FinanceTools.validate_card() got an unexpected keyword argument 'expiry_date'",
+      "timestamp": 1774590612.3752809
+    },
+    {
+      "call_id": "ac7fba65-0063-48a9-b7a7-593208d70df1",
+      "call_number": 1,
+      "tool_name": "get_account_balance",
+      "inputs": {
+        "account_id": "ACC-005566"
+      },
+      "real_result": "{'account_id': 'ACC-005566', 'balance': 43188.65, 'currency': 'USD', 'available_balance': 436.75, 'pending_transactions': 4, 'last_updated': '2026-03-09T11:00:00Z'}",
+      "observed_result": "{'account_id': 'ACC-005566', 'balance': 43188.65, 'currency': 'USD', 'available_balance': 436.75, 'pending_transactions': 4, 'last_updated': '2026-03-09T11:00:00Z'}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.031042000045999885,
+      "observed_latency_ms": 0.035834000300383195,
+      "error": null,
+      "timestamp": 1774590612.376096
+    }
+  ]
+}

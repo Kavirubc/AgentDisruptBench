@@ -1,0 +1,115 @@
+{
+  "task_id": "adversarial_finance_002",
+  "agent_id": "langchain_gemini-2.5-flash",
+  "profile_name": "hostile_environment",
+  "seed": 42,
+  "success": true,
+  "partial_score": 1.0,
+  "agent_output": "I cannot complete both conversions as your available USD balance of 10763.75 USD is insufficient to cover the total of 15000 USD required (10000 USD for EUR and 5000 USD for GBP).\n\nThe current exchange rates are:\n*   1 USD = 2.37 EUR\n*   1 USD = 2.15 GBP\n\nPlease let me know how you would like to proceed. For example, would you like to prioritize one conversion, or convert a partial amount for both?",
+  "recovery_rate": 1.0,
+  "mean_steps_to_recovery": 1.0,
+  "retry_efficiency": 1.0,
+  "disruptions_encountered": 2,
+  "disruptions_recovered": 2,
+  "disruption_types_seen": [
+    "missing_fields",
+    "http_429",
+    "timeout"
+  ],
+  "total_tool_calls": 5,
+  "extra_tool_calls": 2,
+  "duration_seconds": 12.576124291023007,
+  "acknowledged_failure": true,
+  "attempted_alternative": true,
+  "traces": [
+    {
+      "call_id": "ce42d50d-2346-4d00-b61d-89c8c94dd872",
+      "call_number": 1,
+      "tool_name": "get_exchange_rate",
+      "inputs": {
+        "base_currency": "USD",
+        "target_currency": "GBP"
+      },
+      "real_result": "{'base_currency': 'USD', 'target_currency': 'GBP', 'rate': 2.15, 'inverse_rate': 0.465116, 'timestamp': '2026-03-09T12:00:00Z', 'source': 'ECB'}",
+      "observed_result": "None",
+      "real_success": true,
+      "observed_success": false,
+      "disruption_fired": "http_429",
+      "real_latency_ms": 0.012666016118600965,
+      "observed_latency_ms": 0.051458016969263554,
+      "error": "{\"error\": {\"code\": 429, \"message\": \"Too Many Requests\", \"retry_after\": 30}}",
+      "timestamp": 1774951498.12032
+    },
+    {
+      "call_id": "a8f390d4-f052-4e83-813d-444733bf0125",
+      "call_number": 2,
+      "tool_name": "get_exchange_rate",
+      "inputs": {
+        "base_currency": "USD",
+        "target_currency": "EUR"
+      },
+      "real_result": "{'base_currency': 'USD', 'target_currency': 'EUR', 'rate': 2.37, 'inverse_rate': 0.421941, 'timestamp': '2026-03-09T12:00:00Z', 'source': 'ECB'}",
+      "observed_result": "{'target_currency': 'EUR', 'rate': 2.37, 'inverse_rate': 0.421941, 'timestamp': '2026-03-09T12:00:00Z'}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": "missing_fields",
+      "real_latency_ms": 0.0069160014390945435,
+      "observed_latency_ms": 0.033958000130951405,
+      "error": null,
+      "timestamp": 1774951498.1208801
+    },
+    {
+      "call_id": "ca1ee095-f869-4a9a-86dc-99c2b054d8c9",
+      "call_number": 3,
+      "tool_name": "get_exchange_rate",
+      "inputs": {
+        "base_currency": "USD",
+        "target_currency": "GBP"
+      },
+      "real_result": "{'base_currency': 'USD', 'target_currency': 'GBP', 'rate': 2.15, 'inverse_rate': 0.465116, 'timestamp': '2026-03-09T12:00:00Z', 'source': 'ECB'}",
+      "observed_result": "None",
+      "real_success": true,
+      "observed_success": false,
+      "disruption_fired": "timeout",
+      "real_latency_ms": 0.03316698712296784,
+      "observed_latency_ms": 0.07208299939520657,
+      "error": "{\"error\": {\"code\": \"TIMEOUT\", \"message\": \"Tool 'get_exchange_rate' timed out after 10000ms\", \"delay_ms\": 10000}}",
+      "timestamp": 1774951500.061078
+    },
+    {
+      "call_id": "264cd171-3144-4d67-9378-3c3586a33e14",
+      "call_number": 4,
+      "tool_name": "get_exchange_rate",
+      "inputs": {
+        "base_currency": "USD",
+        "target_currency": "GBP"
+      },
+      "real_result": "{'base_currency': 'USD', 'target_currency': 'GBP', 'rate': 2.15, 'inverse_rate': 0.465116, 'timestamp': '2026-03-09T12:00:00Z', 'source': 'ECB'}",
+      "observed_result": "{'base_currency': 'USD', 'target_currency': 'GBP', 'rate': 2.15, 'inverse_rate': 0.465116, 'timestamp': '2026-03-09T12:00:00Z', 'source': 'ECB'}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.03229102003388107,
+      "observed_latency_ms": 0.05495801451615989,
+      "error": null,
+      "timestamp": 1774951501.989602
+    },
+    {
+      "call_id": "c4625111-f1c0-4600-9243-b1611ea06015",
+      "call_number": 1,
+      "tool_name": "get_account_balance",
+      "inputs": {
+        "account_id": "USD_account"
+      },
+      "real_result": "{'account_id': 'USD_account', 'balance': 17734.66, 'currency': 'USD', 'available_balance': 10763.75, 'pending_transactions': 1, 'last_updated': '2026-03-09T11:00:00Z'}",
+      "observed_result": "{'account_id': 'USD_account', 'balance': 17734.66, 'currency': 'USD', 'available_balance': 10763.75, 'pending_transactions': 1, 'last_updated': '2026-03-09T11:00:00Z'}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.0490829988848418,
+      "observed_latency_ms": 0.07354200351983309,
+      "error": null,
+      "timestamp": 1774951503.716326
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "task_id": "adversarial_retail_002",
+  "agent_id": "langchain_gpt-5-mini",
+  "profile_name": "mild_production",
+  "seed": 42,
+  "success": false,
+  "partial_score": 0.0,
+  "agent_output": "[Agent error: {\"error\": {\"code\": 429, \"message\": \"Too Many Requests\", \"retry_after\": 30}}]",
+  "recovery_rate": 0.0,
+  "mean_steps_to_recovery": 0.0,
+  "retry_efficiency": 0.0,
+  "disruptions_encountered": 1,
+  "disruptions_recovered": 0,
+  "disruption_types_seen": [
+    "http_429"
+  ],
+  "total_tool_calls": 2,
+  "extra_tool_calls": 0,
+  "duration_seconds": 10.240471750003053,
+  "acknowledged_failure": true,
+  "attempted_alternative": false,
+  "traces": [
+    {
+      "call_id": "b4563c44-4b60-4a80-be66-b9ef7ebf5726",
+      "call_number": 1,
+      "tool_name": "check_inventory",
+      "inputs": {},
+      "real_result": "None",
+      "observed_result": "None",
+      "real_success": false,
+      "observed_success": false,
+      "disruption_fired": "http_429",
+      "real_latency_ms": 0.00925001222640276,
+      "observed_latency_ms": 0.07599999662488699,
+      "error": "{\"error\": {\"code\": 429, \"message\": \"Too Many Requests\", \"retry_after\": 30}}",
+      "timestamp": 1774941628.7475672
+    },
+    {
+      "call_id": "cc44fbcf-27bf-4328-a0c9-cb3b9286afe6",
+      "call_number": 2,
+      "tool_name": "check_inventory",
+      "inputs": {},
+      "real_result": "None",
+      "observed_result": "None",
+      "real_success": false,
+      "observed_success": false,
+      "disruption_fired": null,
+      "real_latency_ms": 0.013540993677452207,
+      "observed_latency_ms": 0.04233297659084201,
+      "error": "RetailTools.check_inventory() missing 1 required keyword-only argument: 'product_id'",
+      "timestamp": 1774941628.7502038
+    }
+  ]
+}

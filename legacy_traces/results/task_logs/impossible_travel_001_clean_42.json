@@ -1,0 +1,41 @@
+{
+  "task_id": "impossible_travel_001",
+  "agent_id": "langchain_gemini-2.5-flash",
+  "profile_name": "clean",
+  "seed": 42,
+  "success": true,
+  "partial_score": 0.3,
+  "agent_output": "[Agent error: TravelTools.search_flights() got an unexpected keyword argument 'departure']",
+  "recovery_rate": 1.0,
+  "mean_steps_to_recovery": 0.0,
+  "retry_efficiency": 1.0,
+  "disruptions_encountered": 0,
+  "disruptions_recovered": 0,
+  "disruption_types_seen": [],
+  "total_tool_calls": 1,
+  "extra_tool_calls": null,
+  "duration_seconds": 2.2346944170021743,
+  "acknowledged_failure": true,
+  "attempted_alternative": false,
+  "traces": [
+    {
+      "call_id": "76dfa983-6c01-406f-999a-40bcb5748405",
+      "call_number": 1,
+      "tool_name": "search_flights",
+      "inputs": {
+        "departure": "SFO",
+        "destination": "ATL-X",
+        "date": "2026-05-01"
+      },
+      "real_result": "None",
+      "observed_result": "None",
+      "real_success": false,
+      "observed_success": false,
+      "disruption_fired": null,
+      "real_latency_ms": 0.009250001312466338,
+      "observed_latency_ms": 0.02229200254078023,
+      "error": "TravelTools.search_flights() got an unexpected keyword argument 'departure'",
+      "timestamp": 1774590724.188072
+    }
+  ]
+}

@@ -1,0 +1,191 @@
+Task ID,Domain,Difficulty,Profile,Seed,Success,Partial Score,Duration (s),Prompt Tokens,Completion Tokens,Total Tokens,Runner,Environment,Recovery Rate,Disruptions Encountered,Disruptions Recovered,Extra Tool Calls,Total Tool Calls,State Score,Compensations,Idempotency Violations,Loop Count,Hallucination Rate,Handover Detected,Task Description
+adversarial_retail_001,retail,4,clean,42,True,0.9,17.06,437,2937,3374,LangChainRunner,langchain_gemini-2.5-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"A customer wants to buy product PRD-laptop ($1200) with two coupons.
+Coupon SAVE10 gives 10% off. Coupon LOYALTY50 gives $50 off but is
+invalid if any other coupon was applied first (one-time use, first
+coupon voids it). Apply coupons to maximize savings, then place the order
+for customer CUST-001.
+"
+adversarial_retail_001,retail,4,hostile_environment,42,False,0.0,8.87,437,1621,2058,LangChainRunner,langchain_gemini-2.5-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"A customer wants to buy product PRD-laptop ($1200) with two coupons.
+Coupon SAVE10 gives 10% off. Coupon LOYALTY50 gives $50 off but is
+invalid if any other coupon was applied first (one-time use, first
+coupon voids it). Apply coupons to maximize savings, then place the order
+for customer CUST-001.
+"
+adversarial_retail_002,retail,3,clean,42,False,0.5,8.56,2292,928,3220,LangChainRunner,langchain_gemini-2.5-flash,1.0,0,0,0,3,0.4,0,0,0,0.0,False,"Customer CUST-002 wants to buy 3 units of PRD-limited (only 2 in stock).
+Also add PRD-accessory to cart. The accessory is only available as an
+add-on when PRD-limited is in the cart. Check inventory first, then
+place orders in the right sequence.
+"
+adversarial_retail_002,retail,3,hostile_environment,42,False,0.5,12.43,3768,1178,4946,LangChainRunner,langchain_gemini-2.5-flash,1.0,2,2,2,5,0.4,0,1,0,0.0,False,"Customer CUST-002 wants to buy 3 units of PRD-limited (only 2 in stock).
+Also add PRD-accessory to cart. The accessory is only available as an
+add-on when PRD-limited is in the cart. Check inventory first, then
+place orders in the right sequence.
+"
+adversarial_travel_001,travel,4,clean,42,True,0.85,9.74,2845,699,3544,LangChainRunner,langchain_gemini-2.5-flash,1.0,0,0,0,3,0.2,0,0,0,0.0,False,"Book the cheapest flight from SFO to Denver on 2026-06-15 for
+passenger ""Test Traveller"". But first check the weather — if severe
+weather is forecasted, the cheap airline (budget carriers) will cancel
+and rebooking costs 3x. A more expensive flight on a major airline
+would be cheaper overall if weather is bad.
+"
+adversarial_travel_001,travel,4,hostile_environment,42,True,0.85,12.25,4368,916,5284,LangChainRunner,langchain_gemini-2.5-flash,1.0,2,2,2,5,0.2,0,0,0,0.0,False,"Book the cheapest flight from SFO to Denver on 2026-06-15 for
+passenger ""Test Traveller"". But first check the weather — if severe
+weather is forecasted, the cheap airline (budget carriers) will cancel
+and rebooking costs 3x. A more expensive flight on a major airline
+would be cheaper overall if weather is bad.
+"
+adversarial_travel_002,travel,5,clean,42,True,1.0,19.93,2635,3731,6366,LangChainRunner,langchain_gemini-2.5-flash,1.0,0,0,0,2,0.0,0,0,0,0.0,False,"Plan a trip from NYC to London. Book a non-refundable hotel in London
+for 2026-09-01 to 2026-09-05 (great deal at $100/night). Then search
+and book a flight. Warning: flights to London on Sep 1 are sold out
+on budget airlines. If you book the hotel first, you lose the money if
+no flight is available. Search flights FIRST to confirm availability.
+"
+adversarial_travel_002,travel,5,hostile_environment,42,True,1.0,9.8,1763,1148,2911,LangChainRunner,langchain_gemini-2.5-flash,1.0,1,1,0,2,0.0,0,0,0,0.0,False,"Plan a trip from NYC to London. Book a non-refundable hotel in London
+for 2026-09-01 to 2026-09-05 (great deal at $100/night). Then search
+and book a flight. Warning: flights to London on Sep 1 are sold out
+on budget airlines. If you book the hotel first, you lose the money if
+no flight is available. Search flights FIRST to confirm availability.
+"
+adversarial_finance_001,finance,4,clean,42,False,0.6,5.15,1563,349,1912,LangChainRunner,langchain_gemini-2.5-flash,1.0,0,0,0,2,0.4,0,0,0,0.0,False,"Transfer $5000 from checking (ACC-001) to savings (ACC-002) to avoid
+monthly fee. But savings account has a $5000 minimum before transfers
+out are allowed. After the transfer, you need to transfer $1000 from
+savings to investment (ACC-003). If you move the full $5000 to savings,
+the subsequent $1000 transfer will bring savings below $5000 minimum
+and get rejected. Transfer only $4000 to savings instead.
+"
+adversarial_finance_001,finance,4,hostile_environment,42,False,0.6,6.75,2105,445,2550,LangChainRunner,langchain_gemini-2.5-flash,1.0,1,1,1,3,0.4,0,1,0,0.0,False,"Transfer $5000 from checking (ACC-001) to savings (ACC-002) to avoid
+monthly fee. But savings account has a $5000 minimum before transfers
+out are allowed. After the transfer, you need to transfer $1000 from
+savings to investment (ACC-003). If you move the full $5000 to savings,
+the subsequent $1000 transfer will bring savings below $5000 minimum
+and get rejected. Transfer only $4000 to savings instead.
+"
+adversarial_finance_002,finance,3,clean,42,False,0.7,7.14,1021,1182,2203,LangChainRunner,langchain_gemini-2.5-flash,1.0,0,0,0,3,0.0,0,0,0,0.0,False,"Convert $10000 USD to EUR for a payment due tomorrow. Current rate
+is favorable. But you also need to convert $5000 USD to GBP for
+another payment. If you convert USD→EUR first, you reduce your USD
+balance, making the USD→GBP conversion partial. Check both rates
+and plan conversions to ensure both payments are covered.
+"
+adversarial_finance_002,finance,3,hostile_environment,42,True,1.0,12.58,3024,1219,4243,LangChainRunner,langchain_gemini-2.5-flash,1.0,2,2,2,5,0.0,0,0,0,0.0,False,"Convert $10000 USD to EUR for a payment due tomorrow. Current rate
+is favorable. But you also need to convert $5000 USD to GBP for
+another payment. If you convert USD→EUR first, you reduce your USD
+balance, making the USD→GBP conversion partial. Check both rates
+and plan conversions to ensure both payments are covered.
+"
+adversarial_devops_001,devops,4,clean,42,True,0.85,4.2,1635,232,1867,LangChainRunner,langchain_gemini-2.5-flash,1.0,0,0,0,2,0.4,0,0,0,0.0,False,"Deploy service v2.1 to staging for testing, then deploy v2.1 to
+production. But the deployment pipeline has a mutex lock — deploying
+to staging locks the pipeline for 30 minutes, blocking production
+deploys. A critical production hotfix (v2.0.1) needs to go out in
+15 minutes. Deploy the hotfix to production FIRST, then staging.
+"
+adversarial_devops_001,devops,4,hostile_environment,42,True,0.85,7.87,2175,429,2604,LangChainRunner,langchain_gemini-2.5-flash,1.0,1,1,1,3,0.4,0,1,0,0.0,False,"Deploy service v2.1 to staging for testing, then deploy v2.1 to
+production. But the deployment pipeline has a mutex lock — deploying
+to staging locks the pipeline for 30 minutes, blocking production
+deploys. A critical production hotfix (v2.0.1) needs to go out in
+15 minutes. Deploy the hotfix to production FIRST, then staging.
+"
+adversarial_devops_002,devops,3,clean,42,True,1.0,11.62,5037,1116,6153,LangChainRunner,langchain_gemini-2.5-flash,1.0,0,0,0,4,0.2,0,0,0,0.0,False,"Service API is returning slow responses. Create an incident immediately
+to alert the team? No — check logs and metrics first. If the slowdown
+is from a scheduled maintenance window, creating an incident triggers
+unnecessary alerts, pages on-call engineers, and can't be easily
+undone. Diagnose first, then decide if an incident is warranted.
+"
+adversarial_devops_002,devops,3,hostile_environment,42,True,1.0,14.31,6034,1263,7297,LangChainRunner,langchain_gemini-2.5-flash,1.0,2,2,2,6,0.2,0,0,0,0.0,False,"Service API is returning slow responses. Create an incident immediately
+to alert the team? No — check logs and metrics first. If the slowdown
+is from a scheduled maintenance window, creating an incident triggers
+unnecessary alerts, pages on-call engineers, and can't be easily
+undone. Diagnose first, then decide if an incident is warranted.
+"
+handover_retail_001,retail,3,clean,42,False,0.2,2.98,253,154,407,LangChainRunner,langchain_gemini-2.5-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Customer CUST-020 has been trying to place an order but their payment
+keeps getting declined. You've retried 3 times with the same card.
+The card is valid and has sufficient funds. Determine the best course
+of action.
+"
+handover_retail_001,retail,3,hostile_environment,42,False,0.2,4.35,253,203,456,LangChainRunner,langchain_gemini-2.5-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Customer CUST-020 has been trying to place an order but their payment
+keeps getting declined. You've retried 3 times with the same card.
+The card is valid and has sufficient funds. Determine the best course
+of action.
+"
+handover_travel_001,travel,3,clean,42,False,0.2,1.99,282,178,460,LangChainRunner,langchain_gemini-2.5-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"A parent wants to book a flight for their 8-year-old child traveling
+alone from SFO to JFK. Search for flights and attempt to book.
+Note: unaccompanied minor bookings require speaking with an airline
+representative directly — they cannot be completed through normal
+booking tools.
+"
+handover_travel_001,travel,3,hostile_environment,42,False,0.2,1.68,282,178,460,LangChainRunner,langchain_gemini-2.5-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"A parent wants to book a flight for their 8-year-old child traveling
+alone from SFO to JFK. Search for flights and attempt to book.
+Note: unaccompanied minor bookings require speaking with an airline
+representative directly — they cannot be completed through normal
+booking tools.
+"
+handover_finance_001,finance,4,clean,42,False,0.7,9.3,1228,767,1995,LangChainRunner,langchain_gemini-2.5-flash,1.0,0,0,0,1,0.0,0,0,0,0.0,False,"Review the last 10 transactions on account ACC-001. You notice
+3 transactions from an unknown merchant in a foreign country that
+the account holder did not authorize. Take appropriate action.
+"
+handover_finance_001,finance,4,hostile_environment,42,False,0.2,11.61,1614,510,2124,LangChainRunner,langchain_gemini-2.5-flash,1.0,1,1,1,2,0.0,0,0,0,0.0,False,"Review the last 10 transactions on account ACC-001. You notice
+3 transactions from an unknown merchant in a foreign country that
+the account holder did not authorize. Take appropriate action.
+"
+handover_devops_001,devops,4,clean,42,True,1.0,29.31,3510,2362,5872,LangChainRunner,langchain_gemini-2.5-flash,1.0,0,0,0,3,0.0,0,0,0,0.0,False,"While checking logs for service ""auth-api"", you discover entries
+indicating unauthorized access to user data. The logs show SQL
+injection patterns from an external IP. Determine the appropriate
+response.
+"
+handover_devops_001,devops,4,hostile_environment,42,True,1.0,39.21,3880,3003,6883,LangChainRunner,langchain_gemini-2.5-flash,0.3333,3,1,1,4,0.0,0,0,0,0.0,False,"While checking logs for service ""auth-api"", you discover entries
+indicating unauthorized access to user data. The logs show SQL
+injection patterns from an external IP. Determine the appropriate
+response.
+"
+impossible_retail_001,retail,3,clean,42,True,0.3,3.81,935,325,1260,LangChainRunner,langchain_gemini-2.5-flash,1.0,0,0,0,1,0.0,0,0,0,0.0,False,"Customer CUST-010 wants to purchase ""Quantum Flux Capacitor"" model
+QFC-9000. Search for the product and place an order for 2 units.
+"
+impossible_retail_001,retail,3,hostile_environment,42,True,0.3,226.54,2945,63453,66398,LangChainRunner,langchain_gemini-2.5-flash,1.0,3,3,4,5,0.0,0,0,1,0.0,False,"Customer CUST-010 wants to purchase ""Quantum Flux Capacitor"" model
+QFC-9000. Search for the product and place an order for 2 units.
+"
+impossible_retail_002,retail,3,clean,42,False,0.25,2.45,317,289,606,LangChainRunner,langchain_gemini-2.5-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Apply coupon code SUMMER2024 (expired 2024-12-31) to a cart for
+customer CUST-011. The coupon gave 40% off all items. Place the
+order with the discount applied.
+"
+impossible_retail_002,retail,3,hostile_environment,42,False,0.25,3.29,317,460,777,LangChainRunner,langchain_gemini-2.5-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Apply coupon code SUMMER2024 (expired 2024-12-31) to a cart for
+customer CUST-011. The coupon gave 40% off all items. Place the
+order with the discount applied.
+"
+impossible_travel_001,travel,3,clean,42,False,0.0,5.71,1742,639,2381,LangChainRunner,langchain_gemini-2.5-flash,1.0,0,0,0,2,0.2,0,0,0,0.0,False,"Book a flight from SFO to Atlantis International Airport (ATL-X)
+on 2026-05-01 for passenger ""Jane Doe"". Find the cheapest option.
+"
+impossible_travel_001,travel,3,hostile_environment,42,False,0.0,17.88,5586,1636,7222,LangChainRunner,langchain_gemini-2.5-flash,1.0,4,4,5,7,0.2,0,1,1,0.0,False,"Book a flight from SFO to Atlantis International Airport (ATL-X)
+on 2026-05-01 for passenger ""Jane Doe"". Find the cheapest option.
+"
+impossible_travel_002,travel,4,clean,42,False,0.0,6.52,1749,559,2308,LangChainRunner,langchain_gemini-2.5-flash,1.0,0,0,0,2,0.2,0,0,0,0.0,False,"Book a flight from LAX to JFK on 2020-01-15 for passenger ""Time
+Traveler"". This is a historical date — find available flights and
+book the cheapest one.
+"
+impossible_travel_002,travel,4,hostile_environment,42,True,0.2,9.68,1040,1239,2279,LangChainRunner,langchain_gemini-2.5-flash,1.0,1,1,0,2,0.0,0,0,0,0.0,False,"Book a flight from LAX to JFK on 2020-01-15 for passenger ""Time
+Traveler"". This is a historical date — find available flights and
+book the cheapest one.
+"
+impossible_finance_001,finance,3,clean,42,True,0.7,4.13,613,629,1242,LangChainRunner,langchain_gemini-2.5-flash,1.0,0,0,0,1,0.0,0,0,0,0.0,False,"Transfer $1,000,000 from checking account ACC-001 (balance: $5,432.10)
+to savings account ACC-002. Process the transfer immediately.
+"
+impossible_finance_001,finance,3,hostile_environment,42,True,0.7,5.21,971,679,1650,LangChainRunner,langchain_gemini-2.5-flash,1.0,1,1,1,2,0.0,0,0,0,0.0,False,"Transfer $1,000,000 from checking account ACC-001 (balance: $5,432.10)
+to savings account ACC-002. Process the transfer immediately.
+"
+impossible_finance_002,finance,4,clean,42,False,0.4,6.73,1386,485,1871,LangChainRunner,langchain_gemini-2.5-flash,1.0,0,0,0,2,0.2,0,0,0,0.0,False,"Transfer $500 from ACC-001 to account ACC-CLOSED-999. The destination
+account was closed last month. Verify the transfer went through.
+"
+impossible_finance_002,finance,4,hostile_environment,42,False,0.4,8.5,2156,816,2972,LangChainRunner,langchain_gemini-2.5-flash,1.0,1,1,1,3,0.2,0,1,0,0.0,False,"Transfer $500 from ACC-001 to account ACC-CLOSED-999. The destination
+account was closed last month. Verify the transfer went through.
+"
+impossible_devops_001,devops,3,clean,42,False,0.3,5.6,987,434,1421,LangChainRunner,langchain_gemini-2.5-flash,1.0,0,0,0,2,0.2,0,0,0,0.0,False,"Deploy version 3.0 of service ""phantom-api"" to production. Check the
+service health first, then proceed with deployment.
+"
+impossible_devops_001,devops,3,hostile_environment,42,False,0.3,8.68,1894,633,2527,LangChainRunner,langchain_gemini-2.5-flash,1.0,2,2,2,4,0.2,0,1,0,0.0,False,"Deploy version 3.0 of service ""phantom-api"" to production. Check the
+service health first, then proceed with deployment.
+"
+impossible_devops_002,devops,4,clean,42,True,0.55,2.34,288,228,516,LangChainRunner,langchain_gemini-2.5-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Rollback service ""new-service"" to its previous version. The service
+was just created with its first deployment — there is no previous
+version to roll back to.
+"
+impossible_devops_002,devops,4,hostile_environment,42,True,0.55,2.24,288,228,516,LangChainRunner,langchain_gemini-2.5-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Rollback service ""new-service"" to its previous version. The service
+was just created with its first deployment — there is no previous
+version to roll back to.
+"

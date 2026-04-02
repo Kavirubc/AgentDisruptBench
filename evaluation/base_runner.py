@@ -100,9 +100,18 @@ class BaseAgentRunner(abc.ABC):
     def __init__(self, config: RunnerConfig | None = None) -> None:
         self.config = config or RunnerConfig()
         self._is_setup = False
+        
+        # Cumulative tracking for runner teardown logs
+        self._total_prompt_tokens = 0
+        self._total_completion_tokens = 0
         self._total_tokens = 0
         self._total_api_calls = 0
         self._total_time = 0.0
+
+        # Isolated tracking for the CURRENT task (reset in __call__)
+        self._prompt_tokens = 0
+        self._completion_tokens = 0
+        self._task_api_calls = 0
 
     def setup(self) -> None:
         """Initialise LLM client and resources. Override in subclasses."""
@@ -113,8 +122,8 @@ class BaseAgentRunner(abc.ABC):
         """Clean up resources. Override in subclasses."""
         self._is_setup = False
         logger.info(
-            "runner_teardown class=%s tokens=%d api_calls=%d",
-            type(self).__name__, self._total_tokens, self._total_api_calls,
+            "runner_teardown class=%s tokens=%d prompt=%d completion=%d api_calls=%d",
+            type(self).__name__, self._total_tokens, self._total_prompt_tokens, self._total_completion_tokens, self._total_api_calls,
         )
 
     @abc.abstractmethod
@@ -144,6 +153,11 @@ class BaseAgentRunner(abc.ABC):
         if not self._is_setup:
             self.setup()
 
+        # Reset task-specific metrics
+        self._prompt_tokens = 0
+        self._completion_tokens = 0
+        self._task_api_calls = 0
+
         if self.config.verbose:
             ttype = getattr(task, "task_type", "standard")
             tc = _TASK_TYPE_COLOUR.get(ttype, _BLUE)
@@ -161,7 +175,13 @@ class BaseAgentRunner(abc.ABC):
         start = time.monotonic()
         result = self.run_task(task, tools)
         elapsed = time.monotonic() - start
+        
+        # Update cumulative totals
         self._total_time += elapsed
+        self._total_prompt_tokens += self._prompt_tokens
+        self._total_completion_tokens += self._completion_tokens
+        self._total_tokens = self._total_prompt_tokens + self._total_completion_tokens
+        self._total_api_calls += self._task_api_calls
 
         if self.config.verbose:
             output_preview = str(result).replace("\n", " ")[:120]
@@ -174,11 +194,13 @@ class BaseAgentRunner(abc.ABC):
 
     @property
     def stats(self) -> dict[str, Any]:
-        """Runner statistics."""
+        """Runner statistics (task-specific)."""
         return {
             "runner": type(self).__name__,
             "model": self.config.model,
-            "total_tokens": self._total_tokens,
-            "total_api_calls": self._total_api_calls,
+            "total_tokens": self._prompt_tokens + self._completion_tokens,
+            "prompt_tokens": self._prompt_tokens,
+            "completion_tokens": self._completion_tokens,
+            "total_api_calls": self._task_api_calls,
             "total_time": round(self._total_time, 2),
         }

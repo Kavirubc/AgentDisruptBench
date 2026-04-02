@@ -146,11 +146,15 @@ class BenchmarkResult:
     state_equivalent_success: bool = False
     budget_exceeded: bool = False
     token_usage: int = 0
+    prompt_tokens: int = 0
+    completion_tokens: int = 0
     failure_categories: dict[str, int] = field(default_factory=dict)
 
     # Task metadata (authoritative fields for downstream slicing)
     task_domain: str = ""
     task_difficulty: int = 0
+    task_description: str = ""
+    runner_name: str = ""
 
     # Raw data
     traces: list[ToolCallTrace] = field(default_factory=list)
@@ -201,6 +205,9 @@ class MetricsCalculator:
         run_start_time: float | None = None,
         state_diff: dict | None = None,
         idempotency_violations: int = 0,
+        prompt_tokens: int = 0,
+        completion_tokens: int = 0,
+        runner_name: str = "",
     ) -> BenchmarkResult:
         """Compute metrics for a single (task, profile) run.
 
@@ -334,6 +341,11 @@ class MetricsCalculator:
             handover_detected=handover_detected,
             tool_hallucination_rate=tool_hallucination_rate,
             failure_categories=failure_categories,
+            prompt_tokens=prompt_tokens,
+            completion_tokens=completion_tokens,
+            token_usage=prompt_tokens + completion_tokens,
+            runner_name=runner_name,
+            task_description=task.description,
             traces=traces,
             duration_seconds=duration_seconds,
         )

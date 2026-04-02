@@ -1,0 +1,62 @@
+{
+  "task_id": "adversarial_travel_002",
+  "agent_id": "langchain_gemini-2.5-flash",
+  "profile_name": "clean",
+  "seed": 42,
+  "success": true,
+  "partial_score": 1.0,
+  "agent_output": "Flights from NYC to London on September 1, 2026, are available. I found the following options:\n\n*   **Metro Air:** Departing 08:00 AM, Arriving 11:30 AM, Price: $308.44 (1 seat available)\n*   **Alpine Jet:** Departing 12:00 PM, Arriving 03:30 PM, Price: $477.92 (32 seats available)\n*   **Oceanic Airlines:** Departing 04:00 PM, Arriving 07:30 PM, Price: $457.23 (40 seats available)\n\nI also searched for hotels in London for your specified dates (September 1, 2026, to September 5, 2026). I found several options, including \"Lakefront Suites\" for $100.54 per night, which is very close to your desired price point.\n\nPlease note that I cannot directly book a non-refundable hotel or specify a price using the available tools. I can only search for hotels and check their availability.\n\nTo proceed with booking a flight, please let me know the full name of the passenger. I recommend booking the Metro Air flight (FLT-b4f714) as it is the most affordable option at $308.44, though it only has 1 seat remaining.",
+  "recovery_rate": 1.0,
+  "mean_steps_to_recovery": 0.0,
+  "retry_efficiency": 1.0,
+  "disruptions_encountered": 0,
+  "disruptions_recovered": 0,
+  "disruption_types_seen": [],
+  "total_tool_calls": 2,
+  "extra_tool_calls": null,
+  "duration_seconds": 19.933355374989333,
+  "acknowledged_failure": true,
+  "attempted_alternative": false,
+  "traces": [
+    {
+      "call_id": "60db1420-878e-47d4-bb2c-ba8dcc61ae95",
+      "call_number": 1,
+      "tool_name": "search_flights",
+      "inputs": {
+        "origin": "NYC",
+        "destination": "London",
+        "date": "2026-09-01",
+        "passengers": 1
+      },
+      "real_result": "{'flights': [{'flight_id': 'FLT-b4f714', 'airline': 'Metro Air', 'origin': 'NYC', 'destination': 'London', 'departure': '2026-09-01T08:00:00Z', 'arrival': '2026-09-01T11:30:00Z', 'price_per_person': 308.44, 'seats_available': 1, 'class': 'first'}, {'flight_id': 'FLT-7a1148', 'airline': 'Alpine Jet', 'origin': 'NYC', 'destination': 'London', 'departure': '2026-09-01T12:00:00Z', 'arrival': '2026-09-01T15:30:00Z', 'price_per_person': 477.92, 'seats_available': 32, 'class': 'first'}, {'flight_id': '",
+      "observed_result": "{'flights': [{'flight_id': 'FLT-b4f714', 'airline': 'Metro Air', 'origin': 'NYC', 'destination': 'London', 'departure': '2026-09-01T08:00:00Z', 'arrival': '2026-09-01T11:30:00Z', 'price_per_person': 308.44, 'seats_available': 1, 'class': 'first'}, {'flight_id': 'FLT-7a1148', 'airline': 'Alpine Jet', 'origin': 'NYC', 'destination': 'London', 'departure': '2026-09-01T12:00:00Z', 'arrival': '2026-09-01T15:30:00Z', 'price_per_person': 477.92, 'seats_available': 32, 'class': 'first'}, {'flight_id': '",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.1562500256113708,
+      "observed_latency_ms": 0.16783300088718534,
+      "error": null,
+      "timestamp": 1774951459.23635
+    },
+    {
+      "call_id": "98467c88-46b3-4265-ba33-613f58d7aaf3",
+      "call_number": 1,
+      "tool_name": "search_hotels",
+      "inputs": {
+        "location": "London",
+        "check_in": "2026-09-01",
+        "check_out": "2026-09-05",
+        "guests": 1
+      },
+      "real_result": "{'hotels': [{'hotel_id': 'HTL-fca428', 'name': 'City Central Inn', 'location': 'London', 'price_per_night': 359.01, 'rating': 3.7, 'availability': True}, {'hotel_id': 'HTL-52d103', 'name': 'Lakefront Suites', 'location': 'London', 'price_per_night': 486.73, 'rating': 4.4, 'availability': True}, {'hotel_id': 'HTL-10a312', 'name': 'Seaside Resort', 'location': 'London', 'price_per_night': 184.41, 'rating': 4.2, 'availability': True}, {'hotel_id': 'HTL-e838dc', 'name': 'Lakefront Suites', 'location",
+      "observed_result": "{'hotels': [{'hotel_id': 'HTL-fca428', 'name': 'City Central Inn', 'location': 'London', 'price_per_night': 359.01, 'rating': 3.7, 'availability': True}, {'hotel_id': 'HTL-52d103', 'name': 'Lakefront Suites', 'location': 'London', 'price_per_night': 486.73, 'rating': 4.4, 'availability': True}, {'hotel_id': 'HTL-10a312', 'name': 'Seaside Resort', 'location': 'London', 'price_per_night': 184.41, 'rating': 4.2, 'availability': True}, {'hotel_id': 'HTL-e838dc', 'name': 'Lakefront Suites', 'location",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.050417002057656646,
+      "observed_latency_ms": 0.05441700341179967,
+      "error": null,
+      "timestamp": 1774951461.987246
+    }
+  ]
+}

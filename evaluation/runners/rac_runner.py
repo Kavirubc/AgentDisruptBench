@@ -303,12 +303,39 @@ class RACRunner(BaseAgentRunner):
                 {"messages": [{"role": "user", "content": task_input}]},
             )
 
-            # Step 5: Extract final message content
+            # Step 5: Extract tokens and final message content
             messages = result.get("messages", [])
             if messages:
+                # Track tokens from all messages with usage_metadata
+                for m in messages:
+                    if hasattr(m, "usage_metadata") and m.usage_metadata:
+                        usage = m.usage_metadata
+                        self._prompt_tokens += usage.get("input_tokens", 0)
+                        self._completion_tokens += usage.get("output_tokens", 0)
+                    elif hasattr(m, "response_metadata") and m.response_metadata:
+                        # Fallback for older LangChain versions or specific providers
+                        resp_meta = m.response_metadata
+                        token_usage = resp_meta.get("token_usage", {})
+                        if token_usage:
+                            self._prompt_tokens += token_usage.get("prompt_tokens", 0)
+                            self._completion_tokens += token_usage.get("completion_tokens", 0)
+
                 last_msg = messages[-1]
                 content = getattr(last_msg, "content", str(last_msg))
-                self._total_api_calls += sum(
+
+                # Normalize structured content (e.g., Gemini returns list of parts)
+                if isinstance(content, list):
+                    parts = []
+                    for item in content:
+                        if isinstance(item, dict):
+                            parts.append(str(item.get("text", item)))
+                        else:
+                            parts.append(str(item))
+                    content = " ".join(parts)
+                else:
+                    content = str(content)
+
+                self._task_api_calls += sum(
                     1 for m in messages if getattr(m, "type", "") == "ai"
                 )
 

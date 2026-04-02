@@ -46,7 +46,7 @@ console = Console()
 # ─── CLI HELPERS ──────────────────────────────────────────────────────────────
 
 
-def resolve_run_dir(run_id: Optional[str], logs_dir: str = "logs") -> Path:
+def resolve_run_dir(run_id: Optional[str], logs_dir: str = "runs") -> Path:
     logs_root = Path(logs_dir)
     if run_id:
         run_dir = logs_root / run_id
@@ -439,7 +439,7 @@ def render_run(events: list[dict[str, Any]], run_dir: Path) -> None:
 @app.command()
 def main(
     run_id: Optional[str] = typer.Option(None, "--run-id", "-r", help="Run ID to display"),
-    logs_dir: str = typer.Option("logs", "--logs-dir", "-d", help="Root directory containing run folders"),
+    logs_dir: str = typer.Option("runs", "--logs-dir", "-d", help="Root directory containing run folders"),
 ) -> None:
     """Render the full step-by-step narrative for an AgentDisruptBench run."""
     run_dir = resolve_run_dir(run_id, logs_dir)

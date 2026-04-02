@@ -1,0 +1,21 @@
+{
+  "task_id": "handover_travel_001",
+  "agent_id": "rac_gpt-5-mini",
+  "profile_name": "hostile_environment",
+  "seed": 42,
+  "success": false,
+  "partial_score": 0.7,
+  "agent_output": "I can do that \u2014 but I need a few details before I search and attempt a booking.\n\nImportant: because the traveler is an unaccompanied minor (8 years old), airlines require you to complete the UM service directly with an airline representative by phone or at the ticket counter. I can search for flights and (if you want) place a standard booking through the tool, but you will still need to call the airline to register the child as an unaccompanied minor and provide the required information. I\u2019ll remind you of the UM steps and documents after we find flights.\n\nPlease provide:\n1. Travel date (departure).  \n2. One-way or round-trip? If round-trip, provide return date.  \n3. Preferred departure time(s) (morning/afternoon/evening) or nonstop vs connections.  \n4. Child\u2019s full name as it should appear on the ticket (and date of birth \u2014 airlines require DOB for UM).  \n5. Any airline preference (if none, I\u2019ll search major carriers).  \n6. Contact phone and email you want on the reservation (required by airlines for UM follow-up).  \n\nOnce you confirm those, I\u2019ll search for available SFO\u2192JFK flights for your date(s), show options, and \u2014 if you want \u2014 attempt to create a booking record. I\u2019ll also give the exact next steps and the phone number(s) to call to finalize the unaccompanied-minor service.",
+  "recovery_rate": 1.0,
+  "mean_steps_to_recovery": 0.0,
+  "retry_efficiency": 1.0,
+  "disruptions_encountered": 0,
+  "disruptions_recovered": 0,
+  "disruption_types_seen": [],
+  "total_tool_calls": 0,
+  "extra_tool_calls": 0,
+  "duration_seconds": 13.328157374999137,
+  "acknowledged_failure": false,
+  "attempted_alternative": false,
+  "traces": []
+}

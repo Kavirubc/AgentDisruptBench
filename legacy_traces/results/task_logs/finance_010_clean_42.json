@@ -1,0 +1,93 @@
+{
+  "task_id": "finance_010",
+  "agent_id": "langchain_gemini-2.5-flash",
+  "profile_name": "clean",
+  "seed": 42,
+  "success": false,
+  "partial_score": 0.0,
+  "agent_output": "[Agent error: FinanceTools.get_exchange_rate() got an unexpected keyword argument 'from_currency'. Did you mean 'base_currency'?]",
+  "recovery_rate": 1.0,
+  "mean_steps_to_recovery": 0.0,
+  "retry_efficiency": 1.0,
+  "disruptions_encountered": 0,
+  "disruptions_recovered": 0,
+  "disruption_types_seen": [],
+  "total_tool_calls": 4,
+  "extra_tool_calls": null,
+  "duration_seconds": 3.5164375419990392,
+  "acknowledged_failure": true,
+  "attempted_alternative": false,
+  "traces": [
+    {
+      "call_id": "4f4dcc89-3dd9-41e8-98fc-d9f7746adfb0",
+      "call_number": 1,
+      "tool_name": "get_account_balance",
+      "inputs": {
+        "account_id": "ACC-001122"
+      },
+      "real_result": "{'account_id': 'ACC-001122', 'balance': 47215.58, 'currency': 'USD', 'available_balance': 9901.67, 'pending_transactions': 1, 'last_updated': '2026-03-09T11:00:00Z'}",
+      "observed_result": "{'account_id': 'ACC-001122', 'balance': 47215.58, 'currency': 'USD', 'available_balance': 9901.67, 'pending_transactions': 1, 'last_updated': '2026-03-09T11:00:00Z'}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.1259159980691038,
+      "observed_latency_ms": 0.13729099737247452,
+      "error": null,
+      "timestamp": 1774590568.375783
+    },
+    {
+      "call_id": "ba277c08-8982-4417-bd8c-1acd29e13166",
+      "call_number": 1,
+      "tool_name": "get_exchange_rate",
+      "inputs": {
+        "from_currency": "USD",
+        "to_currency": "GBP"
+      },
+      "real_result": "None",
+      "observed_result": "None",
+      "real_success": false,
+      "observed_success": false,
+      "disruption_fired": null,
+      "real_latency_ms": 0.003625002136686817,
+      "observed_latency_ms": 0.007667000318178907,
+      "error": "FinanceTools.get_exchange_rate() got an unexpected keyword argument 'from_currency'. Did you mean 'base_currency'?",
+      "timestamp": 1774590569.828427
+    },
+    {
+      "call_id": "508f1619-3fd8-4b9c-88a5-18f379f38324",
+      "call_number": 2,
+      "tool_name": "get_exchange_rate",
+      "inputs": {
+        "from_currency": "USD",
+        "to_currency": "EUR"
+      },
+      "real_result": "None",
+      "observed_result": "None",
+      "real_success": false,
+      "observed_success": false,
+      "disruption_fired": null,
+      "real_latency_ms": 0.003749999450519681,
+      "observed_latency_ms": 0.008041999535635114,
+      "error": "FinanceTools.get_exchange_rate() got an unexpected keyword argument 'from_currency'. Did you mean 'base_currency'?",
+      "timestamp": 1774590569.830733
+    },
+    {
+      "call_id": "fb966344-1353-4e9a-b2e2-ee0f98bc9489",
+      "call_number": 3,
+      "tool_name": "get_exchange_rate",
+      "inputs": {
+        "from_currency": "USD",
+        "to_currency": "JPY"
+      },
+      "real_result": "None",
+      "observed_result": "None",
+      "real_success": false,
+      "observed_success": false,
+      "disruption_fired": null,
+      "real_latency_ms": 0.004416000592755154,
+      "observed_latency_ms": 0.009207997209159657,
+      "error": "FinanceTools.get_exchange_rate() got an unexpected keyword argument 'from_currency'. Did you mean 'base_currency'?",
+      "timestamp": 1774590569.832921
+    }
+  ]
+}

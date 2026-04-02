@@ -1,0 +1,42 @@
+{
+  "task_id": "devops_014",
+  "agent_id": "langchain_gemini-2.5-flash",
+  "profile_name": "mild_production",
+  "seed": 42,
+  "success": false,
+  "partial_score": 0.0,
+  "agent_output": "[Agent error: {\"error\": {\"code\": 429, \"message\": \"Too Many Requests\", \"retry_after\": 30}}]",
+  "recovery_rate": 0.0,
+  "mean_steps_to_recovery": 0.0,
+  "retry_efficiency": 1.0,
+  "disruptions_encountered": 1,
+  "disruptions_recovered": 0,
+  "disruption_types_seen": [
+    "http_429"
+  ],
+  "total_tool_calls": 1,
+  "extra_tool_calls": 0,
+  "duration_seconds": 2.4530720000002475,
+  "acknowledged_failure": true,
+  "attempted_alternative": false,
+  "traces": [
+    {
+      "call_id": "38ed2862-d82e-46d7-afff-d91510c6959b",
+      "call_number": 1,
+      "tool_name": "get_logs",
+      "inputs": {
+        "service_name": "api-gateway",
+        "log_type": "error"
+      },
+      "real_result": "None",
+      "observed_result": "None",
+      "real_success": false,
+      "observed_success": false,
+      "disruption_fired": "http_429",
+      "real_latency_ms": 0.007165999704739079,
+      "observed_latency_ms": 0.04958299905410968,
+      "error": "{\"error\": {\"code\": 429, \"message\": \"Too Many Requests\", \"retry_after\": 30}}",
+      "timestamp": 1774590456.1276312
+    }
+  ]
+}

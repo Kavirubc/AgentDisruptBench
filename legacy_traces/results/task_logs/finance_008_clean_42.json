@@ -1,0 +1,37 @@
+{
+  "task_id": "finance_008",
+  "agent_id": "langchain_gemini-2.5-flash",
+  "profile_name": "clean",
+  "seed": 42,
+  "success": false,
+  "partial_score": 0.0,
+  "agent_output": "[Agent error: FinanceTools.get_transaction_history() missing 1 required keyword-only argument: 'account_id']",
+  "recovery_rate": 1.0,
+  "mean_steps_to_recovery": 0.0,
+  "retry_efficiency": 1.0,
+  "disruptions_encountered": 0,
+  "disruptions_recovered": 0,
+  "disruption_types_seen": [],
+  "total_tool_calls": 1,
+  "extra_tool_calls": null,
+  "duration_seconds": 2.4831275409997033,
+  "acknowledged_failure": true,
+  "attempted_alternative": false,
+  "traces": [
+    {
+      "call_id": "5b40b8d7-9649-4036-ac36-a5415a53f874",
+      "call_number": 1,
+      "tool_name": "get_transaction_history",
+      "inputs": {},
+      "real_result": "None",
+      "observed_result": "None",
+      "real_success": false,
+      "observed_success": false,
+      "disruption_fired": null,
+      "real_latency_ms": 0.08287499804282561,
+      "observed_latency_ms": 0.09724999836180359,
+      "error": "FinanceTools.get_transaction_history() missing 1 required keyword-only argument: 'account_id'",
+      "timestamp": 1774590554.044653
+    }
+  ]
+}

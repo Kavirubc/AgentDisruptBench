@@ -1,0 +1,77 @@
+{
+  "task_id": "finance_019",
+  "agent_id": "langchain_gemini-2.5-flash",
+  "profile_name": "hostile_environment",
+  "seed": 42,
+  "success": false,
+  "partial_score": 0.0,
+  "agent_output": "[Agent error: {\"error\": {\"code\": 429, \"message\": \"Too Many Requests\", \"retry_after\": 30}}]",
+  "recovery_rate": 0.5,
+  "mean_steps_to_recovery": 1.0,
+  "retry_efficiency": 1.0,
+  "disruptions_encountered": 2,
+  "disruptions_recovered": 1,
+  "disruption_types_seen": [
+    "timeout",
+    "http_429",
+    "missing_fields"
+  ],
+  "total_tool_calls": 3,
+  "extra_tool_calls": -2,
+  "duration_seconds": 2.0213013749998936,
+  "acknowledged_failure": true,
+  "attempted_alternative": false,
+  "traces": [
+    {
+      "call_id": "1a5ca5aa-eb5b-4e8f-b8c9-b5a356bff57c",
+      "call_number": 1,
+      "tool_name": "get_account_balance",
+      "inputs": {
+        "account_id": "ACC-001122"
+      },
+      "real_result": "{'account_id': 'ACC-001122', 'balance': 47215.58, 'currency': 'USD', 'available_balance': 9901.67, 'pending_transactions': 1, 'last_updated': '2026-03-09T11:00:00Z'}",
+      "observed_result": "None",
+      "real_success": true,
+      "observed_success": false,
+      "disruption_fired": "http_429",
+      "real_latency_ms": 0.04537499989964999,
+      "observed_latency_ms": 0.08037500083446503,
+      "error": "{\"error\": {\"code\": 429, \"message\": \"Too Many Requests\", \"retry_after\": 30}}",
+      "timestamp": 1774590634.919009
+    },
+    {
+      "call_id": "9aebd11c-09a4-439a-bcba-f4f0ac507349",
+      "call_number": 2,
+      "tool_name": "get_account_balance",
+      "inputs": {
+        "account_id": "ACC-005566"
+      },
+      "real_result": "{'account_id': 'ACC-005566', 'balance': 43188.65, 'currency': 'USD', 'available_balance': 436.75, 'pending_transactions': 4, 'last_updated': '2026-03-09T11:00:00Z'}",
+      "observed_result": "{'balance': 43188.65, 'currency': 'USD', 'available_balance': 436.75, 'pending_transactions': 4}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": "missing_fields",
+      "real_latency_ms": 0.02479200338711962,
+      "observed_latency_ms": 0.07783300316077657,
+      "error": null,
+      "timestamp": 1774590634.9198809
+    },
+    {
+      "call_id": "892a29cd-2a86-4c79-ac2a-8e277dd14b28",
+      "call_number": 3,
+      "tool_name": "get_account_balance",
+      "inputs": {
+        "account_id": "ACC-003344"
+      },
+      "real_result": "{'account_id': 'ACC-003344', 'balance': 10060.04, 'currency': 'USD', 'available_balance': 19254.34, 'pending_transactions': 0, 'last_updated': '2026-03-09T11:00:00Z'}",
+      "observed_result": "None",
+      "real_success": true,
+      "observed_success": false,
+      "disruption_fired": "timeout",
+      "real_latency_ms": 0.014624998584622517,
+      "observed_latency_ms": 0.04025000089313835,
+      "error": "{\"error\": {\"code\": \"TIMEOUT\", \"message\": \"Tool 'get_account_balance' timed out after 10000ms\", \"delay_ms\": 10000}}",
+      "timestamp": 1774590634.920637
+    }
+  ]
+}

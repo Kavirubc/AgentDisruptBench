@@ -58,7 +58,7 @@ from agentdisruptbench.core.trace import TraceCollector
 class RunLogger:
     """Writes structured JSONL events for a single benchmark run."""
 
-    def __init__(self, output_dir: str = "logs"):
+    def __init__(self, output_dir: str = "runs"):
         ts = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
         short_id = uuid.uuid4().hex[:6]
         self.run_id = f"{ts}_{short_id}"
@@ -128,7 +128,7 @@ def main():
     parser.add_argument("--max-difficulty", type=int, default=5, help="Max difficulty")
     parser.add_argument("--min-difficulty", type=int, default=1, help="Min difficulty")
     parser.add_argument("--seed", type=int, default=42, help="Random seed")
-    parser.add_argument("--output-dir", default="logs", help="Log output directory")
+    parser.add_argument("--output-dir", default="runs", help="Log output directory")
     parser.add_argument("--verbose", "-v", action="store_true")
     args = parser.parse_args()
 

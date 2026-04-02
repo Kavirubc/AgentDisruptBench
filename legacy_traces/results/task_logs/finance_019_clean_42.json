@@ -1,0 +1,113 @@
+{
+  "task_id": "finance_019",
+  "agent_id": "langchain_gemini-2.5-flash",
+  "profile_name": "clean",
+  "seed": 42,
+  "success": false,
+  "partial_score": 0.0,
+  "agent_output": "[Agent error: FinanceTools.transfer_funds() got an unexpected keyword argument 'source_account_id']",
+  "recovery_rate": 1.0,
+  "mean_steps_to_recovery": 0.0,
+  "retry_efficiency": 1.0,
+  "disruptions_encountered": 0,
+  "disruptions_recovered": 0,
+  "disruption_types_seen": [],
+  "total_tool_calls": 5,
+  "extra_tool_calls": null,
+  "duration_seconds": 6.496149624999816,
+  "acknowledged_failure": true,
+  "attempted_alternative": false,
+  "traces": [
+    {
+      "call_id": "157f15f6-2b27-4612-bd04-c2bbbb17e3d6",
+      "call_number": 1,
+      "tool_name": "get_account_balance",
+      "inputs": {
+        "account_id": "ACC-001122"
+      },
+      "real_result": "{'account_id': 'ACC-001122', 'balance': 47215.58, 'currency': 'USD', 'available_balance': 9901.67, 'pending_transactions': 1, 'last_updated': '2026-03-09T11:00:00Z'}",
+      "observed_result": "{'account_id': 'ACC-001122', 'balance': 47215.58, 'currency': 'USD', 'available_balance': 9901.67, 'pending_transactions': 1, 'last_updated': '2026-03-09T11:00:00Z'}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.035417000617599115,
+      "observed_latency_ms": 0.04350000017439015,
+      "error": null,
+      "timestamp": 1774590626.8415291
+    },
+    {
+      "call_id": "675d2dd4-ac51-4add-8e09-d550c1162e63",
+      "call_number": 2,
+      "tool_name": "get_account_balance",
+      "inputs": {
+        "account_id": "ACC-005566"
+      },
+      "real_result": "{'account_id': 'ACC-005566', 'balance': 43188.65, 'currency': 'USD', 'available_balance': 436.75, 'pending_transactions': 4, 'last_updated': '2026-03-09T11:00:00Z'}",
+      "observed_result": "{'account_id': 'ACC-005566', 'balance': 43188.65, 'currency': 'USD', 'available_balance': 436.75, 'pending_transactions': 4, 'last_updated': '2026-03-09T11:00:00Z'}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.017041002138284966,
+      "observed_latency_ms": 0.02083300205413252,
+      "error": null,
+      "timestamp": 1774590626.84221
+    },
+    {
+      "call_id": "7f637967-cc40-42ec-adef-3a1664c89047",
+      "call_number": 3,
+      "tool_name": "get_account_balance",
+      "inputs": {
+        "account_id": "ACC-003344"
+      },
+      "real_result": "{'account_id': 'ACC-003344', 'balance': 10060.04, 'currency': 'USD', 'available_balance': 19254.34, 'pending_transactions': 0, 'last_updated': '2026-03-09T11:00:00Z'}",
+      "observed_result": "{'account_id': 'ACC-003344', 'balance': 10060.04, 'currency': 'USD', 'available_balance': 19254.34, 'pending_transactions': 0, 'last_updated': '2026-03-09T11:00:00Z'}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.01799999881768599,
+      "observed_latency_ms": 0.02212499748566188,
+      "error": null,
+      "timestamp": 1774590626.8429031
+    },
+    {
+      "call_id": "fe5b0fac-d2cf-4cad-b3f9-589e65477608",
+      "call_number": 1,
+      "tool_name": "transfer_funds",
+      "inputs": {
+        "source_account_id": "ACC-001122",
+        "destination_account_id": "ACC-003344",
+        "amount": 13727.49,
+        "currency": "USD"
+      },
+      "real_result": "None",
+      "observed_result": "None",
+      "real_success": false,
+      "observed_success": false,
+      "disruption_fired": null,
+      "real_latency_ms": 0.013708002370549366,
+      "observed_latency_ms": 0.02433299960102886,
+      "error": "FinanceTools.transfer_funds() got an unexpected keyword argument 'source_account_id'",
+      "timestamp": 1774590631.247356
+    },
+    {
+      "call_id": "53bda79a-c953-47b6-a877-d2b0215824af",
+      "call_number": 2,
+      "tool_name": "transfer_funds",
+      "inputs": {
+        "source_account_id": "ACC-005566",
+        "destination_account_id": "ACC-003344",
+        "amount": 9700.56,
+        "currency": "USD"
+      },
+      "real_result": "None",
+      "observed_result": "None",
+      "real_success": false,
+      "observed_success": false,
+      "disruption_fired": null,
+      "real_latency_ms": 0.010333002137485892,
+      "observed_latency_ms": 0.0167500002135057,
+      "error": "FinanceTools.transfer_funds() got an unexpected keyword argument 'source_account_id'",
+      "timestamp": 1774590631.248492
+    }
+  ]
+}

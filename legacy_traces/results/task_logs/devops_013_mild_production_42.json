@@ -1,0 +1,41 @@
+{
+  "task_id": "devops_013",
+  "agent_id": "langchain_gemini-2.5-flash",
+  "profile_name": "mild_production",
+  "seed": 42,
+  "success": false,
+  "partial_score": 0.0,
+  "agent_output": "[Agent error: {\"error\": {\"code\": 429, \"message\": \"Too Many Requests\", \"retry_after\": 30}}]",
+  "recovery_rate": 0.0,
+  "mean_steps_to_recovery": 0.0,
+  "retry_efficiency": 1.0,
+  "disruptions_encountered": 1,
+  "disruptions_recovered": 0,
+  "disruption_types_seen": [
+    "http_429"
+  ],
+  "total_tool_calls": 1,
+  "extra_tool_calls": -2,
+  "duration_seconds": 2.0132222499996715,
+  "acknowledged_failure": true,
+  "attempted_alternative": false,
+  "traces": [
+    {
+      "call_id": "fb5244be-0686-4680-9f4f-c32ad42c213f",
+      "call_number": 1,
+      "tool_name": "run_tests",
+      "inputs": {
+        "service_name": "payment-service"
+      },
+      "real_result": "{'service': 'payment-service', 'test_suite': 'unit', 'total_tests': 152, 'passed': 150, 'failed': 2, 'skipped': 1, 'duration_seconds': 54.5, 'coverage_percent': 83.1}",
+      "observed_result": "None",
+      "real_success": true,
+      "observed_success": false,
+      "disruption_fired": "http_429",
+      "real_latency_ms": 0.03837500116787851,
+      "observed_latency_ms": 0.08045800132094882,
+      "error": "{\"error\": {\"code\": 429, \"message\": \"Too Many Requests\", \"retry_after\": 30}}",
+      "timestamp": 1774590449.314307
+    }
+  ]
+}

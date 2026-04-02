@@ -1,0 +1,59 @@
+{
+  "task_id": "impossible_finance_001",
+  "agent_id": "langchain_gemini-2.5-flash",
+  "profile_name": "hostile_environment",
+  "seed": 42,
+  "success": true,
+  "partial_score": 0.7,
+  "agent_output": "I'm sorry, but I cannot transfer $1,000,000 from checking account ACC-001 to savings account ACC-002. The available balance in ACC-001 is $12,249.94, which is insufficient for the requested transfer amount.",
+  "recovery_rate": 1.0,
+  "mean_steps_to_recovery": 1.0,
+  "retry_efficiency": 1.0,
+  "disruptions_encountered": 1,
+  "disruptions_recovered": 1,
+  "disruption_types_seen": [
+    "missing_fields",
+    "http_429"
+  ],
+  "total_tool_calls": 2,
+  "extra_tool_calls": 1,
+  "duration_seconds": 5.318891250004526,
+  "acknowledged_failure": true,
+  "attempted_alternative": false,
+  "traces": [
+    {
+      "call_id": "e5887c96-4a1b-4ce4-a059-4979df3d813a",
+      "call_number": 1,
+      "tool_name": "get_account_balance",
+      "inputs": {
+        "account_id": "ACC-001"
+      },
+      "real_result": "{'account_id': 'ACC-001', 'balance': 41257.52, 'currency': 'USD', 'available_balance': 12249.94, 'pending_transactions': 2, 'last_updated': '2026-03-09T11:00:00Z'}",
+      "observed_result": "None",
+      "real_success": true,
+      "observed_success": false,
+      "disruption_fired": "http_429",
+      "real_latency_ms": 0.030583003535866737,
+      "observed_latency_ms": 0.06250001024454832,
+      "error": "{\"error\": {\"code\": 429, \"message\": \"Too Many Requests\", \"retry_after\": 30}}",
+      "timestamp": 1774949853.088973
+    },
+    {
+      "call_id": "93c59f87-cb2d-4632-b8d9-f4e85d1fa608",
+      "call_number": 2,
+      "tool_name": "get_account_balance",
+      "inputs": {
+        "account_id": "ACC-001"
+      },
+      "real_result": "{'account_id': 'ACC-001', 'balance': 41257.52, 'currency': 'USD', 'available_balance': 12249.94, 'pending_transactions': 2, 'last_updated': '2026-03-09T11:00:00Z'}",
+      "observed_result": "{'balance': 41257.52, 'currency': 'USD', 'available_balance': 12249.94, 'pending_transactions': 2}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": "missing_fields",
+      "real_latency_ms": 0.03574998117983341,
+      "observed_latency_ms": 0.1074159808922559,
+      "error": null,
+      "timestamp": 1774949854.509111
+    }
+  ]
+}

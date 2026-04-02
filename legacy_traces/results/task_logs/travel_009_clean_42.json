@@ -1,0 +1,58 @@
+{
+  "task_id": "travel_009",
+  "agent_id": "langchain_gemini-2.5-flash",
+  "profile_name": "clean",
+  "seed": 42,
+  "success": false,
+  "partial_score": 0.0,
+  "agent_output": "[Agent error: TravelTools.search_flights() got an unexpected keyword argument 'departure_airport']",
+  "recovery_rate": 1.0,
+  "mean_steps_to_recovery": 0.0,
+  "retry_efficiency": 1.0,
+  "disruptions_encountered": 0,
+  "disruptions_recovered": 0,
+  "disruption_types_seen": [],
+  "total_tool_calls": 2,
+  "extra_tool_calls": null,
+  "duration_seconds": 3.924712500000169,
+  "acknowledged_failure": true,
+  "attempted_alternative": false,
+  "traces": [
+    {
+      "call_id": "960baa66-16e8-459c-be84-678c8f0dfaab",
+      "call_number": 1,
+      "tool_name": "cancel_booking",
+      "inputs": {
+        "booking_id": "BKG-existing123"
+      },
+      "real_result": "{'booking_id': 'BKG-existing123', 'status': 'cancelled', 'refund_amount': 379.84, 'reason': 'schedule_change', 'cancellation_fee': 95.62}",
+      "observed_result": "{'booking_id': 'BKG-existing123', 'status': 'cancelled', 'refund_amount': 379.84, 'reason': 'schedule_change', 'cancellation_fee': 95.62}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.14683400149806403,
+      "observed_latency_ms": 0.15550000171060674,
+      "error": null,
+      "timestamp": 1774590982.683284
+    },
+    {
+      "call_id": "b0a137f5-46eb-4327-b068-77821479be1f",
+      "call_number": 1,
+      "tool_name": "search_flights",
+      "inputs": {
+        "departure_airport": "SFO",
+        "arrival_airport": "LAX",
+        "date": "2026-04-20"
+      },
+      "real_result": "None",
+      "observed_result": "None",
+      "real_success": false,
+      "observed_success": false,
+      "disruption_fired": null,
+      "real_latency_ms": 0.014500001270789653,
+      "observed_latency_ms": 0.029500002710847184,
+      "error": "TravelTools.search_flights() got an unexpected keyword argument 'departure_airport'",
+      "timestamp": 1774590984.2545521
+    }
+  ]
+}

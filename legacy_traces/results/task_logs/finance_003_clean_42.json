@@ -1,0 +1,59 @@
+{
+  "task_id": "finance_003",
+  "agent_id": "langchain_gemini-2.5-flash",
+  "profile_name": "clean",
+  "seed": 42,
+  "success": false,
+  "partial_score": 0.0,
+  "agent_output": "[Agent error: FinanceTools.transfer_funds() got an unexpected keyword argument 'source_account_id']",
+  "recovery_rate": 1.0,
+  "mean_steps_to_recovery": 0.0,
+  "retry_efficiency": 1.0,
+  "disruptions_encountered": 0,
+  "disruptions_recovered": 0,
+  "disruption_types_seen": [],
+  "total_tool_calls": 2,
+  "extra_tool_calls": null,
+  "duration_seconds": 3.545170750003308,
+  "acknowledged_failure": true,
+  "attempted_alternative": false,
+  "traces": [
+    {
+      "call_id": "f8df928b-aeed-43fe-8c61-5fdf2f17b8ec",
+      "call_number": 1,
+      "tool_name": "get_account_balance",
+      "inputs": {
+        "account_id": "ACC-001122"
+      },
+      "real_result": "{'account_id': 'ACC-001122', 'balance': 47215.58, 'currency': 'USD', 'available_balance': 9901.67, 'pending_transactions': 1, 'last_updated': '2026-03-09T11:00:00Z'}",
+      "observed_result": "{'account_id': 'ACC-001122', 'balance': 47215.58, 'currency': 'USD', 'available_balance': 9901.67, 'pending_transactions': 1, 'last_updated': '2026-03-09T11:00:00Z'}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.06462500095949508,
+      "observed_latency_ms": 0.07783300316077657,
+      "error": null,
+      "timestamp": 1774590521.9547899
+    },
+    {
+      "call_id": "967867db-1c10-407f-8046-d6154792bdba",
+      "call_number": 1,
+      "tool_name": "transfer_funds",
+      "inputs": {
+        "source_account_id": "ACC-001122",
+        "target_account_id": "ACC-003344",
+        "amount": 500,
+        "currency": "USD"
+      },
+      "real_result": "None",
+      "observed_result": "None",
+      "real_success": false,
+      "observed_success": false,
+      "disruption_fired": null,
+      "real_latency_ms": 0.012874999811174348,
+      "observed_latency_ms": 0.02216600114479661,
+      "error": "FinanceTools.transfer_funds() got an unexpected keyword argument 'source_account_id'",
+      "timestamp": 1774590523.831209
+    }
+  ]
+}

@@ -114,6 +114,7 @@ class BenchmarkYAMLConfig:
         default_factory=lambda: ["clean", "mild_production", "hostile_environment"]
     )
     domains: list[str] | None = None
+    tasks: list[str] | None = None
     max_difficulty: int = 5
     seeds: list[int] = field(default_factory=lambda: [42])
     output_dir: str = "results"
@@ -129,7 +130,7 @@ _LLM_FIELDS = {
 }
 
 _BENCHMARK_FIELDS = {
-    "runner", "profiles", "domains", "max_difficulty", "seeds",
+    "runner", "profiles", "domains", "tasks", "max_difficulty", "seeds",
     "output_dir", "verbose", "agent_id",
 }
 

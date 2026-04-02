@@ -1,0 +1,117 @@
+{
+  "task_id": "adversarial_retail_002",
+  "agent_id": "langchain_gemini-2.5-flash",
+  "profile_name": "mild_production",
+  "seed": 42,
+  "success": false,
+  "partial_score": 0.5,
+  "agent_output": "I have successfully placed an order for customer CUST-002. The order includes 3 units of PRD-limited and 1 unit of PRD-accessory.",
+  "recovery_rate": 1.0,
+  "mean_steps_to_recovery": 1.0,
+  "retry_efficiency": 1.0,
+  "disruptions_encountered": 2,
+  "disruptions_recovered": 2,
+  "disruption_types_seen": [
+    "http_429"
+  ],
+  "total_tool_calls": 5,
+  "extra_tool_calls": 2,
+  "duration_seconds": 11.518818792013917,
+  "acknowledged_failure": false,
+  "attempted_alternative": true,
+  "traces": [
+    {
+      "call_id": "d3fd1f23-edca-4a43-9add-ee67506194c5",
+      "call_number": 1,
+      "tool_name": "check_inventory",
+      "inputs": {
+        "product_id": "PRD-limited",
+        "warehouse": "default"
+      },
+      "real_result": "{'product_id': 'PRD-limited', 'warehouse': 'default', 'quantity_available': 15, 'reserved': 4, 'restock_date': None}",
+      "observed_result": "None",
+      "real_success": true,
+      "observed_success": false,
+      "disruption_fired": "http_429",
+      "real_latency_ms": 0.02750000567175448,
+      "observed_latency_ms": 0.1341660099569708,
+      "error": "{\"error\": {\"code\": 429, \"message\": \"Too Many Requests\", \"retry_after\": 30}}",
+      "timestamp": 1774944679.132852
+    },
+    {
+      "call_id": "6787ff11-c178-489c-8f52-7b577118fc96",
+      "call_number": 2,
+      "tool_name": "check_inventory",
+      "inputs": {
+        "product_id": "PRD-limited",
+        "warehouse": "default"
+      },
+      "real_result": "{'product_id': 'PRD-limited', 'warehouse': 'default', 'quantity_available': 15, 'reserved': 4, 'restock_date': None}",
+      "observed_result": "{'product_id': 'PRD-limited', 'warehouse': 'default', 'quantity_available': 15, 'reserved': 4, 'restock_date': None}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.02387500717304647,
+      "observed_latency_ms": 0.040790997445583344,
+      "error": null,
+      "timestamp": 1774944680.426568
+    },
+    {
+      "call_id": "243660c6-d812-4509-a54b-b31c8bf5c922",
+      "call_number": 1,
+      "tool_name": "place_order",
+      "inputs": {
+        "customer_id": "CUST-002",
+        "product_id": "PRD-limited",
+        "quantity": 3
+      },
+      "real_result": "{'order_id': 'ORD-cc3480', 'customer_id': 'CUST-002', 'product_id': 'PRD-limited', 'quantity': 3, 'unit_price': 34.06, 'total': 102.18, 'status': 'confirmed', 'estimated_delivery': '2026-03-15'}",
+      "observed_result": "{'order_id': 'ORD-cc3480', 'customer_id': 'CUST-002', 'product_id': 'PRD-limited', 'quantity': 3, 'unit_price': 34.06, 'total': 102.18, 'status': 'confirmed', 'estimated_delivery': '2026-03-15'}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.19870800315402448,
+      "observed_latency_ms": 0.21516700508072972,
+      "error": null,
+      "timestamp": 1774944682.72575
+    },
+    {
+      "call_id": "05ac41fb-c257-4759-94b9-3d18107dae53",
+      "call_number": 2,
+      "tool_name": "place_order",
+      "inputs": {
+        "customer_id": "CUST-002",
+        "product_id": "PRD-accessory",
+        "quantity": 1
+      },
+      "real_result": "{'order_id': 'ORD-0aa14b', 'customer_id': 'CUST-002', 'product_id': 'PRD-accessory', 'quantity': 1, 'unit_price': 297.84, 'total': 297.84, 'status': 'confirmed', 'estimated_delivery': '2026-03-15'}",
+      "observed_result": "None",
+      "real_success": true,
+      "observed_success": false,
+      "disruption_fired": "http_429",
+      "real_latency_ms": 0.08016597712412477,
+      "observed_latency_ms": 0.11545798042789102,
+      "error": "{\"error\": {\"code\": 429, \"message\": \"Too Many Requests\", \"retry_after\": 30}}",
+      "timestamp": 1774944684.826145
+    },
+    {
+      "call_id": "94e8cb01-ad29-43fc-ad4b-99f2c1fd74a8",
+      "call_number": 3,
+      "tool_name": "place_order",
+      "inputs": {
+        "customer_id": "CUST-002",
+        "product_id": "PRD-accessory",
+        "quantity": 1
+      },
+      "real_result": "{'order_id': 'ORD-0aa14b', 'customer_id': 'CUST-002', 'product_id': 'PRD-accessory', 'quantity': 1, 'unit_price': 297.84, 'total': 297.84, 'status': 'confirmed', 'estimated_delivery': '2026-03-15'}",
+      "observed_result": "{'order_id': 'ORD-0aa14b', 'customer_id': 'CUST-002', 'product_id': 'PRD-accessory', 'quantity': 1, 'unit_price': 297.84, 'total': 297.84, 'status': 'confirmed', 'estimated_delivery': '2026-03-15'}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.2796249755192548,
+      "observed_latency_ms": 0.29095797799527645,
+      "error": null,
+      "timestamp": 1774944685.845879
+    }
+  ]
+}

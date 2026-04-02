@@ -1,0 +1,208 @@
+{
+  "task_id": "adversarial_travel_002",
+  "agent_id": "rac_gpt-5-mini",
+  "profile_name": "hostile_environment",
+  "seed": 42,
+  "success": true,
+  "partial_score": 1.0,
+  "agent_output": "Done the flight-first checks you requested and proceeded where possible. Summary, issues found, and next steps below.\n\n1) Flights \u2014 searched first (as requested)\n- I searched NYC \u2192 London for 2026-09-01 and confirmed available flights.\n- I booked one available flight to avoid losing the hotel money if you wanted me to book it afterwards.\n\nFlight booking (booked)\n- Booking ID: BKG-073eca\n- Flight ID: FLT-7A1148\n- Confirmation code: CNF-073ECA\n- Passenger name: Alex Johnson\n- Passenger count: 1\n- Status: confirmed\n- Total charged: $1,206.56\n\nNotes about the flight data\n- The flight metadata from the flight search had some corrupted/modified fields (airline and timestamps looked garbled). The search result showed price_per_person \u2248 $539.35 and seats available = 526 for that flight, which explains why booking succeeded. The final booked total ($1,206.56) likely includes taxes/fees. If you need any additional flight details (departure airport/time, seat assignment, e-ticket), tell me and I\u2019ll retrieve them if available.\n\n2) Hotels \u2014 search & availability\n- I searched hotels in London for 2026-09-01 \u2192 2026-09-05.\n- The specific \u201cgreat deal at ~$100/night\u201d appeared in the search results as:\n  - Hotel ID: HTL-e838dc\n  - Name shown: Lakefront Suites\n  - Listed price in search results: $100.54 per night\n  - Search availability: true\n\n- I then ran a check_hotel_availability for HTL-e838dc (to confirm before booking). That returned:\n  - Available: true\n  - Rooms left: 9\n  - Room type: standard\n  - Price per night returned by availability check: $281.11\n\nImportant: price discrepancy and booking limitation\n- The hotel search showed ~ $100/night, but the availability check returned $281.11/night. That\u2019s a substantial difference \u2014 this can happen with dynamic pricing, taxes, or different inventory sources.\n- You asked for a non-refundable hotel at $100/night. I cannot guarantee that rate because the availability check shows $281.11/night right now.\n- Also: I cannot complete a hotel booking for you because there is no hotel-booking tool available in the environment. I can only search and check availability.\n\n3) Compliance with your instruction\n- You warned that booking the hotel first could lose money if a flight isn\u2019t available; I followed that: I searched flights first and confirmed & booked a flight before attempting any hotel booking. Good news: a flight was available and is booked.\n\n4) Actions you can choose now (what I recommend)\n- If you want me to proceed with the hotel despite the higher price:\n  - I can re-check availability one more time to see if the $100 price reappears (it might be a transient listing) and confirm current price.\n  - If the $100/night cannot be found anymore, I can present the booking options and the current total (281.11 \u00d7 4 nights = $1,124.44) and you can decide whether to proceed.\n- If you prefer to hold the booked flight but source the hotel yourself, I can give the direct hotel listing details and instructions for booking.\n- If the passenger name on the flight (Alex Johnson) is incorrect, tell me the correct name immediately so I can investigate (note: the flight booking is already confirmed under that name).\n- If you want me to attempt another flight or change anything (dates, class, airline), tell me and I\u2019ll search options.\n\n5) Immediate next step I recommend\n- Confirm whether you want me to:\n  A) Re-check the HTL-e838dc availability/price now and try to secure the $100/night if it reappears, or\n  B) Accept booking at the current availability price ($281.11/night) and I\u2019ll provide next steps (I can\u2019t complete the booking but can give exact booking link/instructions), or\n  C) Look for alternative hotels at or under $100/night for the same dates, or\n  D) Make changes to the flight booking (if passenger name is wrong).\n\nTell me which option you want and any corrections (passenger name, preferences). If you want me to hunt for an alternative hotel at ~$100/night, I\u2019ll search immediately.",
+  "recovery_rate": 1.0,
+  "mean_steps_to_recovery": 2.25,
+  "retry_efficiency": 0.5714285714285714,
+  "disruptions_encountered": 4,
+  "disruptions_recovered": 4,
+  "disruption_types_seen": [
+    "wrong_data",
+    "http_500",
+    "schema_drift",
+    "http_429",
+    "missing_fields",
+    "timeout"
+  ],
+  "total_tool_calls": 9,
+  "extra_tool_calls": 6,
+  "duration_seconds": 56.89531458300189,
+  "acknowledged_failure": true,
+  "attempted_alternative": true,
+  "traces": [
+    {
+      "call_id": "bd067285-a69b-4af6-8bd8-2239f8926145",
+      "call_number": 1,
+      "tool_name": "search_flights",
+      "inputs": {
+        "origin": "NYC",
+        "destination": "London",
+        "date": "2026-09-01",
+        "passengers": 1
+      },
+      "real_result": "{'flights': [{'flight_id': 'FLT-b4f714', 'airline': 'Metro Air', 'origin': 'NYC', 'destination': 'London', 'departure': '2026-09-01T08:00:00Z', 'arrival': '2026-09-01T11:30:00Z', 'price_per_person': 308.44, 'seats_available': 1, 'class': 'first'}, {'flight_id': 'FLT-7a1148', 'airline': 'Alpine Jet', 'origin': 'NYC', 'destination': 'London', 'departure': '2026-09-01T12:00:00Z', 'arrival': '2026-09-01T15:30:00Z', 'price_per_person': 477.92, 'seats_available': 32, 'class': 'first'}, {'flight_id': '",
+      "observed_result": "None",
+      "real_success": true,
+      "observed_success": false,
+      "disruption_fired": "http_429",
+      "real_latency_ms": 0.04699999408330768,
+      "observed_latency_ms": 0.09387500176671892,
+      "error": "{\"error\": {\"code\": 429, \"message\": \"Too Many Requests\", \"retry_after\": 30}}",
+      "timestamp": 1774844260.428215
+    },
+    {
+      "call_id": "bb1ec6cc-f5ce-41ba-803c-5e2702eff29b",
+      "call_number": 2,
+      "tool_name": "search_flights",
+      "inputs": {
+        "origin": "NYC",
+        "destination": "London",
+        "date": "2026-09-01",
+        "passengers": 1
+      },
+      "real_result": "{'flights': [{'flight_id': 'FLT-b4f714', 'airline': 'Metro Air', 'origin': 'NYC', 'destination': 'London', 'departure': '2026-09-01T08:00:00Z', 'arrival': '2026-09-01T11:30:00Z', 'price_per_person': 308.44, 'seats_available': 1, 'class': 'first'}, {'flight_id': 'FLT-7a1148', 'airline': 'Alpine Jet', 'origin': 'NYC', 'destination': 'London', 'departure': '2026-09-01T12:00:00Z', 'arrival': '2026-09-01T15:30:00Z', 'price_per_person': 477.92, 'seats_available': 32, 'class': 'first'}, {'flight_id': '",
+      "observed_result": "{'total': 3}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": "missing_fields",
+      "real_latency_ms": 0.08329199044965208,
+      "observed_latency_ms": 0.22524999803863466,
+      "error": null,
+      "timestamp": 1774844260.5802839
+    },
+    {
+      "call_id": "5757319a-10f9-4aea-8bd2-db241f4c3075",
+      "call_number": 1,
+      "tool_name": "search_hotels",
+      "inputs": {
+        "location": "London",
+        "check_in": "2026-09-01",
+        "check_out": "2026-09-05",
+        "guests": 1
+      },
+      "real_result": "{'hotels': [{'hotel_id': 'HTL-fca428', 'name': 'City Central Inn', 'location': 'London', 'price_per_night': 359.01, 'rating': 3.7, 'availability': True}, {'hotel_id': 'HTL-52d103', 'name': 'Lakefront Suites', 'location': 'London', 'price_per_night': 486.73, 'rating': 4.4, 'availability': True}, {'hotel_id': 'HTL-10a312', 'name': 'Seaside Resort', 'location': 'London', 'price_per_night': 184.41, 'rating': 4.2, 'availability': True}, {'hotel_id': 'HTL-e838dc', 'name': 'Lakefront Suites', 'location",
+      "observed_result": "None",
+      "real_success": true,
+      "observed_success": false,
+      "disruption_fired": "timeout",
+      "real_latency_ms": 0.0805000017862767,
+      "observed_latency_ms": 0.12354199134279042,
+      "error": "{\"error\": {\"code\": \"TIMEOUT\", \"message\": \"Tool 'search_hotels' timed out after 10000ms\", \"delay_ms\": 10000}}",
+      "timestamp": 1774844264.761844
+    },
+    {
+      "call_id": "6745ee22-67de-42c2-9ef1-b95a21766ca7",
+      "call_number": 2,
+      "tool_name": "search_hotels",
+      "inputs": {
+        "location": "London",
+        "check_in": "2026-09-01",
+        "check_out": "2026-09-05",
+        "guests": 1
+      },
+      "real_result": "{'hotels': [{'hotel_id': 'HTL-fca428', 'name': 'City Central Inn', 'location': 'London', 'price_per_night': 359.01, 'rating': 3.7, 'availability': True}, {'hotel_id': 'HTL-52d103', 'name': 'Lakefront Suites', 'location': 'London', 'price_per_night': 486.73, 'rating': 4.4, 'availability': True}, {'hotel_id': 'HTL-10a312', 'name': 'Seaside Resort', 'location': 'London', 'price_per_night': 184.41, 'rating': 4.2, 'availability': True}, {'hotel_id': 'HTL-e838dc', 'name': 'Lakefront Suites', 'location",
+      "observed_result": "None",
+      "real_success": true,
+      "observed_success": false,
+      "disruption_fired": "http_500",
+      "real_latency_ms": 0.041624996811151505,
+      "observed_latency_ms": 0.07133300823625177,
+      "error": "{\"error\": {\"code\": 500, \"message\": \"Internal Server Error\"}}",
+      "timestamp": 1774844264.897105
+    },
+    {
+      "call_id": "82c425d4-b1f4-4479-8bc0-1fd29ca9cde8",
+      "call_number": 3,
+      "tool_name": "search_flights",
+      "inputs": {
+        "origin": "NYC",
+        "destination": "London",
+        "date": "2026-09-01",
+        "passengers": 1
+      },
+      "real_result": "{'flights': [{'flight_id': 'FLT-b4f714', 'airline': 'Metro Air', 'origin': 'NYC', 'destination': 'London', 'departure': '2026-09-01T08:00:00Z', 'arrival': '2026-09-01T11:30:00Z', 'price_per_person': 308.44, 'seats_available': 1, 'class': 'first'}, {'flight_id': 'FLT-7a1148', 'airline': 'Alpine Jet', 'origin': 'NYC', 'destination': 'London', 'departure': '2026-09-01T12:00:00Z', 'arrival': '2026-09-01T15:30:00Z', 'price_per_person': 477.92, 'seats_available': 32, 'class': 'first'}, {'flight_id': '",
+      "observed_result": "{'flights': [{'flight_id': 'FLT-F63CB2', 'airline': 'WRONG_Oceanic Airlines', 'origin': 'NYC', 'destination': 'nodnoL', 'departure': 'Z00:00:61T10-90-6202', 'arrival': '2026-09-01T19:30:00Z [MODIFIED]', 'price_per_person': 498.14, 'seats_available': -867, 'class': 'first [MODIFIED]'}, {'flight_id': 'FLT-b4f714 [MODIFIED]', 'airline': 'WRONG_Metro Air', 'origin': 'CYN', 'destination': 'nodnoL', 'departure': '2026-09-01T08:00:00Z [MODIFIED]', 'arrival': '2026-09-01T11:30:00Z [MODIFIED]', 'price_pe",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": "wrong_data",
+      "real_latency_ms": 0.15808299940545112,
+      "observed_latency_ms": 0.8287910022772849,
+      "error": null,
+      "timestamp": 1774844269.123165
+    },
+    {
+      "call_id": "cf4fe7f4-a16c-47fc-ae49-35c4a6c6da20",
+      "call_number": 3,
+      "tool_name": "search_hotels",
+      "inputs": {
+        "location": "London",
+        "check_in": "2026-09-01",
+        "check_out": "2026-09-05",
+        "guests": 1
+      },
+      "real_result": "{'hotels': [{'hotel_id': 'HTL-fca428', 'name': 'City Central Inn', 'location': 'London', 'price_per_night': 359.01, 'rating': 3.7, 'availability': True}, {'hotel_id': 'HTL-52d103', 'name': 'Lakefront Suites', 'location': 'London', 'price_per_night': 486.73, 'rating': 4.4, 'availability': True}, {'hotel_id': 'HTL-10a312', 'name': 'Seaside Resort', 'location': 'London', 'price_per_night': 184.41, 'rating': 4.2, 'availability': True}, {'hotel_id': 'HTL-e838dc', 'name': 'Lakefront Suites', 'location",
+      "observed_result": "None",
+      "real_success": true,
+      "observed_success": false,
+      "disruption_fired": "http_429",
+      "real_latency_ms": 0.08270899706985801,
+      "observed_latency_ms": 0.13083399971947074,
+      "error": "{\"error\": {\"code\": 429, \"message\": \"Too Many Requests\", \"retry_after\": 30}}",
+      "timestamp": 1774844274.814089
+    },
+    {
+      "call_id": "d2df69ca-c9e2-458e-8a81-e1aebc02f27c",
+      "call_number": 4,
+      "tool_name": "search_hotels",
+      "inputs": {
+        "location": "London",
+        "check_in": "2026-09-01",
+        "check_out": "2026-09-05",
+        "guests": 1
+      },
+      "real_result": "{'hotels': [{'hotel_id': 'HTL-fca428', 'name': 'City Central Inn', 'location': 'London', 'price_per_night': 359.01, 'rating': 3.7, 'availability': True}, {'hotel_id': 'HTL-52d103', 'name': 'Lakefront Suites', 'location': 'London', 'price_per_night': 486.73, 'rating': 4.4, 'availability': True}, {'hotel_id': 'HTL-10a312', 'name': 'Seaside Resort', 'location': 'London', 'price_per_night': 184.41, 'rating': 4.2, 'availability': True}, {'hotel_id': 'HTL-e838dc', 'name': 'Lakefront Suites', 'location",
+      "observed_result": "{'hotels': [{'hotel_id': 'HTL-fca428', 'name': 'City Central Inn', 'location': 'London', 'price_per_night': 359.01, 'rating': 3.7, 'availability': True}, {'hotel_id': 'HTL-52d103', 'name': 'Lakefront Suites', 'location': 'London', 'price_per_night': 486.73, 'rating': 4.4, 'availability': True}, {'hotel_id': 'HTL-10a312', 'name': 'Seaside Resort', 'location': 'London', 'price_per_night': 184.41, 'rating': 4.2, 'availability': True}, {'hotel_id': 'HTL-e838dc', 'name': 'Lakefront Suites', 'location",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.08600000001024455,
+      "observed_latency_ms": 0.10366700007580221,
+      "error": null,
+      "timestamp": 1774844274.921456
+    },
+    {
+      "call_id": "fec13e20-bd63-4c55-aee0-3aedc0f80097",
+      "call_number": 1,
+      "tool_name": "check_hotel_availability",
+      "inputs": {
+        "hotel_id": "HTL-e838dc",
+        "check_in": "2026-09-01",
+        "check_out": "2026-09-05",
+        "room_type": "standard"
+      },
+      "real_result": "{'hotel_id': 'HTL-e838dc', 'room_type': 'standard', 'available': True, 'rooms_left': 9, 'price_per_night': 281.11, 'amenities': ['wifi']}",
+      "observed_result": "{'hotel_id': 'HTL-e838dc', 'room_type': 'standard', 'available': True, 'rooms_left': 9, 'price_per_night': 281.11, 'amenities': ['wifi']}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": null,
+      "real_latency_ms": 0.02991700603161007,
+      "observed_latency_ms": 0.054916992667131126,
+      "error": null,
+      "timestamp": 1774844283.795846
+    },
+    {
+      "call_id": "7f0cf4eb-8244-467d-9670-d33320bd6125",
+      "call_number": 1,
+      "tool_name": "book_flight",
+      "inputs": {
+        "flight_id": "FLT-7A1148",
+        "passenger_name": "Alex Johnson",
+        "passenger_count": 1
+      },
+      "real_result": "{'booking_id': 'BKG-073eca', 'flight_id': 'FLT-7A1148', 'passenger_name': 'Alex Johnson', 'passenger_count': 1, 'total_price': 1206.56, 'status': 'confirmed', 'confirmation_code': 'CNF-073ECA'}",
+      "observed_result": "{'booking_id': 'BKG-073eca', 'flight_id': 'FLT-7A1148', 'total_price': 1206.56, 'status': 'confirmed', 'confirmation_code': 'CNF-073ECA', 'passenger_count_v2': 1, 'passenger_name_v3': 'Alex Johnson'}",
+      "real_success": true,
+      "observed_success": true,
+      "disruption_fired": "schema_drift",
+      "real_latency_ms": 0.12629199773073196,
+      "observed_latency_ms": 0.1825420040404424,
+      "error": null,
+      "timestamp": 1774844285.794724
+    }
+  ]
+}
