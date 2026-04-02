@@ -3,18 +3,19 @@ AgentDisruptBench — StateManager
 =================================
 
 File:        state.py
-Purpose:     In-memory mutable state layer for side-effect tools. Tracks
+Purpose:     Persistent state layer for side-effect tools. Tracks
              all write operations, enables snapshot/diff for evaluation,
              and detects idempotency violations (duplicate writes).
+             Backed by SQLite for ground truths and robust state tracking.
 
 Author:      AgentDisruptBench Contributors
 License:     MIT
 Created:     2026-03-18
-Modified:    2026-03-18
+Modified:    2026-04-02
 
 Key Classes:
     StateAction     : Record of a single state-mutating operation.
-    StateManager    : Thread-safe in-memory DB with snapshot, diff,
+    StateManager    : Thread-safe SQLite DB with snapshot, diff,
                       and idempotency violation tracking.
 
 Convention:
@@ -24,7 +25,9 @@ Convention:
 from __future__ import annotations
 
 import copy
+import json
 import logging
+import sqlite3
 import threading
 import time
 import uuid
@@ -90,37 +93,57 @@ class StateAction:
 # ---------------------------------------------------------------------------
 
 class StateManager:
-    """In-memory mutable state layer for benchmark evaluation.
+    """Persistent state layer for benchmark evaluation.
 
-    Maintains per-collection dictionaries (bookings, orders, transfers,
-    deployments, incidents, carts) that side-effect tools can read/write.
-
-    Thread-safe via threading.Lock.
+    Maintains collections (bookings, orders, transfers, deployments, incidents, carts).
+    Backed by SQLite to support ground truths, persistence, and state tracking
+    across different architectures. Thread-safe.
 
     Key features:
         - ``write()`` — record a state mutation with automatic idempotency check.
         - ``read()`` — query entities from a collection.
-        - ``snapshot()`` — deep-copy the full state for before/after comparison.
+        - ``snapshot()`` — retrieve the full state for before/after comparison.
         - ``diff()`` — compare two snapshots and return changes.
         - ``get_actions()`` — get the full action log for trace analysis.
         - ``get_idempotency_violations()`` — return duplicate write attempts.
-        - ``reset()`` — clear all state between tasks.
+        - ``reset()`` — clear all state.
     """
 
-    def __init__(self) -> None:
+    def __init__(self, db_path: str | None = None) -> None:
         self._lock = threading.Lock()
-        self._collections: dict[str, dict[str, dict[str, Any]]] = {
-            "bookings": {},
-            "orders": {},
-            "transfers": {},
-            "deployments": {},
-            "incidents": {},
-            "carts": {},
-            "refunds": {},
-        }
-        self._actions: list[StateAction] = []
-        self._action_keys: set[str] = set()  # (tool_name:entity_id) dedup
-        self._idempotency_violations: list[tuple[str, str]] = []  # (tool, entity_id)
+        self._db_path = db_path or ":memory:"
+        self._conn = sqlite3.connect(self._db_path, check_same_thread=False)
+        self._init_db()
+
+    def _init_db(self) -> None:
+        with self._lock:
+            with self._conn:
+                self._conn.executescript('''
+                    CREATE TABLE IF NOT EXISTS state_collections (
+                        collection_name TEXT,
+                        entity_id TEXT,
+                        data TEXT,
+                        PRIMARY KEY (collection_name, entity_id)
+                    );
+                    CREATE TABLE IF NOT EXISTS state_actions (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        action_id TEXT,
+                        tool_name TEXT,
+                        collection_name TEXT,
+                        entity_id TEXT,
+                        operation TEXT,
+                        data TEXT,
+                        compensating_tool TEXT,
+                        timestamp REAL
+                    );
+                    CREATE TABLE IF NOT EXISTS action_keys (
+                        dedup_key TEXT PRIMARY KEY
+                    );
+                    CREATE TABLE IF NOT EXISTS idempotency_violations (
+                        tool_name TEXT,
+                        entity_id TEXT
+                    );
+                ''')
 
     # -- write / read -------------------------------------------------------
 
@@ -136,9 +159,7 @@ class StateManager:
         """Record a state mutation.
 
         Idempotency behaviour is **detection-only**: duplicate ``create``
-        operations are logged as violations via
-        :meth:`get_idempotency_violations` but the write still proceeds
-        so that the benchmark can observe the agent's behaviour.
+        operations are logged as violations but the write still proceeds.
 
         Args:
             tool_name:   Name of the tool performing the write.
@@ -151,83 +172,126 @@ class StateManager:
         Returns:
             The StateAction record that was created.
         """
+        dedup_key = f"{tool_name}:{entity_id}"
+        actual_action_id = action_id or str(uuid.uuid4())
+        data_json = json.dumps(data)
+        comp_tool = COMPENSATION_PAIRS.get(tool_name)
+        ts = time.monotonic()
 
         with self._lock:
-            # Idempotency check
-            dedup_key = f"{tool_name}:{entity_id}"
-            if dedup_key in self._action_keys and operation == "create":
-                self._idempotency_violations.append((tool_name, entity_id))
-                logger.warning(
-                    "idempotency_violation tool=%s entity=%s", tool_name, entity_id
+            cur = self._conn.cursor()
+            try:
+                # 1. Idempotency Check
+                cur.execute("SELECT 1 FROM action_keys WHERE dedup_key = ?", (dedup_key,))
+                exists = cur.fetchone() is not None
+                
+                if exists and operation == "create":
+                    cur.execute(
+                        "INSERT INTO idempotency_violations (tool_name, entity_id) VALUES (?, ?)", 
+                        (tool_name, entity_id)
+                    )
+                    logger.warning("idempotency_violation tool=%s entity=%s", tool_name, entity_id)
+
+                if not exists:
+                    cur.execute("INSERT INTO action_keys (dedup_key) VALUES (?)", (dedup_key,))
+
+                # 2. Apply mutation
+                if operation == "delete":
+                    cur.execute(
+                        "DELETE FROM state_collections WHERE collection_name = ? AND entity_id = ?",
+                        (collection, entity_id)
+                    )
+                else:
+                    cur.execute(
+                        """
+                        INSERT INTO state_collections (collection_name, entity_id, data) 
+                        VALUES (?, ?, ?) 
+                        ON CONFLICT(collection_name, entity_id) DO UPDATE SET data=excluded.data
+                        """,
+                        (collection, entity_id, data_json)
+                    )
+
+                # 3. Record action
+                cur.execute(
+                    """
+                    INSERT INTO state_actions (action_id, tool_name, collection_name, entity_id, 
+                                               operation, data, compensating_tool, timestamp)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                    """,
+                    (actual_action_id, tool_name, collection, entity_id, operation, data_json, comp_tool, ts)
                 )
 
-            self._action_keys.add(dedup_key)
+                self._conn.commit()
 
-            # Ensure collection exists
-            if collection not in self._collections:
-                self._collections[collection] = {}
+            except Exception as e:
+                self._conn.rollback()
+                logger.error("Failed to write to DB: %s", e)
+                raise
+            finally:
+                cur.close()
 
-            # Apply mutation
-            if operation == "delete":
-                self._collections[collection].pop(entity_id, None)
-            else:
-                self._collections[collection][entity_id] = copy.deepcopy(data)
+        logger.debug(
+            "state_write tool=%s collection=%s entity=%s op=%s",
+            tool_name, collection, entity_id, operation,
+        )
 
-            # Record action
-            action = StateAction(
-                action_id=action_id or str(uuid.uuid4()),
-                tool_name=tool_name,
-                collection=collection,
-                entity_id=entity_id,
-                operation=operation,
-                data=copy.deepcopy(data),
-                compensating_tool=COMPENSATION_PAIRS.get(tool_name),
-                timestamp=time.monotonic(),
-            )
-            self._actions.append(action)
-
-            logger.debug(
-                "state_write tool=%s collection=%s entity=%s op=%s",
-                tool_name, collection, entity_id, operation,
-            )
-            return action
+        return StateAction(
+            action_id=actual_action_id,
+            tool_name=tool_name,
+            collection=collection,
+            entity_id=entity_id,
+            operation=operation,
+            data=copy.deepcopy(data),
+            compensating_tool=comp_tool,
+            timestamp=ts,
+        )
 
     def read(self, collection: str, entity_id: str | None = None) -> Any:
-        """Read from a collection.
-
-        Args:
-            collection: Collection name.
-            entity_id:  If provided, returns the specific entity. Otherwise
-                        returns the whole collection dict.
-
-        Returns:
-            The entity dict, the collection dict, or None if not found.
-        """
+        """Read from a collection."""
         with self._lock:
-            coll = self._collections.get(collection, {})
+            cur = self._conn.cursor()
             if entity_id is not None:
-                return copy.deepcopy(coll.get(entity_id))
-            return copy.deepcopy(coll)
+                cur.execute(
+                    "SELECT data FROM state_collections WHERE collection_name = ? AND entity_id = ?",
+                    (collection, entity_id)
+                )
+                row = cur.fetchone()
+                return json.loads(row[0]) if row else None
+            else:
+                cur.execute(
+                    "SELECT entity_id, data FROM state_collections WHERE collection_name = ?",
+                    (collection,)
+                )
+                rows = cur.fetchall()
+                return {row[0]: json.loads(row[1]) for row in rows}
 
     # -- snapshot / diff ----------------------------------------------------
 
     def snapshot(self) -> dict[str, dict[str, dict[str, Any]]]:
-        """Deep-copy the entire state for before/after comparison."""
+        """Retrieve the entire state for before/after comparison."""
         with self._lock:
-            return copy.deepcopy(self._collections)
+            cur = self._conn.cursor()
+            cur.execute("SELECT collection_name, entity_id, data FROM state_collections")
+            rows = cur.fetchall()
+            
+            snapshot_data: dict[str, dict[str, dict[str, Any]]] = {
+                "bookings": {}, "orders": {}, "transfers": {},
+                "deployments": {}, "incidents": {}, "carts": {}, "refunds": {}
+            }
+            
+            for collection, eid, data_str in rows:
+                if collection not in snapshot_data:
+                    snapshot_data[collection] = {}
+                snapshot_data[collection][eid] = json.loads(data_str)
+                
+            return snapshot_data
 
     @staticmethod
     def diff(
         before: dict[str, dict[str, dict[str, Any]]],
         after: dict[str, dict[str, dict[str, Any]]],
     ) -> dict[str, list[dict[str, Any]]]:
-        """Compare two snapshots and return changes.
-
-        Returns:
-            Dict mapping collection name → list of change records.
-            Each change record has 'entity_id', 'type' ('created', 'modified',
-            'deleted'), and optionally 'before' / 'after' data.
-        """
+        """Compare two snapshots and return changes."""
         changes: dict[str, list[dict[str, Any]]] = {}
 
         all_collections = set(before.keys()) | set(after.keys())
@@ -267,21 +331,45 @@ class StateManager:
     def get_actions(self) -> list[StateAction]:
         """Return the full action log."""
         with self._lock:
-            return list(self._actions)
+            cur = self._conn.cursor()
+            cur.execute(
+                """
+                SELECT action_id, tool_name, collection_name, entity_id, 
+                       operation, data, compensating_tool, timestamp
+                FROM state_actions ORDER BY id ASC
+                """
+            )
+            rows = cur.fetchall()
+            return [
+                StateAction(
+                    action_id=row[0],
+                    tool_name=row[1],
+                    collection=row[2],
+                    entity_id=row[3],
+                    operation=row[4],
+                    data=json.loads(row[5]),
+                    compensating_tool=row[6],
+                    timestamp=row[7],
+                ) for row in rows
+            ]
 
     def get_idempotency_violations(self) -> list[tuple[str, str]]:
         """Return list of (tool_name, entity_id) idempotency violations."""
         with self._lock:
-            return list(self._idempotency_violations)
+            cur = self._conn.cursor()
+            cur.execute("SELECT tool_name, entity_id FROM idempotency_violations")
+            return [(row[0], row[1]) for row in cur.fetchall()]
 
     # -- lifecycle ----------------------------------------------------------
 
     def reset(self) -> None:
         """Clear all state. Call between tasks."""
         with self._lock:
-            for coll in self._collections.values():
-                coll.clear()
-            self._actions.clear()
-            self._action_keys.clear()
-            self._idempotency_violations.clear()
+            with self._conn:
+                self._conn.executescript('''
+                    DELETE FROM state_collections;
+                    DELETE FROM state_actions;
+                    DELETE FROM action_keys;
+                    DELETE FROM idempotency_violations;
+                ''')
             logger.debug("state_reset")
