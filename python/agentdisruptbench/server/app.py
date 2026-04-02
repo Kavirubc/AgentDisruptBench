@@ -114,13 +114,15 @@ def _build_pydantic_schema_from_fn(name: str, fn: Callable) -> type:
 
 def create_tool_endpoint(tool_name: str, fn: Callable):
     RequestModel = _build_pydantic_schema_from_fn(tool_name, fn)
-    docstring = fn.__doc__ or f"Execute {tool_name} tool."
-
-    async def endpoint_wrapper(request_body: RequestModel):
+    RequestModel.model_rebuild()
+    
+    # We use 'Any' in the actual definition to avoid Pydantic ForwardRef issues,
+    # but manually apply the __annotations__ so FastAPI generates the OpenAPI schema.
+    async def endpoint_wrapper(request_body: Any):
         if not server_state.engine:
             server_state.setup_run("clean", 42)
             
-        kwargs = request_body.model_dump()
+        kwargs = request_body.model_dump() if hasattr(request_body, 'model_dump') else request_body
         
         # 1. State wrapper (records side effects to SQLite DB before proxying)
         state_wrapped_fn = wrap_tool_with_state(tool_name, fn, server_state.state_manager)
@@ -139,6 +141,7 @@ def create_tool_endpoint(tool_name: str, fn: Callable):
         except Exception as e:
             return JSONResponse(status_code=500, content={"error": str(e), "status": "failed"})
 
+    endpoint_wrapper.__annotations__["request_body"] = RequestModel
     return endpoint_wrapper
 
 # Register all tools as endpoints dynamically

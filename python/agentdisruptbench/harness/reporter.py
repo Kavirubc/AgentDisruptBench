@@ -44,8 +44,12 @@ class Reporter:
     - ``summary.json``: Aggregate statistics per profile.
     """
 
-    def __init__(self, output_dir: str = "results") -> None:
-        self._output_dir = Path(output_dir)
+    def __init__(self, output_dir: str | None = None) -> None:
+        if output_dir is None:
+            ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+            self._output_dir = Path(f"runs/{ts}")
+        else:
+            self._output_dir = Path(output_dir)
         self._output_dir.mkdir(parents=True, exist_ok=True)
 
     def generate(self, results: list[BenchmarkResult]) -> dict[str, str]:
