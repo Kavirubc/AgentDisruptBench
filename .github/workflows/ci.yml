@@ -1,0 +1,130 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  lint:
+    name: Lint & Type Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dev dependencies
+        run: |
+          pip install -e "python/.[dev]"
+
+      - name: Ruff lint
+        run: ruff check python/agentdisruptbench/
+
+      - name: Ruff format check
+        run: ruff format --check python/agentdisruptbench/
+
+  test:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Install package with test dependencies
+        run: |
+          pip install -e "python/.[dev]"
+
+      - name: Run tests
+        run: pytest tests/ -v --tb=short
+
+  install-check:
+    name: Package Install & Import Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install base package
+        run: pip install -e "python/."
+
+      - name: Verify core imports
+        run: |
+          python -c "from agentdisruptbench.core.state import StateManager; print('StateManager OK')"
+          python -c "from agentdisruptbench.core.engine import DisruptionEngine; print('DisruptionEngine OK')"
+          python -c "from agentdisruptbench.tasks.registry import TaskRegistry; print('TaskRegistry OK')"
+          python -c "from agentdisruptbench.tools.registry import ToolRegistry; print('ToolRegistry OK')"
+          python -c "from agentdisruptbench.core.metrics import MetricsCalculator; print('MetricsCalculator OK')"
+
+      - name: Verify server extras install
+        run: |
+          pip install -e "python/.[server]"
+          python -c "from agentdisruptbench.server.app import app; print('FastAPI app OK')"
+
+  benchmark-smoke:
+    name: Benchmark Smoke Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install package
+        run: pip install -e "python/.[server]"
+
+      - name: Verify task registry loads
+        run: |
+          python -c "
+          from agentdisruptbench.tasks.registry import TaskRegistry
+          registry = TaskRegistry.from_builtin()
+          tasks = registry.all_tasks()
+          assert len(tasks) > 0, 'No tasks found in registry'
+          print(f'Registry loaded {len(tasks)} tasks OK')
+          "
+
+      - name: Verify disruption profiles load
+        run: |
+          python -c "
+          from agentdisruptbench.core.profiles import get_profile
+          for profile in ['clean', 'noisy', 'adversarial']:
+              configs = get_profile(profile)
+              print(f'Profile \"{profile}\": {len(configs)} disruption configs OK')
+          "
+
+      - name: Verify state manager (SQLite)
+        run: |
+          python -c "
+          from agentdisruptbench.core.state import StateManager
+          sm = StateManager()
+          action = sm.write('test_tool', 'orders', 'order_001', {'item': 'book', 'qty': 1})
+          assert action.tool_name == 'test_tool'
+          result = sm.read('orders', 'order_001')
+          assert result['item'] == 'book'
+          snap = sm.snapshot()
+          assert 'orders' in snap
+          sm.reset()
+          assert sm.read('orders', 'order_001') is None
+          print('StateManager SQLite operations OK')
+          "
