@@ -41,6 +41,11 @@ cli = [
     "rich>=13.0",
     "typer>=0.9",
 ]
+server = [
+    "fastapi>=0.100",
+    "uvicorn[standard]>=0.20",
+    "mcp>=0.1.0"
+]
 all = [
     "langchain-core>=0.1",
     "openai>=1.0",
@@ -63,7 +68,7 @@ Repository = "https://github.com/AgentDisruptBench/AgentDisruptBench"
 Issues = "https://github.com/AgentDisruptBench/AgentDisruptBench/issues"
 
 [project.scripts]
-agentdisruptbench = "agentdisruptbench.cli:main"
+adb = "agentdisruptbench.cli:app"
 
 [tool.hatch.build.targets.sdist]
 include = ["/python/agentdisruptbench"]
