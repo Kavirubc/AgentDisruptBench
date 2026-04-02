@@ -107,7 +107,7 @@ jobs:
         run: |
           python -c "
           from agentdisruptbench.core.profiles import get_profile
-          for profile in ['clean', 'noisy', 'adversarial']:
+          for profile in ['clean', 'mild_production', 'hostile_environment']:
               configs = get_profile(profile)
               print(f'Profile \"{profile}\": {len(configs)} disruption configs OK')
           "
