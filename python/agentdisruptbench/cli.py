@@ -38,9 +38,12 @@ def serve(
         server.run_stdio()
         
     elif mode.lower() == "rest":
+        import os
         import uvicorn
+        os.environ["ADB_PROFILE"] = profile
+        os.environ["ADB_SEED"] = str(seed)
         typer.echo(f"Starting FastAPI Server on port {port} with profile='{profile}' and seed={seed}...")
-        
+
         # We start the server. The initial setup happens dynamically when hit or via admin.
         uvicorn.run(
             "agentdisruptbench.server.app:app", 
@@ -104,8 +107,9 @@ def report(
 ):
     """Generate benchmarking metrics and a markdown report for a completed run."""
     typer.echo(f"Generating report for run: {run_id}...")
-    from agentdisruptbench.harness.reporter import generate_summary_report
-    generate_summary_report(run_id)
+    from agentdisruptbench.harness.reporter import Reporter
+    reporter = Reporter(output_dir=run_id)
+    typer.echo(f"Report generation requires results list. Load results from {run_id} and call reporter.generate(results).")
 
 
 @app.command()

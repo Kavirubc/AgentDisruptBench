@@ -250,20 +250,23 @@ class StateManager:
         """Read from a collection."""
         with self._lock:
             cur = self._conn.cursor()
-            if entity_id is not None:
-                cur.execute(
-                    "SELECT data FROM state_collections WHERE collection_name = ? AND entity_id = ?",
-                    (collection, entity_id)
-                )
-                row = cur.fetchone()
-                return json.loads(row[0]) if row else None
-            else:
-                cur.execute(
-                    "SELECT entity_id, data FROM state_collections WHERE collection_name = ?",
-                    (collection,)
-                )
-                rows = cur.fetchall()
-                return {row[0]: json.loads(row[1]) for row in rows}
+            try:
+                if entity_id is not None:
+                    cur.execute(
+                        "SELECT data FROM state_collections WHERE collection_name = ? AND entity_id = ?",
+                        (collection, entity_id)
+                    )
+                    row = cur.fetchone()
+                    return json.loads(row[0]) if row else None
+                else:
+                    cur.execute(
+                        "SELECT entity_id, data FROM state_collections WHERE collection_name = ?",
+                        (collection,)
+                    )
+                    rows = cur.fetchall()
+                    return {row[0]: json.loads(row[1]) for row in rows}
+            finally:
+                cur.close()
 
     # -- snapshot / diff ----------------------------------------------------
 
@@ -271,20 +274,23 @@ class StateManager:
         """Retrieve the entire state for before/after comparison."""
         with self._lock:
             cur = self._conn.cursor()
-            cur.execute("SELECT collection_name, entity_id, data FROM state_collections")
-            rows = cur.fetchall()
-            
-            snapshot_data: dict[str, dict[str, dict[str, Any]]] = {
-                "bookings": {}, "orders": {}, "transfers": {},
-                "deployments": {}, "incidents": {}, "carts": {}, "refunds": {}
-            }
-            
-            for collection, eid, data_str in rows:
-                if collection not in snapshot_data:
-                    snapshot_data[collection] = {}
-                snapshot_data[collection][eid] = json.loads(data_str)
-                
-            return snapshot_data
+            try:
+                cur.execute("SELECT collection_name, entity_id, data FROM state_collections")
+                rows = cur.fetchall()
+
+                snapshot_data: dict[str, dict[str, dict[str, Any]]] = {
+                    "bookings": {}, "orders": {}, "transfers": {},
+                    "deployments": {}, "incidents": {}, "carts": {}, "refunds": {}
+                }
+
+                for collection, eid, data_str in rows:
+                    if collection not in snapshot_data:
+                        snapshot_data[collection] = {}
+                    snapshot_data[collection][eid] = json.loads(data_str)
+
+                return snapshot_data
+            finally:
+                cur.close()
 
     @staticmethod
     def diff(
@@ -332,33 +338,39 @@ class StateManager:
         """Return the full action log."""
         with self._lock:
             cur = self._conn.cursor()
-            cur.execute(
-                """
-                SELECT action_id, tool_name, collection_name, entity_id, 
-                       operation, data, compensating_tool, timestamp
-                FROM state_actions ORDER BY id ASC
-                """
-            )
-            rows = cur.fetchall()
-            return [
-                StateAction(
-                    action_id=row[0],
-                    tool_name=row[1],
-                    collection=row[2],
-                    entity_id=row[3],
-                    operation=row[4],
-                    data=json.loads(row[5]),
-                    compensating_tool=row[6],
-                    timestamp=row[7],
-                ) for row in rows
-            ]
+            try:
+                cur.execute(
+                    """
+                    SELECT action_id, tool_name, collection_name, entity_id,
+                           operation, data, compensating_tool, timestamp
+                    FROM state_actions ORDER BY id ASC
+                    """
+                )
+                rows = cur.fetchall()
+                return [
+                    StateAction(
+                        action_id=row[0],
+                        tool_name=row[1],
+                        collection=row[2],
+                        entity_id=row[3],
+                        operation=row[4],
+                        data=json.loads(row[5]),
+                        compensating_tool=row[6],
+                        timestamp=row[7],
+                    ) for row in rows
+                ]
+            finally:
+                cur.close()
 
     def get_idempotency_violations(self) -> list[tuple[str, str]]:
         """Return list of (tool_name, entity_id) idempotency violations."""
         with self._lock:
             cur = self._conn.cursor()
-            cur.execute("SELECT tool_name, entity_id FROM idempotency_violations")
-            return [(row[0], row[1]) for row in cur.fetchall()]
+            try:
+                cur.execute("SELECT tool_name, entity_id FROM idempotency_violations")
+                return [(row[0], row[1]) for row in cur.fetchall()]
+            finally:
+                cur.close()
 
     # -- lifecycle ----------------------------------------------------------
 

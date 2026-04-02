@@ -11,18 +11,18 @@ Purpose:     Provides a REST interface to all mock tools, injecting disruptions
 from __future__ import annotations
 
 import inspect
-import json
 import logging
+from dataclasses import asdict
 from typing import Any, Callable, Dict, Optional
 from pydantic import BaseModel, create_model, Field
 
 try:
-    from fastapi import FastAPI, HTTPException, Request, Depends
+    from fastapi import FastAPI
     from fastapi.responses import JSONResponse
 except ImportError:
-    raise ImportError("Please install with `pip install agentdisruptbench[server]`")
+    raise ImportError("Please install with `pip install agentdisruptbench[server]`") from None
 
-from agentdisruptbench.core.engine import DisruptionEngine, DisruptionConfig
+from agentdisruptbench.core.engine import DisruptionEngine
 from agentdisruptbench.core.profiles import get_profile
 from agentdisruptbench.core.state import StateManager
 from agentdisruptbench.core.proxy import ToolProxy
@@ -49,6 +49,7 @@ class ServerState:
         self.trace_collector: TraceCollector = TraceCollector()
         self.active_profile: str = "clean"
         self.seed: int = 42
+        self.baseline_snapshot = None
         
     def setup_run(self, profile: str, seed: int):
         self.active_profile = profile
@@ -78,14 +79,14 @@ async def start_task(task_id: str):
     """Mark the beginning of a task and create a baseline state snapshot."""
     # The traces are cleared out or marked for this task ID.
     server_state.trace_collector = TraceCollector()
-    snapshot = server_state.state_manager.snapshot()
+    server_state.baseline_snapshot = server_state.state_manager.snapshot()
     return {"message": "Task started", "task_id": task_id}
 
 @app.post("/admin/end_task", tags=["Admin"])
 async def end_task():
     """End the task and retrieve all recorded traces and idempotency violations."""
     traces = server_state.trace_collector.get_traces()
-    dict_traces = [t.__dict__ for t in traces]
+    dict_traces = [asdict(t) for t in traces]
     violations = server_state.state_manager.get_idempotency_violations()
     # Snapshot at the end is up to the client evaluation engine via DB.
     return {

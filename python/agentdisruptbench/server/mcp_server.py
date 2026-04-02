@@ -16,7 +16,7 @@ from typing import Any, Callable
 try:
     from mcp.server.fastmcp import FastMCP
 except ImportError:
-    raise ImportError("Please install with `pip install agentdisruptbench[server]` (requires mcp package)")
+    raise ImportError("Please install with `pip install agentdisruptbench[server]` (requires mcp package)") from None
 
 from agentdisruptbench.core.engine import DisruptionEngine
 from agentdisruptbench.core.profiles import get_profile
@@ -97,7 +97,9 @@ def main():
     seed = 42
     if "--profile" in sys.argv:
         profile = sys.argv[sys.argv.index("--profile") + 1]
-        
+    if "--seed" in sys.argv:
+        seed = int(sys.argv[sys.argv.index("--seed") + 1])
+
     server = MCPBenchmarkServer()
     server.setup_run(profile, seed)
     server.run_stdio()

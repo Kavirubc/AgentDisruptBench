@@ -68,13 +68,16 @@ def _build_pydantic_model(name: str, schema: dict, spec: dict) -> type[BaseModel
     return model
 
 
-def build_langchain_client(server_url: str) -> Callable[[str, str], str]:
+def build_langchain_client(server_url: str) -> Callable[[str], str]:
     """Returns a callable agent function that takes (instruction, server_url)."""
 
     # 1. Fetch the OpenAPI Spec
-    resp = httpx.get(f"{server_url}/openapi.json")
-    if resp.status_code != 200:
-        raise ConnectionError(f"Could not load OpenAPI from {server_url}")
+    try:
+        resp = httpx.get(f"{server_url}/openapi.json", timeout=10.0)
+        if resp.status_code != 200:
+            raise ConnectionError(f"Could not load OpenAPI from {server_url}")
+    except httpx.RequestError as e:
+        raise ConnectionError(f"Could not connect to {server_url}: {e}") from e
     openapi_spec = resp.json()
 
     # 2. Dynamically build LangChain tools from the OpenAPI spec with full schemas
@@ -132,7 +135,7 @@ def build_langchain_client(server_url: str) -> Callable[[str, str], str]:
     agent = create_react_agent(llm, tools)
 
     # 4. Define the execution function
-    def run_agent(instruction: str, url: str) -> str:
+    def run_agent(instruction: str) -> str:
         try:
             state = {"messages": [("user", instruction)]}
             result_state = agent.invoke(state)

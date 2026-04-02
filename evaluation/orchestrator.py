@@ -85,7 +85,7 @@ class SandboxOrchestrator:
             start_time = time.time()
             try:
                 # The agent strictly takes the task.description to solve it
-                agent_output = agent_client_func(task.description, self.server_url)
+                agent_output = agent_client_func(task.description)
                 if agent_output:
                     success_flag = True
                 else:

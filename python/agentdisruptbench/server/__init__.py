@@ -1,1 +1,1 @@
-""
+"""AgentDisruptBench server package."""
