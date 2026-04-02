@@ -46,6 +46,7 @@ logger = logging.getLogger("agentdisruptbench.mock_tools")
 # Helpers — deterministic data generation without external Faker dependency
 # ---------------------------------------------------------------------------
 
+
 def _deterministic_hash(seed: str) -> int:
     """Produce a stable integer from a string seed."""
     return int(hashlib.sha256(seed.encode()).hexdigest()[:8], 16)
@@ -73,11 +74,21 @@ def _det_name(seed: str, names: list[str]) -> str:
 # ---------------------------------------------------------------------------
 
 _PRODUCT_NAMES = [
-    "Blue Widget", "Red Gadget", "Green Sprocket", "Silver Bolt",
-    "Gold Bracket", "Titanium Gear", "Carbon Fiber Panel",
-    "LED Display Module", "Wireless Sensor Kit", "Smart Thermostat",
-    "Precision Caliper", "Portable Battery Pack", "USB-C Hub",
-    "Ergonomic Keyboard", "Noise-Cancelling Headphones",
+    "Blue Widget",
+    "Red Gadget",
+    "Green Sprocket",
+    "Silver Bolt",
+    "Gold Bracket",
+    "Titanium Gear",
+    "Carbon Fiber Panel",
+    "LED Display Module",
+    "Wireless Sensor Kit",
+    "Smart Thermostat",
+    "Precision Caliper",
+    "Portable Battery Pack",
+    "USB-C Hub",
+    "Ergonomic Keyboard",
+    "Noise-Cancelling Headphones",
 ]
 
 
@@ -94,14 +105,16 @@ class RetailTools:
         results = []
         for i in range(min(max_results, 5)):
             seed = f"product:{query}:{i}"
-            results.append({
-                "product_id": _det_id("PRD", seed),
-                "name": _det_name(seed, _PRODUCT_NAMES),
-                "price": _det_price(seed),
-                "currency": "USD",
-                "in_stock": (_deterministic_hash(seed) % 10) > 2,
-                "rating": round(3.0 + (_deterministic_hash(seed + "r") % 20) / 10, 1),
-            })
+            results.append(
+                {
+                    "product_id": _det_id("PRD", seed),
+                    "name": _det_name(seed, _PRODUCT_NAMES),
+                    "price": _det_price(seed),
+                    "currency": "USD",
+                    "in_stock": (_deterministic_hash(seed) % 10) > 2,
+                    "rating": round(3.0 + (_deterministic_hash(seed + "r") % 20) / 10, 1),
+                }
+            )
         return {"products": results, "total": len(results), "query": query}
 
     @staticmethod
@@ -118,9 +131,7 @@ class RetailTools:
         }
 
     @staticmethod
-    def place_order(
-        *, customer_id: str, product_id: str, quantity: int = 1
-    ) -> dict:
+    def place_order(*, customer_id: str, product_id: str, quantity: int = 1) -> dict:
         """Place an order for a product."""
         seed = f"order:{customer_id}:{product_id}:{quantity}"
         order_id = _det_id("ORD", seed)
@@ -192,9 +203,7 @@ class RetailTools:
         }
 
     @staticmethod
-    def update_cart(
-        *, cart_id: str, product_id: str, quantity: int, action: str = "add"
-    ) -> dict:
+    def update_cart(*, cart_id: str, product_id: str, quantity: int, action: str = "add") -> dict:
         """Add/remove items from a shopping cart."""
         seed = f"cart:{cart_id}:{product_id}:{action}"
         return {
@@ -219,24 +228,24 @@ class TravelTools:
     """Deterministic mock tools for the Travel domain."""
 
     @staticmethod
-    def search_flights(
-        *, origin: str, destination: str, date: str, passengers: int = 1
-    ) -> dict:
+    def search_flights(*, origin: str, destination: str, date: str, passengers: int = 1) -> dict:
         """Search flights between two airports."""
         results = []
         for i in range(3):
             seed = f"flight:{origin}:{destination}:{date}:{i}"
-            results.append({
-                "flight_id": _det_id("FLT", seed),
-                "airline": _det_name(seed, _AIRLINES),
-                "origin": origin,
-                "destination": destination,
-                "departure": f"{date}T{8 + i * 4:02d}:00:00Z",
-                "arrival": f"{date}T{11 + i * 4:02d}:30:00Z",
-                "price_per_person": _det_price(seed, 150, 1200),
-                "seats_available": _deterministic_hash(seed + "seats") % 50 + 1,
-                "class": _det_name(seed + "cls", ["economy", "business", "first"]),
-            })
+            results.append(
+                {
+                    "flight_id": _det_id("FLT", seed),
+                    "airline": _det_name(seed, _AIRLINES),
+                    "origin": origin,
+                    "destination": destination,
+                    "departure": f"{date}T{8 + i * 4:02d}:00:00Z",
+                    "arrival": f"{date}T{11 + i * 4:02d}:30:00Z",
+                    "price_per_person": _det_price(seed, 150, 1200),
+                    "seats_available": _deterministic_hash(seed + "seats") % 50 + 1,
+                    "class": _det_name(seed + "cls", ["economy", "business", "first"]),
+                }
+            )
         return {"flights": results, "total": len(results)}
 
     @staticmethod
@@ -255,9 +264,7 @@ class TravelTools:
         }
 
     @staticmethod
-    def book_flight(
-        *, flight_id: str, passenger_name: str, passenger_count: int = 1
-    ) -> dict:
+    def book_flight(*, flight_id: str, passenger_name: str, passenger_count: int = 1) -> dict:
         """Book a flight."""
         seed = f"booking:{flight_id}:{passenger_name}"
         return {
@@ -283,27 +290,25 @@ class TravelTools:
         }
 
     @staticmethod
-    def search_hotels(
-        *, location: str, check_in: str, check_out: str, guests: int = 1
-    ) -> dict:
+    def search_hotels(*, location: str, check_in: str, check_out: str, guests: int = 1) -> dict:
         """Search hotels at a location."""
         results = []
         for i in range(4):
             seed = f"hotel:{location}:{check_in}:{i}"
-            results.append({
-                "hotel_id": _det_id("HTL", seed),
-                "name": _det_name(seed, _HOTELS),
-                "location": location,
-                "price_per_night": _det_price(seed, 80, 500),
-                "rating": round(3.5 + (_deterministic_hash(seed + "r") % 15) / 10, 1),
-                "availability": (_deterministic_hash(seed + "avl") % 5) > 0,
-            })
+            results.append(
+                {
+                    "hotel_id": _det_id("HTL", seed),
+                    "name": _det_name(seed, _HOTELS),
+                    "location": location,
+                    "price_per_night": _det_price(seed, 80, 500),
+                    "rating": round(3.5 + (_deterministic_hash(seed + "r") % 15) / 10, 1),
+                    "availability": (_deterministic_hash(seed + "avl") % 5) > 0,
+                }
+            )
         return {"hotels": results, "total": len(results)}
 
     @staticmethod
-    def check_hotel_availability(
-        *, hotel_id: str, check_in: str, check_out: str, room_type: str = "standard"
-    ) -> dict:
+    def check_hotel_availability(*, hotel_id: str, check_in: str, check_out: str, room_type: str = "standard") -> dict:
         """Check room availability at a specific hotel."""
         seed = f"hotelavail:{hotel_id}:{check_in}:{room_type}"
         return {
@@ -312,7 +317,7 @@ class TravelTools:
             "available": (_deterministic_hash(seed) % 4) > 0,
             "rooms_left": _deterministic_hash(seed + "left") % 10,
             "price_per_night": _det_price(seed),
-            "amenities": ["wifi", "breakfast", "pool"][:(_deterministic_hash(seed + "am") % 3 + 1)],
+            "amenities": ["wifi", "breakfast", "pool"][: (_deterministic_hash(seed + "am") % 3 + 1)],
         }
 
     @staticmethod
@@ -330,9 +335,7 @@ class TravelTools:
         }
 
     @staticmethod
-    def currency_convert(
-        *, amount: float, from_currency: str, to_currency: str
-    ) -> dict:
+    def currency_convert(*, amount: float, from_currency: str, to_currency: str) -> dict:
         """Convert amount between currencies."""
         seed = f"fx:{from_currency}:{to_currency}"
         rate = 0.5 + (_deterministic_hash(seed) % 300) / 100
@@ -368,9 +371,7 @@ class FinanceTools:
         }
 
     @staticmethod
-    def transfer_funds(
-        *, from_account: str, to_account: str, amount: float, currency: str = "USD"
-    ) -> dict:
+    def transfer_funds(*, from_account: str, to_account: str, amount: float, currency: str = "USD") -> dict:
         """Transfer funds between accounts."""
         seed = f"transfer:{from_account}:{to_account}:{amount}"
         return {
@@ -385,25 +386,31 @@ class FinanceTools:
         }
 
     @staticmethod
-    def get_transaction_history(
-        *, account_id: str, days: int = 30, limit: int = 10
-    ) -> dict:
+    def get_transaction_history(*, account_id: str, days: int = 30, limit: int = 10) -> dict:
         """Get recent transaction history."""
         txns = []
         for i in range(min(limit, 10)):
             seed = f"txn:{account_id}:{i}"
-            txns.append({
-                "transaction_id": _det_id("TXN", seed),
-                "type": _det_name(seed, ["debit", "credit", "transfer", "payment"]),
-                "amount": _det_price(seed, 5, 2000),
-                "description": _det_name(
-                    seed + "desc",
-                    ["Grocery Store", "Online Purchase", "Salary Deposit",
-                     "Utility Bill", "Restaurant", "ATM Withdrawal"],
-                ),
-                "date": f"2026-03-{max(1, 9 - i):02d}",
-                "balance_after": _det_price(seed + "bal", 500, 30000),
-            })
+            txns.append(
+                {
+                    "transaction_id": _det_id("TXN", seed),
+                    "type": _det_name(seed, ["debit", "credit", "transfer", "payment"]),
+                    "amount": _det_price(seed, 5, 2000),
+                    "description": _det_name(
+                        seed + "desc",
+                        [
+                            "Grocery Store",
+                            "Online Purchase",
+                            "Salary Deposit",
+                            "Utility Bill",
+                            "Restaurant",
+                            "ATM Withdrawal",
+                        ],
+                    ),
+                    "date": f"2026-03-{max(1, 9 - i):02d}",
+                    "balance_after": _det_price(seed + "bal", 500, 30000),
+                }
+            )
         return {"account_id": account_id, "transactions": txns, "total": len(txns)}
 
     @staticmethod
@@ -473,9 +480,7 @@ class DevopsTools:
         }
 
     @staticmethod
-    def deploy_service(
-        *, service_name: str, version: str, environment: str = "staging"
-    ) -> dict:
+    def deploy_service(*, service_name: str, version: str, environment: str = "staging") -> dict:
         """Deploy a new version of a service."""
         seed = f"deploy:{service_name}:{version}:{environment}"
         return {
@@ -503,9 +508,7 @@ class DevopsTools:
         }
 
     @staticmethod
-    def get_logs(
-        *, service_name: str, severity: str = "error", limit: int = 5
-    ) -> dict:
+    def get_logs(*, service_name: str, severity: str = "error", limit: int = 5) -> dict:
         """Get recent logs for a service."""
         log_msgs = [
             "Connection timeout to database",
@@ -520,28 +523,30 @@ class DevopsTools:
         logs = []
         for i in range(min(limit, 8)):
             seed = f"log:{service_name}:{i}"
-            logs.append({
-                "log_id": _det_id("LOG", seed),
-                "severity": severity,
-                "message": log_msgs[_deterministic_hash(seed) % len(log_msgs)],
-                "timestamp": f"2026-03-09T{11 - i:02d}:30:00Z",
-                "source": service_name,
-            })
+            logs.append(
+                {
+                    "log_id": _det_id("LOG", seed),
+                    "severity": severity,
+                    "message": log_msgs[_deterministic_hash(seed) % len(log_msgs)],
+                    "timestamp": f"2026-03-09T{11 - i:02d}:30:00Z",
+                    "source": service_name,
+                }
+            )
         return {"service": service_name, "logs": logs, "total": len(logs)}
 
     @staticmethod
-    def get_metrics(
-        *, service_name: str, metric_type: str = "cpu", period_minutes: int = 60
-    ) -> dict:
+    def get_metrics(*, service_name: str, metric_type: str = "cpu", period_minutes: int = 60) -> dict:
         """Get performance metrics for a service."""
         seed = f"metrics:{service_name}:{metric_type}"
         data_points = []
         for i in range(6):
             s = f"{seed}:{i}"
-            data_points.append({
-                "timestamp": f"2026-03-09T{11 + i}:00:00Z",
-                "value": round(10 + (_deterministic_hash(s) % 800) / 10, 2),
-            })
+            data_points.append(
+                {
+                    "timestamp": f"2026-03-09T{11 + i}:00:00Z",
+                    "value": round(10 + (_deterministic_hash(s) % 800) / 10, 2),
+                }
+            )
         return {
             "service": service_name,
             "metric_type": metric_type,
@@ -569,9 +574,7 @@ class DevopsTools:
         }
 
     @staticmethod
-    def create_incident(
-        *, title: str, severity: str, service_name: str, description: str = ""
-    ) -> dict:
+    def create_incident(*, title: str, severity: str, service_name: str, description: str = "") -> dict:
         """Create an incident."""
         seed = f"incident:{title}:{service_name}"
         return {
@@ -600,6 +603,7 @@ class DevopsTools:
 # ---------------------------------------------------------------------------
 # All tools registry helper
 # ---------------------------------------------------------------------------
+
 
 def get_all_tools() -> dict[str, Any]:
     """Return a flat dict mapping tool_name → callable for all domains.

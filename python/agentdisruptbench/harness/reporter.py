@@ -97,8 +97,7 @@ class Reporter:
             avg_recovery = sum(r.recovery_rate for r in pr) / max(n, 1)
             avg_extra = sum((r.extra_tool_calls or 0) for r in pr) / max(n, 1)
             lines.append(
-                f"| {profile} | {n} | {success_pct:.1f}% | {avg_partial:.3f} | "
-                f"{avg_recovery:.3f} | {avg_extra:.1f} |"
+                f"| {profile} | {n} | {success_pct:.1f}% | {avg_partial:.3f} | {avg_recovery:.3f} | {avg_extra:.1f} |"
             )
 
         # Per-domain breakdown
@@ -153,9 +152,7 @@ class Reporter:
             d.pop("traces", None)
             data.append(d)
 
-        path.write_text(
-            json.dumps(data, indent=2, default=str), encoding="utf-8"
-        )
+        path.write_text(json.dumps(data, indent=2, default=str), encoding="utf-8")
         logger.info("json_results_written path=%s count=%d", path, len(data))
         return str(path)
 
@@ -166,48 +163,66 @@ class Reporter:
         path = self._output_dir / "results.csv"
 
         headers = [
-            "Task ID", "Domain", "Difficulty", "Profile", "Seed",
-            "Success", "Partial Score", "Duration (s)", 
-            "Prompt Tokens", "Completion Tokens", "Total Tokens",
-            "Runner", "Environment",
-            "Recovery Rate", "Disruptions Encountered", "Disruptions Recovered",
-            "Extra Tool Calls", "Total Tool Calls",
-            "State Score", "Compensations", "Idempotency Violations",
-            "Loop Count", "Hallucination Rate", "Handover Detected",
-            "Task Description"
+            "Task ID",
+            "Domain",
+            "Difficulty",
+            "Profile",
+            "Seed",
+            "Success",
+            "Partial Score",
+            "Duration (s)",
+            "Prompt Tokens",
+            "Completion Tokens",
+            "Total Tokens",
+            "Runner",
+            "Environment",
+            "Recovery Rate",
+            "Disruptions Encountered",
+            "Disruptions Recovered",
+            "Extra Tool Calls",
+            "Total Tool Calls",
+            "State Score",
+            "Compensations",
+            "Idempotency Violations",
+            "Loop Count",
+            "Hallucination Rate",
+            "Handover Detected",
+            "Task Description",
         ]
 
         with open(path, "w", newline="", encoding="utf-8") as f:
             writer = csv.DictWriter(f, fieldnames=headers)
             writer.writeheader()
             for r in results:
-                writer.writerow({
-                    "Task ID": r.task_id,
-                    "Domain": r.task_domain,
-                    "Difficulty": r.task_difficulty,
-                    "Profile": r.profile_name,
-                    "Seed": r.seed,
-                    "Success": r.success,
-                    "Partial Score": round(r.partial_score, 4),
-                    "Duration (s)": round(r.duration_seconds, 2),
-                    "Prompt Tokens": r.prompt_tokens,
-                    "Completion Tokens": r.completion_tokens,
-                    "Total Tokens": r.token_usage,
-                    "Runner": r.runner_name or "N/A",
-                    "Environment": r.agent_id,
-                    "Recovery Rate": round(r.recovery_rate, 4),
-                    "Disruptions Encountered": r.disruptions_encountered,
-                    "Disruptions Recovered": r.disruptions_recovered,
-                    "Extra Tool Calls": r.extra_tool_calls if r.extra_tool_calls is not None else 0,
-                    "Total Tool Calls": r.total_tool_calls,
-                    "State Score": round(r.side_effect_score, 4),
-                    "Compensations": r.compensation_count,
-                    "Idempotency Violations": r.idempotency_violations,
-                    "Loop Count": r.loop_count,
-                    "Hallucination Rate": round(r.tool_hallucination_rate, 4),
-                    "Handover Detected": r.handover_detected,
-                    "Task Description": r.task_description
-                })
+                writer.writerow(
+                    {
+                        "Task ID": r.task_id,
+                        "Domain": r.task_domain,
+                        "Difficulty": r.task_difficulty,
+                        "Profile": r.profile_name,
+                        "Seed": r.seed,
+                        "Success": r.success,
+                        "Partial Score": round(r.partial_score, 4),
+                        "Duration (s)": round(r.duration_seconds, 2),
+                        "Prompt Tokens": r.prompt_tokens,
+                        "Completion Tokens": r.completion_tokens,
+                        "Total Tokens": r.token_usage,
+                        "Runner": r.runner_name or "N/A",
+                        "Environment": r.agent_id,
+                        "Recovery Rate": round(r.recovery_rate, 4),
+                        "Disruptions Encountered": r.disruptions_encountered,
+                        "Disruptions Recovered": r.disruptions_recovered,
+                        "Extra Tool Calls": r.extra_tool_calls if r.extra_tool_calls is not None else 0,
+                        "Total Tool Calls": r.total_tool_calls,
+                        "State Score": round(r.side_effect_score, 4),
+                        "Compensations": r.compensation_count,
+                        "Idempotency Violations": r.idempotency_violations,
+                        "Loop Count": r.loop_count,
+                        "Hallucination Rate": round(r.tool_hallucination_rate, 4),
+                        "Handover Detected": r.handover_detected,
+                        "Task Description": r.task_description,
+                    }
+                )
 
         logger.info("csv_results_written path=%s count=%d", path, len(results))
         return str(path)
@@ -240,9 +255,7 @@ class Reporter:
                 "avg_duration_seconds": sum(r.duration_seconds for r in pr) / max(n, 1),
             }
 
-        path.write_text(
-            json.dumps(summary, indent=2, default=str), encoding="utf-8"
-        )
+        path.write_text(json.dumps(summary, indent=2, default=str), encoding="utf-8")
         logger.info("summary_written path=%s", path)
         return str(path)
 
@@ -264,21 +277,23 @@ class Reporter:
             # Build trace dicts
             trace_dicts = []
             for t in r.traces:
-                trace_dicts.append({
-                    "call_id": t.call_id,
-                    "call_number": t.call_number,
-                    "tool_name": t.tool_name,
-                    "inputs": t.inputs,
-                    "real_result": str(t.real_result)[:500],
-                    "observed_result": str(t.observed_result)[:500],
-                    "real_success": t.real_success,
-                    "observed_success": t.observed_success,
-                    "disruption_fired": t.disruption_fired,
-                    "real_latency_ms": t.real_latency_ms,
-                    "observed_latency_ms": t.observed_latency_ms,
-                    "error": t.error,
-                    "timestamp": t.timestamp,
-                })
+                trace_dicts.append(
+                    {
+                        "call_id": t.call_id,
+                        "call_number": t.call_number,
+                        "tool_name": t.tool_name,
+                        "inputs": t.inputs,
+                        "real_result": str(t.real_result)[:500],
+                        "observed_result": str(t.observed_result)[:500],
+                        "real_success": t.real_success,
+                        "observed_success": t.observed_success,
+                        "disruption_fired": t.disruption_fired,
+                        "real_latency_ms": t.real_latency_ms,
+                        "observed_latency_ms": t.observed_latency_ms,
+                        "error": t.error,
+                        "timestamp": t.timestamp,
+                    }
+                )
 
             log_data = {
                 "task_id": r.task_id,
@@ -302,9 +317,7 @@ class Reporter:
                 "traces": trace_dicts,
             }
 
-            log_path.write_text(
-                json.dumps(log_data, indent=2, default=str), encoding="utf-8"
-            )
+            log_path.write_text(json.dumps(log_data, indent=2, default=str), encoding="utf-8")
 
         logger.info("task_logs_written dir=%s count=%d", log_dir, len(results))
         return str(log_dir)

@@ -117,24 +117,12 @@ class DisruptionConfig(BaseModel):
 # ---------------------------------------------------------------------------
 
 _HTTP_ERROR_BODIES: dict[DisruptionType, dict[str, Any]] = {
-    DisruptionType.HTTP_429: {
-        "error": {"code": 429, "message": "Too Many Requests", "retry_after": 30}
-    },
-    DisruptionType.HTTP_401: {
-        "error": {"code": 401, "message": "Unauthorized — token expired or invalid"}
-    },
-    DisruptionType.HTTP_403: {
-        "error": {"code": 403, "message": "Forbidden — insufficient permissions"}
-    },
-    DisruptionType.HTTP_500: {
-        "error": {"code": 500, "message": "Internal Server Error"}
-    },
-    DisruptionType.HTTP_502: {
-        "error": {"code": 502, "message": "Bad Gateway — upstream unreachable"}
-    },
-    DisruptionType.HTTP_503: {
-        "error": {"code": 503, "message": "Service Unavailable — try again later"}
-    },
+    DisruptionType.HTTP_429: {"error": {"code": 429, "message": "Too Many Requests", "retry_after": 30}},
+    DisruptionType.HTTP_401: {"error": {"code": 401, "message": "Unauthorized — token expired or invalid"}},
+    DisruptionType.HTTP_403: {"error": {"code": 403, "message": "Forbidden — insufficient permissions"}},
+    DisruptionType.HTTP_500: {"error": {"code": 500, "message": "Internal Server Error"}},
+    DisruptionType.HTTP_502: {"error": {"code": 502, "message": "Bad Gateway — upstream unreachable"}},
+    DisruptionType.HTTP_503: {"error": {"code": 503, "message": "Service Unavailable — try again later"}},
 }
 
 
@@ -198,19 +186,19 @@ class DisruptionEngine:
                     "disruption_fired=cascading tool=%s reason=cascade_downstream",
                     tool_name,
                 )
-                error_body = json.dumps({
-                    "error": {
-                        "code": 503,
-                        "message": "Service unavailable — upstream dependency failure (cascade)",
+                error_body = json.dumps(
+                    {
+                        "error": {
+                            "code": 503,
+                            "message": "Service unavailable — upstream dependency failure (cascade)",
+                        }
                     }
-                })
+                )
                 return None, False, error_body, DisruptionType.CASCADING
 
             # Iterate configs — first match wins
             for cfg in self._configs:
-                fired = self._evaluate_config(
-                    cfg, tool_name, call_number, original_result
-                )
+                fired = self._evaluate_config(cfg, tool_name, call_number, original_result)
                 if fired is not None:
                     result, success, error, dtype = fired
                     self._last_disruption = dtype
@@ -283,24 +271,32 @@ class DisruptionEngine:
 
 
 def _h_timeout(
-    eng: DisruptionEngine, cfg: DisruptionConfig,
-    tool: str, call_n: int, result: Any,
+    eng: DisruptionEngine,
+    cfg: DisruptionConfig,
+    tool: str,
+    call_n: int,
+    result: Any,
 ) -> tuple[Any, bool, str | None, DisruptionType]:
     logger.debug("disruption_fired=timeout tool=%s delay_ms=%d", tool, cfg.delay_ms)
     raise TimeoutError(
-        json.dumps({
-            "error": {
-                "code": "TIMEOUT",
-                "message": f"Tool '{tool}' timed out after {cfg.delay_ms}ms",
-                "delay_ms": cfg.delay_ms,
+        json.dumps(
+            {
+                "error": {
+                    "code": "TIMEOUT",
+                    "message": f"Tool '{tool}' timed out after {cfg.delay_ms}ms",
+                    "delay_ms": cfg.delay_ms,
+                }
             }
-        })
+        )
     )
 
 
 def _h_latency(
-    eng: DisruptionEngine, cfg: DisruptionConfig,
-    tool: str, call_n: int, result: Any,
+    eng: DisruptionEngine,
+    cfg: DisruptionConfig,
+    tool: str,
+    call_n: int,
+    result: Any,
 ) -> tuple[Any, bool, str | None, DisruptionType]:
     """Return real result — actual sleep applied by ToolProxy.
 
@@ -312,19 +308,23 @@ def _h_latency(
 
 
 def _h_http_error(
-    eng: DisruptionEngine, cfg: DisruptionConfig,
-    tool: str, call_n: int, result: Any,
+    eng: DisruptionEngine,
+    cfg: DisruptionConfig,
+    tool: str,
+    call_n: int,
+    result: Any,
 ) -> tuple[Any, bool, str | None, DisruptionType]:
-    body = _HTTP_ERROR_BODIES.get(
-        cfg.type, {"error": {"code": 500, "message": "Unknown error"}}
-    )
+    body = _HTTP_ERROR_BODIES.get(cfg.type, {"error": {"code": 500, "message": "Unknown error"}})
     logger.debug("disruption_fired=%s tool=%s", cfg.type.value, tool)
     return None, False, json.dumps(body), cfg.type
 
 
 def _h_malformed_json(
-    eng: DisruptionEngine, cfg: DisruptionConfig,
-    tool: str, call_n: int, result: Any,
+    eng: DisruptionEngine,
+    cfg: DisruptionConfig,
+    tool: str,
+    call_n: int,
+    result: Any,
 ) -> tuple[Any, bool, str | None, DisruptionType]:
     try:
         raw = json.dumps(result)
@@ -336,8 +336,11 @@ def _h_malformed_json(
 
 
 def _h_truncated(
-    eng: DisruptionEngine, cfg: DisruptionConfig,
-    tool: str, call_n: int, result: Any,
+    eng: DisruptionEngine,
+    cfg: DisruptionConfig,
+    tool: str,
+    call_n: int,
+    result: Any,
 ) -> tuple[Any, bool, str | None, DisruptionType]:
     try:
         raw = json.dumps(result)
@@ -349,16 +352,22 @@ def _h_truncated(
 
 
 def _h_null_response(
-    eng: DisruptionEngine, cfg: DisruptionConfig,
-    tool: str, call_n: int, result: Any,
+    eng: DisruptionEngine,
+    cfg: DisruptionConfig,
+    tool: str,
+    call_n: int,
+    result: Any,
 ) -> tuple[Any, bool, str | None, DisruptionType]:
     logger.debug("disruption_fired=null_response tool=%s", tool)
     return None, True, None, DisruptionType.NULL_RESPONSE
 
 
 def _h_missing_fields(
-    eng: DisruptionEngine, cfg: DisruptionConfig,
-    tool: str, call_n: int, result: Any,
+    eng: DisruptionEngine,
+    cfg: DisruptionConfig,
+    tool: str,
+    call_n: int,
+    result: Any,
 ) -> tuple[Any, bool, str | None, DisruptionType] | None:
     if not isinstance(result, dict):
         return None
@@ -374,8 +383,11 @@ def _h_missing_fields(
 
 
 def _h_type_mismatch(
-    eng: DisruptionEngine, cfg: DisruptionConfig,
-    tool: str, call_n: int, result: Any,
+    eng: DisruptionEngine,
+    cfg: DisruptionConfig,
+    tool: str,
+    call_n: int,
+    result: Any,
 ) -> tuple[Any, bool, str | None, DisruptionType] | None:
     if not isinstance(result, dict):
         return None
@@ -403,8 +415,11 @@ def _h_type_mismatch(
 
 
 def _h_schema_drift(
-    eng: DisruptionEngine, cfg: DisruptionConfig,
-    tool: str, call_n: int, result: Any,
+    eng: DisruptionEngine,
+    cfg: DisruptionConfig,
+    tool: str,
+    call_n: int,
+    result: Any,
 ) -> tuple[Any, bool, str | None, DisruptionType] | None:
     if not isinstance(result, dict):
         return None
@@ -421,8 +436,11 @@ def _h_schema_drift(
 
 
 def _h_wrong_data(
-    eng: DisruptionEngine, cfg: DisruptionConfig,
-    tool: str, call_n: int, result: Any,
+    eng: DisruptionEngine,
+    cfg: DisruptionConfig,
+    tool: str,
+    call_n: int,
+    result: Any,
 ) -> tuple[Any, bool, str | None, DisruptionType]:
     def _perturb(obj: Any) -> Any:
         if isinstance(obj, dict):
@@ -452,8 +470,11 @@ def _h_wrong_data(
 
 
 def _h_intermittent(
-    eng: DisruptionEngine, cfg: DisruptionConfig,
-    tool: str, call_n: int, result: Any,
+    eng: DisruptionEngine,
+    cfg: DisruptionConfig,
+    tool: str,
+    call_n: int,
+    result: Any,
 ) -> tuple[Any, bool, str | None, DisruptionType] | None:
     if cfg.fail_every_n <= 0 or call_n % cfg.fail_every_n != 0:
         return None
@@ -461,15 +482,19 @@ def _h_intermittent(
         return None
     logger.debug("disruption_fired=intermittent tool=%s call=%d", tool, call_n)
     return (
-        None, False,
+        None,
+        False,
         json.dumps({"error": {"code": 500, "message": f"Intermittent failure on call #{call_n}"}}),
         DisruptionType.INTERMITTENT,
     )
 
 
 def _h_flapping(
-    eng: DisruptionEngine, cfg: DisruptionConfig,
-    tool: str, call_n: int, result: Any,
+    eng: DisruptionEngine,
+    cfg: DisruptionConfig,
+    tool: str,
+    call_n: int,
+    result: Any,
 ) -> tuple[Any, bool, str | None, DisruptionType] | None:
     if eng._rng.random() > cfg.probability:
         return None
@@ -478,7 +503,8 @@ def _h_flapping(
     if not last_fail:
         logger.debug("disruption_fired=flapping tool=%s state=fail", tool)
         return (
-            None, False,
+            None,
+            False,
             json.dumps({"error": {"code": 503, "message": "Service flapping — currently unavailable"}}),
             DisruptionType.FLAPPING,
         )
@@ -486,36 +512,55 @@ def _h_flapping(
 
 
 def _h_quota_exhausted(
-    eng: DisruptionEngine, cfg: DisruptionConfig,
-    tool: str, call_n: int, result: Any,
+    eng: DisruptionEngine,
+    cfg: DisruptionConfig,
+    tool: str,
+    call_n: int,
+    result: Any,
 ) -> tuple[Any, bool, str | None, DisruptionType] | None:
     if call_n <= cfg.fail_after_n_calls:
         return None
     logger.debug("disruption_fired=quota_exhausted tool=%s call=%d", tool, call_n)
     return (
-        None, False,
-        json.dumps({"error": {"code": 429, "message": f"Quota exhausted after {cfg.fail_after_n_calls} calls", "retry_after": 60}}),
+        None,
+        False,
+        json.dumps(
+            {
+                "error": {
+                    "code": 429,
+                    "message": f"Quota exhausted after {cfg.fail_after_n_calls} calls",
+                    "retry_after": 60,
+                }
+            }
+        ),
         DisruptionType.QUOTA_EXHAUSTED,
     )
 
 
 def _h_auth_expiry(
-    eng: DisruptionEngine, cfg: DisruptionConfig,
-    tool: str, call_n: int, result: Any,
+    eng: DisruptionEngine,
+    cfg: DisruptionConfig,
+    tool: str,
+    call_n: int,
+    result: Any,
 ) -> tuple[Any, bool, str | None, DisruptionType] | None:
     if call_n <= cfg.fail_after_n_calls:
         return None
     logger.debug("disruption_fired=auth_expiry tool=%s call=%d", tool, call_n)
     return (
-        None, False,
+        None,
+        False,
         json.dumps({"error": {"code": 401, "message": "Authentication token expired"}}),
         DisruptionType.AUTH_EXPIRY,
     )
 
 
 def _h_cascading(
-    eng: DisruptionEngine, cfg: DisruptionConfig,
-    tool: str, call_n: int, result: Any,
+    eng: DisruptionEngine,
+    cfg: DisruptionConfig,
+    tool: str,
+    call_n: int,
+    result: Any,
 ) -> tuple[Any, bool, str | None, DisruptionType] | None:
     if eng._rng.random() > cfg.probability:
         return None
@@ -525,7 +570,8 @@ def _h_cascading(
             logger.debug("disruption_cascade_propagated from=%s to=%s", tool, t)
     logger.debug("disruption_fired=cascading tool=%s", tool)
     return (
-        None, False,
+        None,
+        False,
         json.dumps({"error": {"code": 500, "message": f"Service '{tool}' failure — cascading to dependents"}}),
         DisruptionType.CASCADING,
     )

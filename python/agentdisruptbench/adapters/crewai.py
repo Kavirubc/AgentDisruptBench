@@ -40,12 +40,10 @@ def _import_crewai():
     """Guard import of crewai."""
     try:
         from crewai.tools import BaseTool  # noqa: F401
+
         return True
     except ImportError:
-        raise ImportError(
-            "CrewAI adapter requires crewai. "
-            "Install with: pip install crewai"
-        )
+        raise ImportError("CrewAI adapter requires crewai. Install with: pip install crewai")
 
 
 class CrewAIAdapter(BaseAdapter):
@@ -78,8 +76,10 @@ class CrewAIAdapter(BaseAdapter):
                 continue
 
             proxy = ToolProxy(
-                name=tool.name, fn=tool._run,
-                engine=self._engine, trace_collector=self._trace_collector,
+                name=tool.name,
+                fn=tool._run,
+                engine=self._engine,
+                trace_collector=self._trace_collector,
             )
             original_tool = tool
 
@@ -89,6 +89,7 @@ class CrewAIAdapter(BaseAdapter):
                 Caching is explicitly disabled (cache_function = None) to
                 ensure disruptions fire on every invocation.
                 """
+
                 name: str = original_tool.name
                 description: str = original_tool.description
                 cache_function: Any = None  # Disable caching
@@ -106,7 +107,4 @@ class CrewAIAdapter(BaseAdapter):
 
     def unwrap_tools(self, tools: list) -> list:
         """Restore original CrewAI tools."""
-        return [
-            getattr(t, "_original_tool", t)
-            for t in tools
-        ]
+        return [getattr(t, "_original_tool", t) for t in tools]

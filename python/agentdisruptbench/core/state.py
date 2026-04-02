@@ -63,6 +63,7 @@ COMPENSATION_PAIRS: dict[str, str | None] = {
 # StateAction — record of one mutation
 # ---------------------------------------------------------------------------
 
+
 @dataclass
 class StateAction:
     """Record of a single state-mutating operation.
@@ -92,6 +93,7 @@ class StateAction:
 # StateManager
 # ---------------------------------------------------------------------------
 
+
 class StateManager:
     """Persistent state layer for benchmark evaluation.
 
@@ -118,7 +120,7 @@ class StateManager:
     def _init_db(self) -> None:
         with self._lock:
             with self._conn:
-                self._conn.executescript('''
+                self._conn.executescript("""
                     CREATE TABLE IF NOT EXISTS state_collections (
                         collection_name TEXT,
                         entity_id TEXT,
@@ -143,7 +145,7 @@ class StateManager:
                         tool_name TEXT,
                         entity_id TEXT
                     );
-                ''')
+                """)
 
     # -- write / read -------------------------------------------------------
 
@@ -184,11 +186,11 @@ class StateManager:
                 # 1. Idempotency Check
                 cur.execute("SELECT 1 FROM action_keys WHERE dedup_key = ?", (dedup_key,))
                 exists = cur.fetchone() is not None
-                
+
                 if exists and operation == "create":
                     cur.execute(
-                        "INSERT INTO idempotency_violations (tool_name, entity_id) VALUES (?, ?)", 
-                        (tool_name, entity_id)
+                        "INSERT INTO idempotency_violations (tool_name, entity_id) VALUES (?, ?)",
+                        (tool_name, entity_id),
                     )
                     logger.warning("idempotency_violation tool=%s entity=%s", tool_name, entity_id)
 
@@ -199,26 +201,26 @@ class StateManager:
                 if operation == "delete":
                     cur.execute(
                         "DELETE FROM state_collections WHERE collection_name = ? AND entity_id = ?",
-                        (collection, entity_id)
+                        (collection, entity_id),
                     )
                 else:
                     cur.execute(
                         """
-                        INSERT INTO state_collections (collection_name, entity_id, data) 
-                        VALUES (?, ?, ?) 
+                        INSERT INTO state_collections (collection_name, entity_id, data)
+                        VALUES (?, ?, ?)
                         ON CONFLICT(collection_name, entity_id) DO UPDATE SET data=excluded.data
                         """,
-                        (collection, entity_id, data_json)
+                        (collection, entity_id, data_json),
                     )
 
                 # 3. Record action
                 cur.execute(
                     """
-                    INSERT INTO state_actions (action_id, tool_name, collection_name, entity_id, 
+                    INSERT INTO state_actions (action_id, tool_name, collection_name, entity_id,
                                                operation, data, compensating_tool, timestamp)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                     """,
-                    (actual_action_id, tool_name, collection, entity_id, operation, data_json, comp_tool, ts)
+                    (actual_action_id, tool_name, collection, entity_id, operation, data_json, comp_tool, ts),
                 )
 
                 self._conn.commit()
@@ -232,7 +234,10 @@ class StateManager:
 
         logger.debug(
             "state_write tool=%s collection=%s entity=%s op=%s",
-            tool_name, collection, entity_id, operation,
+            tool_name,
+            collection,
+            entity_id,
+            operation,
         )
 
         return StateAction(
@@ -254,14 +259,13 @@ class StateManager:
                 if entity_id is not None:
                     cur.execute(
                         "SELECT data FROM state_collections WHERE collection_name = ? AND entity_id = ?",
-                        (collection, entity_id)
+                        (collection, entity_id),
                     )
                     row = cur.fetchone()
                     return json.loads(row[0]) if row else None
                 else:
                     cur.execute(
-                        "SELECT entity_id, data FROM state_collections WHERE collection_name = ?",
-                        (collection,)
+                        "SELECT entity_id, data FROM state_collections WHERE collection_name = ?", (collection,)
                     )
                     rows = cur.fetchall()
                     return {row[0]: json.loads(row[1]) for row in rows}
@@ -279,8 +283,13 @@ class StateManager:
                 rows = cur.fetchall()
 
                 snapshot_data: dict[str, dict[str, dict[str, Any]]] = {
-                    "bookings": {}, "orders": {}, "transfers": {},
-                    "deployments": {}, "incidents": {}, "carts": {}, "refunds": {}
+                    "bookings": {},
+                    "orders": {},
+                    "transfers": {},
+                    "deployments": {},
+                    "incidents": {},
+                    "carts": {},
+                    "refunds": {},
                 }
 
                 for collection, eid, data_str in rows:
@@ -312,20 +321,30 @@ class StateManager:
                 in_after = eid in coll_after
 
                 if not in_before and in_after:
-                    coll_changes.append({
-                        "entity_id": eid, "type": "created",
-                        "after": coll_after[eid],
-                    })
+                    coll_changes.append(
+                        {
+                            "entity_id": eid,
+                            "type": "created",
+                            "after": coll_after[eid],
+                        }
+                    )
                 elif in_before and not in_after:
-                    coll_changes.append({
-                        "entity_id": eid, "type": "deleted",
-                        "before": coll_before[eid],
-                    })
+                    coll_changes.append(
+                        {
+                            "entity_id": eid,
+                            "type": "deleted",
+                            "before": coll_before[eid],
+                        }
+                    )
                 elif coll_before[eid] != coll_after[eid]:
-                    coll_changes.append({
-                        "entity_id": eid, "type": "modified",
-                        "before": coll_before[eid], "after": coll_after[eid],
-                    })
+                    coll_changes.append(
+                        {
+                            "entity_id": eid,
+                            "type": "modified",
+                            "before": coll_before[eid],
+                            "after": coll_after[eid],
+                        }
+                    )
 
             if coll_changes:
                 changes[coll] = coll_changes
@@ -357,7 +376,8 @@ class StateManager:
                         data=json.loads(row[5]),
                         compensating_tool=row[6],
                         timestamp=row[7],
-                    ) for row in rows
+                    )
+                    for row in rows
                 ]
             finally:
                 cur.close()
@@ -378,10 +398,10 @@ class StateManager:
         """Clear all state. Call between tasks."""
         with self._lock:
             with self._conn:
-                self._conn.executescript('''
+                self._conn.executescript("""
                     DELETE FROM state_collections;
                     DELETE FROM state_actions;
                     DELETE FROM action_keys;
                     DELETE FROM idempotency_violations;
-                ''')
+                """)
             logger.debug("state_reset")

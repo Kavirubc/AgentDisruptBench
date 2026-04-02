@@ -26,7 +26,7 @@ from __future__ import annotations
 import json
 import logging
 import threading
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass
 from typing import Any
 
 logger = logging.getLogger("agentdisruptbench.trace")
