@@ -90,6 +90,45 @@ def _compute_k_and_lambda(
     return k_consistency, lambda_fault_tolerance
 
 
+def _base_task_id(task_id: str) -> str:
+    """Strip variant suffix (e.g. _v1, _v2) to get the family base ID.
+
+    Examples:
+        "retail_001"    → "retail_001"
+        "retail_001_v1" → "retail_001"
+        "retail_001_v2" → "retail_001"
+    """
+    import re
+    return re.sub(r"_v\d+$", "", task_id)
+
+
+def _compute_epsilon(results: list[BenchmarkResult]) -> float:
+    """Compute ε-robustness: pass rate consistency across task-wording variants.
+
+    Groups results by variant family (base task ID) and profile, then
+    measures how consistently an agent passes across different phrasings.
+
+    Returns 1.0 if no variant families exist (backwards compatible), otherwise
+    returns the average intra-family pass-rate consistency.
+    """
+    # Group results by (base_task_id, profile) → list of successes
+    family_groups: dict[tuple[str, str], list[bool]] = defaultdict(list)
+    for r in results:
+        base = _base_task_id(r.task_id)
+        family_groups[(base, r.profile_name)].append(r.success)
+
+    # Only consider families with multiple variants (i.e., base + at least 1 _vN)
+    multi_variant_rates: list[float] = []
+    for (base, _), successes in family_groups.items():
+        if len(successes) > 1:
+            multi_variant_rates.append(sum(successes) / len(successes))
+
+    if not multi_variant_rates:
+        return 1.0  # No variants → placeholder (backward compatible)
+
+    return sum(multi_variant_rates) / len(multi_variant_rates)
+
+
 def compute_reliability_surface(
     results: list[BenchmarkResult],
 ) -> ReliabilitySurface:
@@ -109,8 +148,10 @@ def compute_reliability_surface(
 
     k_consistency, lambda_fault_tolerance = _compute_k_and_lambda(results)
 
-    # ε-robustness: placeholder (no variant tasks yet)
-    epsilon_robustness = 1.0
+    # ε-robustness: pass rate across task-wording variants.
+    # Variant families are identified by stripping the _v1/_v2/... suffix.
+    # E.g., retail_001, retail_001_v1, retail_001_v2 form one family.
+    epsilon_robustness = _compute_epsilon(results)
 
     composite = k_consistency * epsilon_robustness * lambda_fault_tolerance
 

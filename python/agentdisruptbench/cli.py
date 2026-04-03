@@ -15,7 +15,7 @@ import typer
 logger = logging.getLogger("agentdisruptbench.cli")
 
 app = typer.Typer(
-    help="AgentDisrupt-Bench: The standard sandbox for testing agent resilience in hostile environments.",
+    help="AgentDisrupt-Bench: An evaluation methodology for measuring AI agent resilience in hostile environments.",
     no_args_is_help=True,
 )
 

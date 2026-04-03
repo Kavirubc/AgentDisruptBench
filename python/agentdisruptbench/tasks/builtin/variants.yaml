@@ -1,0 +1,323 @@
+# AgentDisruptBench — Task Variants for ε-Robustness
+# ====================================================
+# These are rephrasings of representative tasks from each domain.
+# Used to compute the ε (epsilon) axis of the R(k,ε,λ) reliability surface.
+#
+# Each task preserves the same ground truth and required tools but uses
+# different natural-language phrasing for the description.
+#
+# Coverage: 5 base tasks per domain (one per difficulty 1,3,5) × 2 variants each
+# = 18 variant tasks referencing 9 base tasks.
+
+domain: variants
+version: "1.0"
+tasks:
+  # ================================================================
+  # RETAIL VARIANTS
+  # ================================================================
+
+  # --- retail_001 variants (D1: Search for a product) ---
+  - task_id: retail_001_v1
+    domain: retail
+    title: "Search for a product (rephrased)"
+    description: |
+      You're helping a customer on our online store.
+      They're looking for blue widgets — please search our catalog
+      and let them know what's available, along with pricing info.
+    difficulty: 1
+    required_tools: [search_products]
+    expected_tool_call_depth: 1
+    ground_truth:
+      expected_outcome: "List of blue widget products with prices"
+      required_tool_calls: [search_products]
+      evaluation_rubric:
+        searched_for_products: 0.50
+        reported_prices: 0.50
+      disruption_sensitive_tools: [search_products]
+      recovery_actions: [retry_search]
+
+  - task_id: retail_001_v2
+    domain: retail
+    title: "Search for a product (formal)"
+    description: |
+      As a retail platform assistant, perform a product search
+      for "blue widgets". Return a summary of all matching products
+      including their names and unit prices.
+    difficulty: 1
+    required_tools: [search_products]
+    expected_tool_call_depth: 1
+    ground_truth:
+      expected_outcome: "List of blue widget products with prices"
+      required_tool_calls: [search_products]
+      evaluation_rubric:
+        searched_for_products: 0.50
+        reported_prices: 0.50
+      disruption_sensitive_tools: [search_products]
+      recovery_actions: [retry_search]
+
+  # --- retail_007 variants (D3: Full purchase flow with coupon) ---
+  - task_id: retail_007_v1
+    domain: retail
+    title: "Complete purchase with discount code (rephrased)"
+    description: |
+      Help a shopper complete their purchase. They want a green sprocket.
+      Find the product, make sure it's in stock, use discount code SAVE20
+      on cart CART-001, then finish the order for customer C-3344.
+      Tell them about any savings applied.
+    difficulty: 3
+    required_tools: [search_products, check_inventory, apply_coupon, place_order]
+    expected_tool_call_depth: 4
+    ground_truth:
+      expected_outcome: "Order placed with coupon applied"
+      required_tool_calls: [search_products, check_inventory, apply_coupon, place_order]
+      evaluation_rubric:
+        searched_products: 0.20
+        checked_inventory: 0.20
+        applied_coupon: 0.30
+        placed_order: 0.30
+      disruption_sensitive_tools: [place_order, apply_coupon]
+      recovery_actions: [retry_coupon, retry_order]
+
+  - task_id: retail_007_v2
+    domain: retail
+    title: "End-to-end purchase with coupon (terse)"
+    description: |
+      Product: green sprocket. Coupon: SAVE20. Cart: CART-001. Customer: C-3344.
+      Steps: search → inventory check → apply coupon → place order.
+      Report final order details with discount.
+    difficulty: 3
+    required_tools: [search_products, check_inventory, apply_coupon, place_order]
+    expected_tool_call_depth: 4
+    ground_truth:
+      expected_outcome: "Order placed with coupon applied"
+      required_tool_calls: [search_products, check_inventory, apply_coupon, place_order]
+      evaluation_rubric:
+        searched_products: 0.20
+        checked_inventory: 0.20
+        applied_coupon: 0.30
+        placed_order: 0.30
+      disruption_sensitive_tools: [place_order, apply_coupon]
+      recovery_actions: [retry_coupon, retry_order]
+
+  # --- retail_018 variants (D5: Complete customer lifecycle management) ---
+  - task_id: retail_018_v1
+    domain: retail
+    title: "Full customer journey (conversational)"
+    description: |
+      A VIP customer (C-1010) needs full-service help. Start by pulling up
+      their profile and checking what tier they're in. Then find a
+      "wireless sensor kit" for them. Make sure the best one is in stock,
+      add 2 units to cart CART-006, and if they're gold tier or above,
+      apply the VIP30 coupon. Place the order and verify it went through.
+      Give them a complete rundown of everything you did.
+    difficulty: 5
+    required_tools: [get_customer_profile, search_products, check_inventory, update_cart, apply_coupon, place_order, get_order_status]
+    expected_tool_call_depth: 7
+    ground_truth:
+      expected_outcome: "Full lifecycle: profile check, search, inventory, cart, coupon, order, confirmation"
+      required_tool_calls: [get_customer_profile, search_products, check_inventory, update_cart, apply_coupon, place_order, get_order_status]
+      evaluation_rubric:
+        profile_lookup: 0.10
+        product_search: 0.10
+        inventory_check: 0.10
+        cart_update: 0.15
+        coupon_applied: 0.15
+        order_placed: 0.25
+        status_confirmed: 0.15
+      disruption_sensitive_tools: [place_order, apply_coupon]
+      recovery_actions: [retry_order, skip_coupon, check_alternative_product]
+
+  # ================================================================
+  # TRAVEL VARIANTS
+  # ================================================================
+
+  # --- travel_001 variants (D1: Search for flights) ---
+  - task_id: travel_001_v1
+    domain: travel
+    title: "Find flights (casual)"
+    description: |
+      I need to fly from JFK to LAX on 2026-04-15. Can you search
+      for available flights and show me what's out there? Include
+      prices and times please.
+    difficulty: 1
+    required_tools: [search_flights]
+    expected_tool_call_depth: 1
+    ground_truth:
+      expected_outcome: "Flight options from JFK to LAX with prices and times"
+      required_tool_calls: [search_flights]
+      evaluation_rubric:
+        searched_flights: 0.50
+        reported_details: 0.50
+      disruption_sensitive_tools: [search_flights]
+      recovery_actions: [retry_search]
+
+  - task_id: travel_001_v2
+    domain: travel
+    title: "Flight search (formal request)"
+    description: |
+      Please query the flight database for all available flights
+      departing from JFK airport to LAX on the date 2026-04-15.
+      Provide a structured response with flight IDs, airlines,
+      departure times, arrival times, and per-person pricing.
+    difficulty: 1
+    required_tools: [search_flights]
+    expected_tool_call_depth: 1
+    ground_truth:
+      expected_outcome: "Flight options from JFK to LAX with prices and times"
+      required_tool_calls: [search_flights]
+      evaluation_rubric:
+        searched_flights: 0.50
+        reported_details: 0.50
+      disruption_sensitive_tools: [search_flights]
+      recovery_actions: [retry_search]
+
+  # --- travel_007 variants (D3: Book a flight with weather check) ---
+  - task_id: travel_007_v1
+    domain: travel
+    title: "Travel planning with weather (rephrased)"
+    description: |
+      Help me plan a trip from SFO to ORD on 2026-04-20. I want to
+      know what the weather will be like at my destination, then
+      find flights and book the most affordable one. My name is
+      John Smith and I'm traveling solo. Let me know the weather
+      and my booking confirmation.
+    difficulty: 3
+    required_tools: [get_weather, search_flights, book_flight]
+    expected_tool_call_depth: 3
+    ground_truth:
+      expected_outcome: "Weather checked, cheapest flight found and booked"
+      required_tool_calls: [get_weather, search_flights, book_flight]
+      evaluation_rubric:
+        checked_weather: 0.25
+        searched_flights: 0.25
+        booked_cheapest: 0.30
+        reported_confirmation: 0.20
+      disruption_sensitive_tools: [book_flight]
+      recovery_actions: [retry_book, try_next_flight]
+
+  # ================================================================
+  # FINANCE VARIANTS
+  # ================================================================
+
+  # --- finance_001 variants (D1: Check account balance) ---
+  - task_id: finance_001_v1
+    domain: finance
+    title: "Balance inquiry (casual)"
+    description: |
+      Hey, can you check my bank balance? My account number is ACC-12345.
+      Just tell me how much I have available.
+    difficulty: 1
+    required_tools: [get_account_balance]
+    expected_tool_call_depth: 1
+    ground_truth:
+      expected_outcome: "Account balance and available funds reported"
+      required_tool_calls: [get_account_balance]
+      evaluation_rubric:
+        retrieved_balance: 0.60
+        reported_available: 0.40
+      disruption_sensitive_tools: [get_account_balance]
+      recovery_actions: [retry_balance]
+
+  - task_id: finance_001_v2
+    domain: finance
+    title: "Account balance query (formal)"
+    description: |
+      Retrieve the current account balance for account ACC-12345.
+      Report the total balance, available balance, number of pending
+      transactions, and the timestamp of the last update.
+    difficulty: 1
+    required_tools: [get_account_balance]
+    expected_tool_call_depth: 1
+    ground_truth:
+      expected_outcome: "Account balance and available funds reported"
+      required_tool_calls: [get_account_balance]
+      evaluation_rubric:
+        retrieved_balance: 0.60
+        reported_available: 0.40
+      disruption_sensitive_tools: [get_account_balance]
+      recovery_actions: [retry_balance]
+
+  # --- finance_007 variants (D3: Fund transfer with validation) ---
+  - task_id: finance_007_v1
+    domain: finance
+    title: "Send money between accounts (rephrased)"
+    description: |
+      I need to move $500 from my checking account ACC-11111 to my
+      savings account ACC-22222. Before you do the transfer, verify
+      I have enough funds. Let me know the transfer confirmation
+      and any fees charged.
+    difficulty: 3
+    required_tools: [get_account_balance, transfer_funds]
+    expected_tool_call_depth: 2
+    ground_truth:
+      expected_outcome: "Balance verified, transfer completed, fees reported"
+      required_tool_calls: [get_account_balance, transfer_funds]
+      evaluation_rubric:
+        checked_balance: 0.30
+        completed_transfer: 0.40
+        reported_confirmation: 0.30
+      disruption_sensitive_tools: [transfer_funds]
+      recovery_actions: [retry_transfer, verify_balance_first]
+
+  # ================================================================
+  # DEVOPS VARIANTS
+  # ================================================================
+
+  # --- devops_001 variants (D1: Check service health) ---
+  - task_id: devops_001_v1
+    domain: devops
+    title: "Service health check (casual)"
+    description: |
+      Can you check if the api-gateway service is running okay?
+      Give me its status, uptime, and response time.
+    difficulty: 1
+    required_tools: [get_service_health]
+    expected_tool_call_depth: 1
+    ground_truth:
+      expected_outcome: "Service health status reported"
+      required_tool_calls: [get_service_health]
+      evaluation_rubric:
+        checked_health: 0.50
+        reported_metrics: 0.50
+      disruption_sensitive_tools: [get_service_health]
+      recovery_actions: [retry_health_check]
+
+  - task_id: devops_001_v2
+    domain: devops
+    title: "Service status inquiry (formal)"
+    description: |
+      Execute a health check on the api-gateway service. Report the
+      current operational status, uptime percentage, average response
+      time in milliseconds, and the number of active connections.
+    difficulty: 1
+    required_tools: [get_service_health]
+    expected_tool_call_depth: 1
+    ground_truth:
+      expected_outcome: "Service health status reported"
+      required_tool_calls: [get_service_health]
+      evaluation_rubric:
+        checked_health: 0.50
+        reported_metrics: 0.50
+      disruption_sensitive_tools: [get_service_health]
+      recovery_actions: [retry_health_check]
+
+  # --- devops_007 variants (D3: Deploy and verify) ---
+  - task_id: devops_007_v1
+    domain: devops
+    title: "Ship a new version (casual)"
+    description: |
+      We need to push version v2.3.1 of the payment-service to staging.
+      Deploy it, then run the integration tests to make sure nothing broke.
+      If tests fail, roll it back. Give me the full status either way.
+    difficulty: 3
+    required_tools: [deploy_service, run_tests, rollback_deployment]
+    expected_tool_call_depth: 3
+    ground_truth:
+      expected_outcome: "Service deployed to staging and tests run"
+      required_tool_calls: [deploy_service, run_tests]
+      evaluation_rubric:
+        deployed_service: 0.35
+        ran_tests: 0.35
+        reported_results: 0.30
+      disruption_sensitive_tools: [deploy_service]
+      recovery_actions: [rollback_deployment, retry_deploy]
