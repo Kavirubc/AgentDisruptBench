@@ -115,7 +115,7 @@ fi
 
 # 2. Gemini 2.5 Flash
 if [ -z "$MODEL_FILTER" ] || [ "$MODEL_FILTER" = "gemini-2.5" ]; then
-    if [ -n "${GOOGLE_API_KEY:-}" ]; then
+    if [ -n "${GEMINI_API_KEY:-}" ] || [ -n "${GOOGLE_API_KEY:-}" ]; then
         echo ""
         echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
         echo "📊 Gemini 2.5 Flash"
@@ -130,7 +130,7 @@ fi
 
 # 3. Gemini 3 Flash
 if [ -z "$MODEL_FILTER" ] || [ "$MODEL_FILTER" = "gemini-3" ]; then
-    if [ -n "${GOOGLE_API_KEY:-}" ]; then
+    if [ -n "${GEMINI_API_KEY:-}" ] || [ -n "${GOOGLE_API_KEY:-}" ]; then
         echo ""
         echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
         echo "📊 Gemini 3 Flash"
