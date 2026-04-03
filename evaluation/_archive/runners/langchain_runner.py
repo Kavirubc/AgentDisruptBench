@@ -163,7 +163,7 @@ class LangChainRunner(BaseAgentRunner):
     def run_task(self, task: Task, tools: dict[str, Any]) -> str:
         """Run the LangChain agent for one task.
 
-        Uses LangGraph's create_react_agent which builds a ReAct
+        Uses LangChain's create_agent which builds a ReAct
         graph under the hood:  LLM → tool call → result → LLM → ...
         """
         if self._llm is None:
@@ -221,17 +221,17 @@ class LangChainRunner(BaseAgentRunner):
             "summarising what you accomplished."
         )
 
-        # Create the agent using LangGraph's standard ReAct agent
-        from langgraph.prebuilt import create_react_agent
+        # Create the agent using LangChain's standard ReAct agent (v1)
+        from langchain.agents import create_agent
         if verbose:
             print(f"    [DEBUG] Creating agent with {len(lc_tools)} tools")
             for t in lc_tools:
                 print(f"    [DEBUG] Tool: {t.name} (args: {t.args_schema.schema() if t.args_schema else 'None'})")
 
-        agent = create_react_agent(
-            model=self._llm,
-            tools=lc_tools,
-            prompt=system_prompt,
+        agent = create_agent(
+            self._llm,
+            lc_tools,
+            system_prompt=system_prompt,
         )
 
         # Build the task input
