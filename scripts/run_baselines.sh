@@ -151,7 +151,7 @@ if [ -z "$MODEL_FILTER" ] || [ "$MODEL_FILTER" = "gpt-5-mini" ]; then
         echo "📊 OpenAI GPT-5 Mini"
         echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
         for profile in "${PROFILES[@]}"; do
-            run_eval "openai" "gpt-5-mini" "$profile"
+            run_eval "langchain" "gpt-5-mini" "$profile"
         done
     else
         echo "⚠️  Skipping GPT-5 Mini: OPENAI_API_KEY not set"
