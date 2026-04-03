@@ -18,7 +18,7 @@ Large language model (LLM) agents increasingly rely on external tool calls to co
 
 **AgentDisruptBench** introduces a systematic evaluation methodology for measuring how well AI agents handle _runtime disruptions_ to their tool calls. By injecting 20 carefully designed fault types across 100 base tasks and variants in 4 domains, AgentDisruptBench produces a reliability surface that captures recovery rate, retry efficiency, graceful degradation, side-effect safety, and compensation metrics that go far beyond simple success/failure.
 
-> **Target venue:** NeurIPS 2026 — Evaluations and Datasets (ED) Track
+
 
 ---
 
@@ -517,24 +517,6 @@ We welcome contributions! Please see our contribution guidelines:
 3. Follow the mandatory file header convention (see any source file)
 4. Write tests for new features
 5. Submit a pull request
-
----
-
-## Citation
-
-If you use AgentDisruptBench in your research, please cite:
-
-```bibtex
-@inproceedings{agentdisruptbench2026,
-  title     = {AgentDisruptBench: A Benchmark for Evaluating AI Agent
-               Resilience Under Runtime Tool-Call Disruptions},
-  author    = {AgentDisruptBench Contributors},
-  booktitle = {Advances in Neural Information Processing Systems (NeurIPS)
-               Datasets and Benchmarks Track},
-  year      = {2026},
-  url       = {https://github.com/Kavirubc/AgentDisruptBench},
-}
-```
 
 ---
 
