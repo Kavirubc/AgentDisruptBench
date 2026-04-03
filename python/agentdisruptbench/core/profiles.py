@@ -41,13 +41,11 @@ logger = logging.getLogger("agentdisruptbench.profiles")
 
 BUILTIN_PROFILES: dict[str, list[DisruptionConfig]] = {
     "clean": [],
-
     "mild_production": [
         DisruptionConfig(type=DisruptionType.LATENCY, probability=0.10, delay_ms=800),
         DisruptionConfig(type=DisruptionType.HTTP_429, probability=0.03),
         DisruptionConfig(type=DisruptionType.TRUNCATED, probability=0.02, truncation_pct=0.75),
     ],
-
     "moderate_production": [
         DisruptionConfig(type=DisruptionType.TIMEOUT, probability=0.07, delay_ms=6000),
         DisruptionConfig(type=DisruptionType.HTTP_429, probability=0.08),
@@ -55,7 +53,6 @@ BUILTIN_PROFILES: dict[str, list[DisruptionConfig]] = {
         DisruptionConfig(type=DisruptionType.MALFORMED_JSON, probability=0.04),
         DisruptionConfig(type=DisruptionType.MISSING_FIELDS, probability=0.06),
     ],
-
     "hostile_environment": [
         DisruptionConfig(type=DisruptionType.TIMEOUT, probability=0.15, delay_ms=10000),
         DisruptionConfig(type=DisruptionType.HTTP_429, probability=0.12),
@@ -66,17 +63,14 @@ BUILTIN_PROFILES: dict[str, list[DisruptionConfig]] = {
         DisruptionConfig(type=DisruptionType.WRONG_DATA, probability=0.08),
         DisruptionConfig(type=DisruptionType.NULL_RESPONSE, probability=0.05),
     ],
-
     "auth_pressure": [
         DisruptionConfig(type=DisruptionType.HTTP_401, probability=0.10),
         DisruptionConfig(type=DisruptionType.AUTH_EXPIRY, fail_after_n_calls=4),
     ],
-
     "quota_pressure": [
         DisruptionConfig(type=DisruptionType.HTTP_429, probability=0.15),
         DisruptionConfig(type=DisruptionType.QUOTA_EXHAUSTED, fail_after_n_calls=6),
     ],
-
     "data_corruption": [
         DisruptionConfig(type=DisruptionType.WRONG_DATA, probability=0.15),
         DisruptionConfig(type=DisruptionType.MISSING_FIELDS, probability=0.15),
@@ -85,7 +79,6 @@ BUILTIN_PROFILES: dict[str, list[DisruptionConfig]] = {
         DisruptionConfig(type=DisruptionType.NULL_RESPONSE, probability=0.05),
         DisruptionConfig(type=DisruptionType.TRUNCATED, probability=0.10, truncation_pct=0.40),
     ],
-
     "cascading_failure": [
         DisruptionConfig(
             type=DisruptionType.CASCADING,
@@ -94,7 +87,6 @@ BUILTIN_PROFILES: dict[str, list[DisruptionConfig]] = {
             cascade_targets=["refund_issue", "order_status", "invoice_generate"],
         ),
     ],
-
     "flapping_services": [
         DisruptionConfig(type=DisruptionType.FLAPPING, probability=0.50),
         DisruptionConfig(type=DisruptionType.INTERMITTENT, fail_every_n=3),
@@ -145,9 +137,7 @@ def load_profiles(path: str | Path) -> dict[str, list[DisruptionConfig]]:
         for d in disruptions:
             configs.append(DisruptionConfig(**d))
         profiles[name] = configs
-        logger.info(
-            "profile_loaded name=%s disruption_count=%d", name, len(configs)
-        )
+        logger.info("profile_loaded name=%s disruption_count=%d", name, len(configs))
 
     return profiles
 
@@ -174,6 +164,4 @@ def get_profile(name: str, custom_profiles: dict[str, list[DisruptionConfig]] | 
     available = list(BUILTIN_PROFILES.keys())
     if custom_profiles:
         available += list(custom_profiles.keys())
-    raise KeyError(
-        f"Unknown profile '{name}'. Available: {available}"
-    )
+    raise KeyError(f"Unknown profile '{name}'. Available: {available}")

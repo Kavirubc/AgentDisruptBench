@@ -53,12 +53,12 @@ _TOOL_STATE_MAP: dict[str, tuple[str, str]] = {
 #: Per-tool operation semantics for state tracking.
 #: Tools not in this map default to "create".
 _TOOL_OPERATION: dict[str, str] = {
-    "cancel_booking": "update",       # status change on existing entity
-    "process_refund": "create",       # new entity in refunds collection
+    "cancel_booking": "update",  # status change on existing entity
+    "process_refund": "create",  # new entity in refunds collection
     "rollback_deployment": "update",  # status change on existing entity
-    "resolve_incident": "update",     # status change on existing entity
-    "update_cart": "update",          # modifies existing cart
-    "apply_coupon": "update",         # modifies existing cart
+    "resolve_incident": "update",  # status change on existing entity
+    "update_cart": "update",  # modifies existing cart
+    "apply_coupon": "update",  # modifies existing cart
 }
 
 
@@ -108,7 +108,10 @@ def wrap_tool_with_state(
 
         logger.debug(
             "stateful_write tool=%s collection=%s entity=%s op=%s",
-            tool_name, collection, entity_id, operation,
+            tool_name,
+            collection,
+            entity_id,
+            operation,
         )
         return result
 

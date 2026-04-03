@@ -76,10 +76,7 @@ class OpenAIAdapter(BaseAdapter):
 
     def unwrap_tools(self, tools: dict[str, Any]) -> dict[str, Any]:
         """Return original functions (not used in typical OpenAI workflow)."""
-        return {
-            name: (proxy._fn if isinstance(proxy, ToolProxy) else proxy)
-            for name, proxy in tools.items()
-        }
+        return {name: (proxy._fn if isinstance(proxy, ToolProxy) else proxy) for name, proxy in tools.items()}
 
     def dispatch(
         self,
@@ -142,9 +139,11 @@ class OpenAIAdapter(BaseAdapter):
         messages = []
         for tc in tool_calls:
             content = self.dispatch(tc, tool_registry)
-            messages.append({
-                "role": "tool",
-                "tool_call_id": tc.id,
-                "content": content,
-            })
+            messages.append(
+                {
+                    "role": "tool",
+                    "tool_call_id": tc.id,
+                    "content": content,
+                }
+            )
         return messages

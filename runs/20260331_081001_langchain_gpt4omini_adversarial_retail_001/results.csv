@@ -1,7 +1,0 @@
-Task ID,Domain,Difficulty,Profile,Seed,Success,Partial Score,Duration (s),Prompt Tokens,Completion Tokens,Total Tokens,Runner,Environment,Recovery Rate,Disruptions Encountered,Disruptions Recovered,Extra Tool Calls,Total Tool Calls,State Score,Compensations,Idempotency Violations,Loop Count,Hallucination Rate,Handover Detected,Task Description
-adversarial_retail_001,retail,4,clean,42,True,1.0,12.03,2622,276,2898,LangChainRunner,langchain_gpt-4o-mini,1.0,0,0,0,5,0.4,0,0,0,0.0,False,"A customer wants to buy product PRD-laptop ($1200) with two coupons.
-Coupon SAVE10 gives 10% off. Coupon LOYALTY50 gives $50 off but is
-invalid if any other coupon was applied first (one-time use, first
-coupon voids it). Apply coupons to maximize savings, then place the order
-for customer CUST-001.
-"

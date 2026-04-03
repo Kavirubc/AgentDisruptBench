@@ -23,7 +23,7 @@ Convention:
 from __future__ import annotations
 
 import logging
-from typing import Any, Callable
+from typing import Callable
 
 from agentdisruptbench.tools.mock_tools import get_all_tools
 
@@ -60,9 +60,7 @@ class ToolRegistry:
             KeyError: If the tool is not registered.
         """
         if name not in self._tools:
-            raise KeyError(
-                f"Tool '{name}' not found. Available: {list(self._tools.keys())}"
-            )
+            raise KeyError(f"Tool '{name}' not found. Available: {list(self._tools.keys())}")
         return self._tools[name]
 
     def list_tools(self) -> list[str]:

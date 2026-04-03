@@ -49,35 +49,39 @@ console = Console()
 def resolve_run_dir(run_id: Optional[str], logs_dir: str = "runs") -> Path:
     logs_root = Path(logs_dir)
     if run_id:
-        run_dir = logs_root / run_id
-        if not run_dir.exists():
-            console.print(f"[red]Run directory not found: {run_dir}[/red]")
-            raise typer.Exit(1)
-        return run_dir
-    # Default: find the most recently modified run_log.jsonl
-    candidates = list(logs_root.glob("*/run_log.jsonl"))
+        return logs_root / run_id
+    
+    # Default is finding the most recently modified directory in runs/
+    candidates = [p for p in logs_root.iterdir() if p.is_dir()]
     if not candidates:
-        console.print(f"[red]No run_log.jsonl files found under {logs_root}/[/red]")
+        console.print(f"[red]No run directories found under {logs_root}/[/red]")
         raise typer.Exit(1)
-    return max(candidates, key=lambda p: p.stat().st_mtime).parent
+    
+    return max(candidates, key=lambda p: p.stat().st_mtime)
 
 
-def load_events(run_dir: Path) -> list[dict[str, Any]]:
-    jsonl_path = run_dir / "run_log.jsonl"
-    if not jsonl_path.exists():
-        console.print(f"[red]No run_log.jsonl found in {run_dir}[/red]")
+def load_events(run_dir: Path) -> dict[str, Any]:
+    # New task_logs JSON format parsing
+    task_logs_dir = run_dir / "task_logs"
+    if not task_logs_dir.exists():
+        console.print(f"[red]No task_logs directory found in {run_dir}.[/red]")
         raise typer.Exit(1)
-    events: list[dict[str, Any]] = []
-    with open(jsonl_path) as f:
-        for line in f:
-            line = line.strip()
-            if not line:
-                continue
-            try:
-                events.append(json.loads(line))
-            except json.JSONDecodeError:
-                pass
-    return events
+        
+    runs = []
+    for log_file in sorted(task_logs_dir.glob("*.json")):
+        try:
+            with open(log_file) as f:
+                runs.append(json.load(f))
+        except Exception as e:
+            pass
+            
+    summary_path = run_dir / "summary.json"
+    summary = {}
+    if summary_path.exists():
+        with open(summary_path) as f:
+            summary = json.load(f)
+            
+    return {"runs": runs, "summary": summary}
 
 
 # ─── STYLE HELPERS ────────────────────────────────────────────────────────────
@@ -125,97 +129,37 @@ def strategy_style(strat: str) -> str:
 # ─── RENDERER ─────────────────────────────────────────────────────────────────
 
 
-def render_run(events: list[dict[str, Any]], run_dir: Path) -> None:
-    # Bucket events by type
-    run_started = None
-    tasks_selected = None
-    task_blocks: list[dict] = []  # Each has: started, tool_calls, rac_events, completed
-    run_completed = None
-
-    current_block: dict[str, Any] | None = None
-
-    for e in events:
-        et = e["event_type"]
-        payload = e["payload"]
-
-        if et == "run_started":
-            run_started = payload
-        elif et == "tasks_selected":
-            tasks_selected = payload
-        elif et == "task_started":
-            # Save any in-progress block before starting a new one
-            if current_block is not None:
-                task_blocks.append(current_block)
-            current_block = {
-                "started": payload,
-                "tool_calls": [],
-                "rac_events": [],
-                "completed": None,
-            }
-        elif et == "tool_call" and current_block is not None:
-            current_block["tool_calls"].append(payload)
-        elif et == "rac_event" and current_block is not None:
-            current_block["rac_events"].append(payload)
-        elif et == "task_completed":
-            if current_block is not None:
-                current_block["completed"] = payload
-                task_blocks.append(current_block)
-                current_block = None
-        elif et == "run_completed":
-            run_completed = payload
-
-    # Capture any block that was in-progress when the run was interrupted
-    if current_block is not None:
-        task_blocks.append(current_block)
-
+def render_run(data: dict[str, Any], run_dir: Path) -> None:
+    runs = data.get("runs", [])
+    summary = data.get("summary", {})
+    
+    if not runs:
+        console.print("[yellow]No tasks found to render.[/yellow]")
+        return
+        
     # ── RUN HEADER ────────────────────────────────────────────────────────────
-    run_id = (run_started or {}).get("run_id", run_dir.name)
+    run_id = run_dir.name
     console.rule(f"[bold cyan]AgentDisruptBench Run: {run_id}[/bold cyan]", style="cyan")
 
-    if run_started:
-        meta = Table(show_header=False, box=box.SIMPLE, padding=(0, 1))
-        meta.add_column("Key", style="bold dim")
-        meta.add_column("Value")
-        meta.add_row("Model", f"[bold]{run_started.get('model', '?')}[/bold]")
-        meta.add_row("Profile", f"[bold magenta]{run_started.get('profile', '?')}[/bold magenta]")
-        meta.add_row("Domain", run_started.get("domain", "?"))
-        meta.add_row("Difficulty", f"{run_started.get('min_difficulty', '?')}–{run_started.get('max_difficulty', '?')}")
-        meta.add_row("Seed", str(run_started.get("seed", "?")))
-        if run_completed:
-            meta.add_row("Tasks", str(run_completed.get("total_tasks", "?")))
-            meta.add_row("Duration", f"{run_completed.get('total_duration_seconds', '?')}s")
-        console.print(meta)
-
-    # ── TASK LISTING ──────────────────────────────────────────────────────────
-    if tasks_selected:
-        task_table = Table(show_header=True, box=box.SIMPLE_HEAD, padding=(0, 1))
-        task_table.add_column("#", style="bold dim", width=3)
-        task_table.add_column("Task ID", style="cyan", no_wrap=True)
-        task_table.add_column("Diff", justify="center", width=4)
-        task_table.add_column("Title", style="white")
-        task_table.add_column("Tools", style="dim")
-        task_table.add_column("Depth", justify="center", width=5)
-        for i, t in enumerate(tasks_selected.get("tasks", []), 1):
-            task_table.add_row(
-                str(i),
-                t["id"],
-                f"D{t['difficulty']}",
-                t["title"],
-                ", ".join(t["tools"]),
-                str(t.get("depth", "?")),
-            )
-        console.print(Panel(task_table, title="[bold]Selected Tasks[/bold]", border_style="blue"))
+    first_run = runs[0]
+    meta = Table(show_header=False, box=box.SIMPLE, padding=(0, 1))
+    meta.add_column("Key", style="bold dim")
+    meta.add_column("Value")
+    meta.add_row("Agent", f"[bold]{first_run.get('agent_id', '?')}[/bold]")
+    meta.add_row("Profile", f"[bold magenta]{first_run.get('profile_name', '?')}[/bold magenta]")
+    meta.add_row("Seed", str(first_run.get("seed", "?")))
+    meta.add_row("Tasks", str(len(runs)))
+    console.print(meta)
 
     # ── PER-TASK BREAKDOWN ────────────────────────────────────────────────────
-    for block_idx, block in enumerate(task_blocks):
-        started = block["started"]
-        tool_calls = block["tool_calls"]
-        rac_events = block["rac_events"]
-        completed = block["completed"] or {}
+    for block_idx, r in enumerate(runs):
+        tool_calls = r.get("traces", [])
+        rac_events = [] # Not stored in new format yet
+        completed = r
 
-        task_id = started["task_id"]
-        success = completed.get("success", False)
-        score = completed.get("partial_score", 0)
+        task_id = r.get("task_id", "")
+        success = r.get("success", False)
+        score = r.get("partial_score", 0)
 
         # Task header
         status_icon = success_icon(success)
@@ -226,15 +170,13 @@ def render_run(events: list[dict[str, Any]], run_dir: Path) -> None:
             style="yellow",
         )
 
-        # Task info
+        # Task info placeholder
         info = Table(show_header=False, box=box.SIMPLE, padding=(0, 1))
         info.add_column("Key", style="bold dim")
         info.add_column("Value")
-        info.add_row("Title", started.get("title", ""))
-        info.add_row("Difficulty", f"D{started.get('difficulty', '?')}")
-        info.add_row("Type", started.get("task_type", "standard"))
-        info.add_row("Tools", ", ".join(started.get("required_tools", [])))
-        info.add_row("Expected depth", str(started.get("expected_depth", "?")))
+        info.add_row("Duration", f"{r.get('duration_seconds', 0):.2f}s")
+        err = r.get("error_msg") or "None"
+        info.add_row("Agent Error", f"[red]{err}[/red]")
         console.print(info)
 
         # ── TOOL CALL TIMELINE ────────────────────────────────────────────────
@@ -372,60 +314,48 @@ def render_run(events: list[dict[str, Any]], run_dir: Path) -> None:
             ))
 
     # ── RUN SUMMARY ───────────────────────────────────────────────────────────
-    if run_completed:
+    if summary:
         console.rule("[bold green]Run Summary[/bold green]", style="green")
 
-        summary = Table(show_header=False, box=box.HEAVY_HEAD, padding=(0, 2))
-        summary.add_column("Metric", style="bold")
-        summary.add_column("Value", justify="right")
+        sum_table = Table(show_header=False, box=box.HEAVY_HEAD, padding=(0, 2))
+        sum_table.add_column("Metric", style="bold")
+        sum_table.add_column("Value", justify="right")
 
-        total = run_completed.get("total_tasks", 0)
-        success = run_completed.get("successful", 0)
-        rate = run_completed.get("success_rate", 0)
-        avg_score = run_completed.get("avg_partial_score", 0)
-        duration = run_completed.get("total_duration_seconds", 0)
+        total = summary.get("total_runs", 0)
+        profile_stats = list(summary.get("profiles", {}).values())
+        if profile_stats:
+            p = profile_stats[0]
+            success_rate = p.get("success_rate", 0)
+            avg_score = p.get("avg_partial_score", 0)
 
-        rate_style = score_color(rate)
-        score_style_val = score_color(avg_score)
+            rate_style = score_color(success_rate)
+            score_style_val = score_color(avg_score)
 
-        summary.add_row("Total Tasks", str(total))
-        summary.add_row("Successful", f"{success}/{total}")
-        summary.add_row("Success Rate", f"[{rate_style}]{rate:.0%}[/{rate_style}]")
-        summary.add_row("Avg Partial Score", f"[{score_style_val}]{avg_score:.2f}[/{score_style_val}]")
-        summary.add_row("Total Duration", f"{duration:.1f}s")
-
-        console.print(Panel(summary, title="[bold green]Final Results[/bold green]", border_style="green"))
+            sum_table.add_row("Total Tasks", str(total))
+            sum_table.add_row("Success Rate", f"[{rate_style}]{success_rate:.0%}[/{rate_style}]")
+            sum_table.add_row("Avg Partial Score", f"[{score_style_val}]{avg_score:.2f}[/{score_style_val}]")
+            console.print(Panel(sum_table, title="[bold green]Final Results[/bold green]", border_style="green"))
 
         # Per-task summary table
-        if task_blocks:
+        if runs:
             task_summary = Table(show_header=True, box=box.SIMPLE_HEAD, padding=(0, 1))
             task_summary.add_column("Task", style="cyan")
-            task_summary.add_column("D", justify="center", width=3)
             task_summary.add_column("Status", justify="center", width=6)
             task_summary.add_column("Score", justify="right", width=6)
             task_summary.add_column("Tools", justify="right", width=5)
-            task_summary.add_column("Disrupts", justify="right", width=8)
-            task_summary.add_column("Strategy", width=12)
             task_summary.add_column("Time", justify="right", width=6)
 
-            for block in task_blocks:
-                c = block["completed"] or {}
-                s = block["started"]
-                ok = c.get("success", False)
-                sc = c.get("partial_score", 0)
+            for r in runs:
+                ok = r.get("success", False)
+                sc = r.get("partial_score", 0)
                 sc_s = score_color(sc)
-                dom = c.get("dominant_strategy") or "—"
-                ds = strategy_style(dom) if dom != "—" else "dim"
 
                 task_summary.add_row(
-                    s.get("task_id", "?"),
-                    f"D{s.get('difficulty', '?')}",
+                    r.get("task_id", "?"),
                     success_icon(ok),
                     f"[{sc_s}]{sc:.2f}[/{sc_s}]",
-                    str(c.get("total_tool_calls", 0)),
-                    str(c.get("disruptions_encountered", 0)),
-                    f"[{ds}]{dom}[/{ds}]",
-                    f"{c.get('duration_seconds', 0):.1f}s",
+                    str(r.get("total_tool_calls", 0)),
+                    f"{r.get('duration_seconds', 0):.1f}s",
                 )
 
             console.print(task_summary)
@@ -444,11 +374,11 @@ def main(
     """Render the full step-by-step narrative for an AgentDisruptBench run."""
     run_dir = resolve_run_dir(run_id, logs_dir)
     console.print(f"[dim]Loading from: {run_dir}[/dim]\n")
-    events = load_events(run_dir)
-    if not events:
+    data = load_events(run_dir)
+    if not data["runs"]:
         console.print("[yellow]No events found in this run.[/yellow]")
         raise typer.Exit(0)
-    render_run(events, run_dir)
+    render_run(data, run_dir)
 
 
 if __name__ == "__main__":

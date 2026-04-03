@@ -35,12 +35,10 @@ def _get_autogen_version() -> str:
     """Detect installed AutoGen version."""
     try:
         import autogen
+
         return getattr(autogen, "__version__", "0.2.0")
     except ImportError:
-        raise ImportError(
-            "AutoGen adapter requires autogen or pyautogen. "
-            "Install with: pip install pyautogen"
-        )
+        raise ImportError("AutoGen adapter requires autogen or pyautogen. Install with: pip install pyautogen")
 
 
 class AutoGenAdapter(BaseAdapter):
@@ -81,8 +79,7 @@ class AutoGenAdapter(BaseAdapter):
         wrapped = {}
         for name, fn in function_map.items():
             self._originals[name] = fn
-            proxy = ToolProxy(name=name, fn=fn, engine=self._engine,
-                              trace_collector=self._trace_collector)
+            proxy = ToolProxy(name=name, fn=fn, engine=self._engine, trace_collector=self._trace_collector)
             wrapped[name] = proxy
             logger.debug("autogen_v02_wrapped name=%s", name)
         return wrapped
@@ -113,12 +110,15 @@ class AutoGenAdapter(BaseAdapter):
             original_fn = tool._func
             self._originals[tool.name] = original_fn
             proxy = ToolProxy(
-                name=tool.name, fn=original_fn,
-                engine=self._engine, trace_collector=self._trace_collector,
+                name=tool.name,
+                fn=original_fn,
+                engine=self._engine,
+                trace_collector=self._trace_collector,
             )
 
             class DisruptedFunctionTool(FunctionTool):
                 """FunctionTool with disruption injection."""
+
                 def __init__(self, proxy, original):
                     self._proxy = proxy
                     self._original = original

@@ -84,21 +84,18 @@ class ToolProxy:
         real_latency_ms = (time.monotonic() - real_start) * 1000
 
         # --- 2. Run through disruption engine ---
-        observed_start = time.monotonic()
         disruption_type: DisruptionType | None = None
         observed_result = real_result
         observed_success = real_success
         observed_error = real_error
 
         try:
-            observed_result, observed_success, observed_error, disruption_type = (
-                self._engine.apply(
-                    tool_name=self.name,
-                    tool_input=kwargs,
-                    original_result=real_result,
-                    original_success=real_success,
-                    original_error=real_error,
-                )
+            observed_result, observed_success, observed_error, disruption_type = self._engine.apply(
+                tool_name=self.name,
+                tool_input=kwargs,
+                original_result=real_result,
+                original_success=real_success,
+                original_error=real_error,
             )
         except TimeoutError as te:
             observed_result = None

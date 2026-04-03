@@ -44,12 +44,10 @@ def _import_langchain():
     try:
         from langchain_core.tools import BaseTool  # noqa: F401
         from pydantic import PrivateAttr  # noqa: F401
+
         return True
     except ImportError:
-        raise ImportError(
-            "LangChain adapter requires langchain-core. "
-            "Install with: pip install langchain-core"
-        )
+        raise ImportError("LangChain adapter requires langchain-core. Install with: pip install langchain-core")
 
 
 class LangChainAdapter(BaseAdapter):

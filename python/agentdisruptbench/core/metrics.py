@@ -243,9 +243,7 @@ class MetricsCalculator:
         ) = self._compute_recovery(traces)
 
         # -- Disruption statistics --------------------------------------------
-        disruption_types_seen = list({
-            t.disruption_fired for t in traces if t.disruption_fired
-        })
+        disruption_types_seen = list({t.disruption_fired for t in traces if t.disruption_fired})
         max_cascade_depth = self._cascade_depth(traces)
 
         # -- Cost of resilience -----------------------------------------------
@@ -259,7 +257,7 @@ class MetricsCalculator:
             extra_tool_calls = total_tool_calls - baseline_result.total_tool_calls
             extra_latency_ms = total_latency_ms - baseline_result.total_latency_ms
             if baseline_result.success:
-                resilience_ratio = (1.0 if success else 0.0)
+                resilience_ratio = 1.0 if success else 0.0
             else:
                 resilience_ratio = None
 
@@ -273,14 +271,13 @@ class MetricsCalculator:
         loop_count = self._compute_loops(traces)
 
         # -- P1: Impossible task giveup ----------------------------------------
-        graceful_giveup = (
-            task.task_type == "impossible" and success
-        )
+        graceful_giveup = task.task_type == "impossible" and success
 
         # -- P1: Recovery strategy classification ------------------------------
         recovery_strategies = self._classify_recovery(traces, agent_output)
         if recovery_strategies:
             from collections import Counter
+
             _strategy_counter = Counter(recovery_strategies)
             dominant_strategy = min(
                 _strategy_counter,
@@ -290,9 +287,7 @@ class MetricsCalculator:
             dominant_strategy = ""
 
         # -- P2: Planning time ratio -------------------------------------------
-        planning_time_ratio = self._compute_planning_ratio(
-            traces, duration_seconds, run_start_time=run_start_time
-        )
+        planning_time_ratio = self._compute_planning_ratio(traces, duration_seconds, run_start_time=run_start_time)
 
         # -- P2: Handover detection --------------------------------------------
         handover_detected = self._check_handover(agent_output)
@@ -354,9 +349,7 @@ class MetricsCalculator:
     # Partial score — rubric-based evaluation
     # ------------------------------------------------------------------
 
-    def _evaluate_rubric(
-        self, task: Task, traces: list[ToolCallTrace], agent_output: str
-    ) -> float:
+    def _evaluate_rubric(self, task: Task, traces: list[ToolCallTrace], agent_output: str) -> float:
         """Evaluate agent output against ground-truth rubric.
 
         Uses string-matching on agent output and trace inspection to
@@ -399,7 +392,10 @@ class MetricsCalculator:
     # ------------------------------------------------------------------
 
     def _is_success(
-        self, task: Task, partial_score: float, agent_output: str,
+        self,
+        task: Task,
+        partial_score: float,
+        agent_output: str,
         traces: list[ToolCallTrace] | None = None,
     ) -> bool:
         """Determine if the task was successful.
@@ -435,9 +431,7 @@ class MetricsCalculator:
     # Recovery analysis
     # ------------------------------------------------------------------
 
-    def _compute_recovery(
-        self, traces: list[ToolCallTrace]
-    ) -> tuple[float, float, float, int, int]:
+    def _compute_recovery(self, traces: list[ToolCallTrace]) -> tuple[float, float, float, int, int]:
         """Compute recovery_rate, mean_steps_to_recovery, retry_efficiency.
 
         A recovery: tool call fails (disruption), then a subsequent call
@@ -447,7 +441,7 @@ class MetricsCalculator:
             (recovery_rate, mean_steps, retry_efficiency,
              disruptions_encountered, disruptions_recovered)
         """
-        failed_tools: dict[str, list[int]] = {}   # tool -> [index of failure]
+        failed_tools: dict[str, list[int]] = {}  # tool -> [index of failure]
         for i, t in enumerate(traces):
             if t.disruption_fired and not t.observed_success:
                 failed_tools.setdefault(t.tool_name, []).append(i)
@@ -474,14 +468,8 @@ class MetricsCalculator:
                             break
 
         recovery_rate = recovered / disruptions_encountered
-        mean_steps = (
-            sum(steps_to_recovery) / len(steps_to_recovery)
-            if steps_to_recovery
-            else 0.0
-        )
-        retry_eff = (
-            successful_retries / total_retries if total_retries > 0 else 1.0
-        )
+        mean_steps = sum(steps_to_recovery) / len(steps_to_recovery) if steps_to_recovery else 0.0
+        retry_eff = successful_retries / total_retries if total_retries > 0 else 1.0
 
         return (
             recovery_rate,
@@ -514,16 +502,22 @@ class MetricsCalculator:
     def _check_acknowledged(self, agent_output: str) -> bool:
         """Check if the agent communicated tool failure to the user."""
         keywords = [
-            "unable to", "failed to", "error", "could not",
-            "unavailable", "timed out", "sorry", "cannot",
-            "not able to", "issue", "problem",
+            "unable to",
+            "failed to",
+            "error",
+            "could not",
+            "unavailable",
+            "timed out",
+            "sorry",
+            "cannot",
+            "not able to",
+            "issue",
+            "problem",
         ]
         lower = agent_output.lower()
         return any(kw in lower for kw in keywords)
 
-    def _check_alternative(
-        self, traces: list[ToolCallTrace], task: Task
-    ) -> bool:
+    def _check_alternative(self, traces: list[ToolCallTrace], task: Task) -> bool:
         """Check if agent tried a different tool after a failure."""
         for i, t in enumerate(traces):
             if t.disruption_fired and not t.observed_success:
@@ -537,9 +531,7 @@ class MetricsCalculator:
     # P1-7: Recovery strategy classification
     # ------------------------------------------------------------------
 
-    def _classify_recovery(
-        self, traces: list[ToolCallTrace], agent_output: str
-    ) -> list[str]:
+    def _classify_recovery(self, traces: list[ToolCallTrace], agent_output: str) -> list[str]:
         """Classify each recovery event into a strategy category.
 
         Categories:
@@ -630,10 +622,17 @@ class MetricsCalculator:
     def _check_handover(agent_output: str) -> bool:
         """Check if agent suggested handing off to a human."""
         keywords = [
-            "hand over", "handover", "hand off", "handoff",
-            "escalate", "human agent", "human support",
-            "contact support", "manual intervention",
-            "speak to a representative", "customer service",
+            "hand over",
+            "handover",
+            "hand off",
+            "handoff",
+            "escalate",
+            "human agent",
+            "human support",
+            "contact support",
+            "manual intervention",
+            "speak to a representative",
+            "customer service",
         ]
         lower = agent_output.lower()
         return any(kw in lower for kw in keywords)
@@ -752,9 +751,7 @@ class MetricsCalculator:
 
         for t in traces:
             if t.disruption_fired and not t.observed_success:
-                cat = _DISRUPTION_TO_CATEGORY.get(
-                    t.disruption_fired, "UNKNOWN"
-                )
+                cat = _DISRUPTION_TO_CATEGORY.get(t.disruption_fired, "UNKNOWN")
                 counts[cat] = counts.get(cat, 0) + 1
 
         return counts
@@ -801,7 +798,7 @@ class MetricsCalculator:
         compensated = 0
         for idx, tool_name, entity_id in side_effect_calls:
             comp_tool = COMPENSATION_PAIRS[tool_name]
-            for j, t in enumerate(traces[idx + 1:], start=idx + 1):
+            for j, t in enumerate(traces[idx + 1 :], start=idx + 1):
                 if j in consumed:
                     continue
                 if t.tool_name == comp_tool and t.real_success:
@@ -862,8 +859,13 @@ class MetricsCalculator:
             return 0.0
 
         _RESOLVED_STATUSES = {
-            "cancelled", "canceled", "resolved", "refunded",
-            "rolled_back", "compensated", "reversed",
+            "cancelled",
+            "canceled",
+            "resolved",
+            "refunded",
+            "rolled_back",
+            "compensated",
+            "reversed",
         }
 
         unresolved = 0
@@ -888,9 +890,7 @@ class MetricsCalculator:
     # ------------------------------------------------------------------
 
     @staticmethod
-    def _compute_loops(
-        traces: list[ToolCallTrace], min_repeat: int = 3
-    ) -> int:
+    def _compute_loops(traces: list[ToolCallTrace], min_repeat: int = 3) -> int:
         """Count loops: N (>= min_repeat) consecutive identical calls.
 
         An identical call = same tool_name AND same inputs.

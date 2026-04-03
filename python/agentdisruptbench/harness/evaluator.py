@@ -100,8 +100,10 @@ class Evaluator:
                 fn = wrap_tool_with_state(tool_name, fn, state_manager)
                 # Then wrap with disruption proxy
                 proxied_tools[tool_name] = ToolProxy(
-                    name=tool_name, fn=fn,
-                    engine=engine, trace_collector=trace_collector,
+                    name=tool_name,
+                    fn=fn,
+                    engine=engine,
+                    trace_collector=trace_collector,
                 )
             else:
                 logger.warning("tool_not_found name=%s task=%s", tool_name, task.task_id)
@@ -155,8 +157,13 @@ class Evaluator:
         logger.info(
             "run_complete task=%s profile=%s success=%s partial=%.2f "
             "idempotency_violations=%d compensations=%d loops=%d duration=%.1fs",
-            task.task_id, profile_name, result.success,
-            result.partial_score, result.idempotency_violations,
-            result.compensation_count, result.loop_count, duration,
+            task.task_id,
+            profile_name,
+            result.success,
+            result.partial_score,
+            result.idempotency_violations,
+            result.compensation_count,
+            result.loop_count,
+            duration,
         )
         return result

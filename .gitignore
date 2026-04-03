@@ -36,11 +36,9 @@ htmlcov/
 results/
 evaluation_results/
 
-# Track consolidated run outputs
-!runs/
-!runs/**
-!legacy_traces/
-!legacy_traces/**
+# Ignore consolidated run outputs
+runs/
+legacy_traces/
 
 # Ignore loose log files but allow .jsonl inside runs/ and legacy_traces/
 *.log

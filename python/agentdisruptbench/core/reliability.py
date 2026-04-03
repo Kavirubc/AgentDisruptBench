@@ -72,11 +72,7 @@ def _compute_k_and_lambda(
     for r in results:
         k_groups[(r.task_id, r.profile_name)].append(r.success)
 
-    k_rates = [
-        sum(s) / len(s)
-        for s in k_groups.values()
-        if len(s) > 1
-    ]
+    k_rates = [sum(s) / len(s) for s in k_groups.values() if len(s) > 1]
     k_consistency = sum(k_rates) / len(k_rates) if k_rates else overall_rate
 
     # λ: pass rate across *unique* profiles per task; dedupe repeated seeds
@@ -88,14 +84,8 @@ def _compute_k_and_lambda(
     for (task_id, _), successes in profile_groups.items():
         task_profile_rates[task_id].append(sum(successes) / len(successes))
 
-    lambda_rates = [
-        sum(rates) / len(rates)
-        for rates in task_profile_rates.values()
-        if rates
-    ]
-    lambda_fault_tolerance = (
-        sum(lambda_rates) / len(lambda_rates) if lambda_rates else overall_rate
-    )
+    lambda_rates = [sum(rates) / len(rates) for rates in task_profile_rates.values() if rates]
+    lambda_fault_tolerance = sum(lambda_rates) / len(lambda_rates) if lambda_rates else overall_rate
 
     return k_consistency, lambda_fault_tolerance
 

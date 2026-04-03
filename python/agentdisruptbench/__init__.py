@@ -61,10 +61,10 @@ from agentdisruptbench.core.trace import ToolCallTrace, TraceCollector
 from agentdisruptbench.harness.evaluator import Evaluator
 from agentdisruptbench.harness.reporter import Reporter
 from agentdisruptbench.harness.runner import BenchmarkConfig, BenchmarkRunner
+from agentdisruptbench.tasks.registry import TaskRegistry
 
 # Tasks
 from agentdisruptbench.tasks.schemas import GroundTruth, Task
-from agentdisruptbench.tasks.registry import TaskRegistry
 
 # Tools
 from agentdisruptbench.tools.registry import ToolRegistry

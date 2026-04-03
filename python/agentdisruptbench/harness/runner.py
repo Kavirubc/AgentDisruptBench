@@ -26,9 +26,8 @@ import logging
 from dataclasses import dataclass, field
 from typing import Any, Callable
 
-from agentdisruptbench.core.engine import DisruptionConfig
-from agentdisruptbench.core.metrics import BenchmarkResult, MetricsCalculator
-from agentdisruptbench.core.profiles import BUILTIN_PROFILES, get_profile
+from agentdisruptbench.core.metrics import BenchmarkResult
+from agentdisruptbench.core.profiles import get_profile
 from agentdisruptbench.harness.evaluator import Evaluator
 from agentdisruptbench.tasks.registry import TaskRegistry
 from agentdisruptbench.tasks.schemas import Task
@@ -100,7 +99,9 @@ class BenchmarkRunner:
         tasks = self._get_tasks()
         logger.info(
             "benchmark_start tasks=%d profiles=%d seeds=%d",
-            len(tasks), len(self._config.profiles), len(self._config.seeds),
+            len(tasks),
+            len(self._config.profiles),
+            len(self._config.seeds),
         )
 
         all_results: list[BenchmarkResult] = []
@@ -149,7 +150,10 @@ class BenchmarkRunner:
 
                 logger.info(
                     "task_profile_complete task=%s profile=%s seed=%d success=%s",
-                    task.task_id, profile_name, seed, result.success,
+                    task.task_id,
+                    profile_name,
+                    seed,
+                    result.success,
                 )
 
         return results
