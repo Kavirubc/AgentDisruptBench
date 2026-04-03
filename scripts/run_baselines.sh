@@ -43,6 +43,7 @@ RESULTS_DIR="runs/baselines_${TIMESTAMP}"
 # Parse arguments
 QUICK=false
 MODEL_FILTER=""
+VERBOSE_FLAG=""
 while [[ $# -gt 0 ]]; do
     case $1 in
         --quick)
@@ -52,6 +53,10 @@ while [[ $# -gt 0 ]]; do
         --model)
             MODEL_FILTER="$2"
             shift 2
+            ;;
+        --verbose)
+            VERBOSE_FLAG="--verbose"
+            shift
             ;;
         *)
             echo "Unknown argument: $1"
@@ -94,6 +99,7 @@ run_eval() {
         --profiles "$profile" \
         --seeds $SEEDS \
         --output-dir "$RESULTS_DIR/${runner}_${model}_${profile}" \
+        $VERBOSE_FLAG \
         $extra_args \
         2>&1 | tee "$RESULTS_DIR/${runner}_${model}_${profile}.log"
 
