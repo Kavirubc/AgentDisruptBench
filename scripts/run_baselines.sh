@@ -142,7 +142,7 @@ if [ -z "$MODEL_FILTER" ] || [ "$MODEL_FILTER" = "gemini-3" ]; then
         echo "📊 Gemini 3 Flash"
         echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
         for profile in "${PROFILES[@]}"; do
-            run_eval "langchain" "gemini-3-flash" "$profile"
+            run_eval "langchain" "gemini-3-flash-preview" "$profile"
         done
     else
         echo "⚠️  Skipping Gemini 3 Flash: GOOGLE_API_KEY not set"
