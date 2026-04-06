@@ -41,6 +41,7 @@ echo "Repository: $HF_REPO"
 echo ""
 
 STAGING_DIR=$(mktemp -d)
+trap 'rm -rf "$STAGING_DIR"' EXIT
 echo "📁 Staging files in: $STAGING_DIR"
 
 # Copy README (dataset card)
@@ -61,6 +62,23 @@ if [ -f "python/agentdisruptbench/core/profiles.py" ]; then
     cp python/agentdisruptbench/core/profiles.py "$STAGING_DIR/profiles/profiles_source.py"
 fi
 
+# Validate Croissant hashes are populated
+echo "🔍 Validating Croissant metadata..."
+if ! python3 -c "
+import json
+with open('croissant.json') as f:
+    data = json.load(f)
+for dist in data.get('distribution', []):
+    sha = dist.get('sha256', '')
+    if not sha or len(sha) != 64:
+        print(f\"Invalid hash for {dist.get('name')}: {sha[:20]}...\")
+        exit(1)
+print('All hashes valid')
+"; then
+    echo "❌ Please run: python3 scripts/populate_croissant_hashes.py"
+    exit 1
+fi
+
 # Copy Croissant metadata
 cp croissant.json "$STAGING_DIR/"
 
@@ -69,8 +87,8 @@ cp DATASHEET.md "$STAGING_DIR/"
 
 echo ""
 echo "📦 Staged files:"
-find "$STAGING_DIR" -type f | sort | while read f; do
-    echo "  $(echo "$f" | sed "s|$STAGING_DIR/||")"
+find "$STAGING_DIR" -type f | sort | while read -r f; do
+    echo "  ${f#"$STAGING_DIR/"}"
 done
 
 echo ""
@@ -82,8 +100,7 @@ hf repo create "$HF_REPO" --type dataset 2>/dev/null || echo "  (repo already ex
 # Upload all files
 hf upload "$HF_REPO" "$STAGING_DIR" . --repo-type dataset
 
-# Cleanup
-rm -rf "$STAGING_DIR"
+# Cleanup handled by trap
 
 echo ""
 echo "============================================================"

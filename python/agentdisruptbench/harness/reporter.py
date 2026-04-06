@@ -81,7 +81,8 @@ class Reporter:
         ts = datetime.now(timezone.utc).isoformat()
 
         lines.append("# AgentDisruptBench — Benchmark Report")
-        lines.append(f"\nGenerated: {ts}\n")
+        lines.append(f"\nGenerated: {ts}")
+        lines.append("\n*Note: A Recovery Rate of 'N/A' means no disruptions were encountered during the task.* \n")
 
         # Aggregate stats
         profiles = sorted({r.profile_name for r in results})
@@ -95,10 +96,12 @@ class Reporter:
             success_pct = sum(1 for r in pr if r.success) / max(n, 1) * 100
             avg_partial = sum(r.partial_score for r in pr) / max(n, 1)
             avg_recovery = sum(r.recovery_rate for r in pr) / max(n, 1)
-            avg_extra = sum((r.extra_tool_calls or 0) for r in pr) / max(n, 1)
+            extra_list = [r.extra_tool_calls for r in pr if r.extra_tool_calls is not None]
+            avg_extra_str = f"{(sum(extra_list) / max(len(extra_list), 1)):.1f}" if extra_list else "N/A"
             lines.append(
-                f"| {profile} | {n} | {success_pct:.1f}% | {avg_partial:.3f} | {avg_recovery:.3f} | {avg_extra:.1f} |"
+                f"| {profile} | {n} | {success_pct:.1f}% | {avg_partial:.3f} | {avg_recovery:.3f} | {avg_extra_str} |"
             )
+        lines.append("")
 
         # Per-domain breakdown
         domains = sorted({r.task_id.split("_")[0] for r in results})
@@ -109,12 +112,15 @@ class Reporter:
             lines.append("| Task | Profile | Success | Partial | Recovery | Disruptions | Extra Calls |")
             lines.append("|------|---------|---------|---------|----------|-------------|-------------|")
             for r in sorted(dr, key=lambda x: (x.task_id, x.profile_name)):
+                rec_val = f"{r.recovery_rate:.2f}" if r.disruptions_encountered > 0 else "N/A"
+                extra_val = f"{r.extra_tool_calls}" if r.extra_tool_calls is not None else "N/A"
                 lines.append(
                     f"| {r.task_id} | {r.profile_name} | "
                     f"{'✅' if r.success else '❌'} | {r.partial_score:.2f} | "
-                    f"{r.recovery_rate:.2f} | {r.disruptions_encountered} | "
-                    f"{r.extra_tool_calls or 'N/A'} |"
+                    f"{rec_val} | {r.disruptions_encountered} | "
+                    f"{extra_val} |"
                 )
+            lines.append("")
 
         # Disruption type distribution
         lines.append("\n## Disruption Types Encountered\n")
@@ -127,6 +133,7 @@ class Reporter:
             lines.append("|------|-------|")
             for dt, count in sorted(type_counts.items(), key=lambda x: -x[1]):
                 lines.append(f"| {dt} | {count} |")
+            lines.append("")
         else:
             lines.append("No disruptions encountered.\n")
 

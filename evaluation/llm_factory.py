@@ -82,19 +82,13 @@ def _create_gemini_llm(config: RunnerConfig) -> Any:
         from langchain_google_genai import ChatGoogleGenerativeAI
     except ImportError:
         raise ImportError(
-            "Gemini models require langchain-google-genai. "
-            "Install with: pip install langchain-google-genai"
+            "Gemini models require langchain-google-genai. Install with: pip install langchain-google-genai"
         )
 
-    api_key = (
-        config.api_key
-        or os.environ.get("GEMINI_API_KEY")
-        or os.environ.get("GOOGLE_API_KEY")
-    )
+    api_key = config.api_key or os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
     if not api_key:
         raise ValueError(
-            "Gemini API key required. Set GEMINI_API_KEY or GOOGLE_API_KEY "
-            "env var, or pass api_key in RunnerConfig."
+            "Gemini API key required. Set GEMINI_API_KEY or GOOGLE_API_KEY env var, or pass api_key in RunnerConfig."
         )
 
     logger.info("creating_gemini_llm model=%s", config.model)
@@ -118,17 +112,11 @@ def _create_openai_llm(config: RunnerConfig) -> Any:
     try:
         from langchain_openai import ChatOpenAI
     except ImportError:
-        raise ImportError(
-            "OpenAI models require langchain-openai. "
-            "Install with: pip install langchain-openai"
-        )
+        raise ImportError("OpenAI models require langchain-openai. Install with: pip install langchain-openai")
 
     api_key = config.api_key or os.environ.get("OPENAI_API_KEY")
     if not api_key:
-        raise ValueError(
-            "OpenAI API key required. Set OPENAI_API_KEY env var "
-            "or pass api_key in RunnerConfig."
-        )
+        raise ValueError("OpenAI API key required. Set OPENAI_API_KEY env var or pass api_key in RunnerConfig.")
 
     logger.info("creating_openai_llm model=%s", config.model)
     kwargs: dict[str, Any] = {

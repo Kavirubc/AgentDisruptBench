@@ -2,7 +2,7 @@
 # AgentDisruptBench — Makefile
 # ============================================================
 
-.PHONY: help install install-dev test lint format typecheck clean eval eval-quick docker
+.PHONY: help install install-dev test test-cov lint format typecheck quality clean clean-runs validate-croissant eval eval-quick eval-openai eval-langchain docker-build docker-test
 
 PYTHON ?= python3
 PIP ?= pip

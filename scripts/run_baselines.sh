@@ -36,7 +36,7 @@ fi
 
 # --- Configuration ---
 PROFILES=("clean" "moderate_production" "hostile_environment")
-SEEDS="42 123 456"
+SEEDS=(42 123 456)
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 RESULTS_DIR="runs/baselines_${TIMESTAMP}"
 
@@ -71,7 +71,7 @@ done
 
 if [ "$QUICK" = true ]; then
     PROFILES=("clean" "moderate_production")
-    SEEDS="42"
+    SEEDS=(42)
     echo "🚀 Quick mode: 2 profiles, 1 seed"
 fi
 
@@ -82,7 +82,7 @@ echo "AgentDisruptBench — Baseline Evaluation"
 echo "============================================================"
 echo "Timestamp:  $TIMESTAMP"
 echo "Profiles:   ${PROFILES[*]}"
-echo "Seeds:      $SEEDS"
+echo "Seeds:      ${SEEDS[*]}"
 echo "Results:    $RESULTS_DIR"
 echo "============================================================"
 
@@ -95,17 +95,19 @@ run_eval() {
 
     echo ""
     echo "▶ Running: runner=$runner model=$model profile=$profile"
-    echo "  Seeds: $SEEDS"
+    echo "  Seeds: ${SEEDS[*]}"
 
-    python3 -m evaluation.run_benchmark \
-        --runner "$runner" \
-        --model "$model" \
-        --profiles "$profile" \
-        --seeds $SEEDS \
-        --output-dir "$RESULTS_DIR/${runner}_${model}_${profile}" \
-        $VERBOSE_FLAG \
-        $extra_args \
-        2>&1 | tee "$RESULTS_DIR/${runner}_${model}_${profile}.log"
+    cmd=(
+        python3 -m evaluation.run_benchmark
+        --runner "$runner"
+        --model "$model"
+        --profiles "$profile"
+        --seeds "${SEEDS[@]}"
+        --output-dir "$RESULTS_DIR/${runner}_${model}_${profile}"
+    )
+    [[ -n "$VERBOSE_FLAG" ]] && cmd+=("$VERBOSE_FLAG")
+    [[ -n "$extra_args" ]] && cmd+=($extra_args)
+    "${cmd[@]}" 2>&1 | tee "$RESULTS_DIR/${runner}_${model}_${profile}.log"
 
     echo "✅ Done: $runner/$model/$profile"
 }

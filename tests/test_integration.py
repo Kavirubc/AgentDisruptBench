@@ -17,12 +17,10 @@ Convention:
 
 from __future__ import annotations
 
-import json
 import tempfile
 from typing import Any
 
 import pytest
-
 from agentdisruptbench import (
     BenchmarkConfig,
     BenchmarkRunner,
@@ -35,7 +33,7 @@ from agentdisruptbench.core.proxy import ToolProxy
 from agentdisruptbench.core.trace import TraceCollector
 from agentdisruptbench.harness.reporter import Reporter
 from agentdisruptbench.tasks.schemas import Task
-from agentdisruptbench.tools.mock_tools import RetailTools, TravelTools, FinanceTools, DevopsTools
+from agentdisruptbench.tools.mock_tools import DevopsTools, FinanceTools, RetailTools, TravelTools
 
 
 class TestMockTools:
@@ -130,8 +128,7 @@ class TestToolProxy:
     def test_clean_passthrough(self):
         engine = DisruptionEngine(configs=[], seed=42)
         tc = TraceCollector()
-        proxy = ToolProxy(name="search_products", fn=RetailTools.search_products,
-                         engine=engine, trace_collector=tc)
+        proxy = ToolProxy(name="search_products", fn=RetailTools.search_products, engine=engine, trace_collector=tc)
         result = proxy(query="widget")
         assert "products" in result
         assert len(tc.get_traces()) == 1
@@ -142,8 +139,7 @@ class TestToolProxy:
             seed=42,
         )
         tc = TraceCollector()
-        proxy = ToolProxy(name="search_products", fn=RetailTools.search_products,
-                         engine=engine, trace_collector=tc)
+        proxy = ToolProxy(name="search_products", fn=RetailTools.search_products, engine=engine, trace_collector=tc)
         result = proxy(query="widget")
         assert result is None
         traces = tc.get_traces()
@@ -157,8 +153,7 @@ class TestTraceCollector:
     def test_jsonl_roundtrip(self):
         engine = DisruptionEngine(configs=[], seed=42)
         tc = TraceCollector()
-        proxy = ToolProxy(name="test", fn=lambda: {"ok": True},
-                         engine=engine, trace_collector=tc)
+        proxy = ToolProxy(name="test", fn=lambda: {"ok": True}, engine=engine, trace_collector=tc)
         proxy()
         proxy()
 
@@ -178,7 +173,11 @@ class TestEndToEnd:
             for name in task.required_tools:
                 if name in tools:
                     try:
-                        r = tools[name](query="test") if name == "search_products" else tools[name](product_id="PRD-abc")
+                        r = (
+                            tools[name](query="test")
+                            if name == "search_products"
+                            else tools[name](product_id="PRD-abc")
+                        )
                         results.append(f"OK: {name}")
                     except Exception as e:
                         results.append(f"Error: {name}: {e}")
@@ -212,15 +211,27 @@ class TestEndToEnd:
         from agentdisruptbench.core.metrics import BenchmarkResult
 
         result = BenchmarkResult(
-            task_id="test_001", agent_id="test", profile_name="clean",
-            seed=42, success=True, partial_score=1.0, agent_output="OK",
-            resilience_ratio=None, recovery_rate=1.0,
-            mean_steps_to_recovery=0.0, retry_efficiency=1.0,
-            acknowledged_failure=False, attempted_alternative=False,
-            total_tool_calls=1, extra_tool_calls=None,
-            total_latency_ms=10.0, extra_latency_ms=None,
-            disruptions_encountered=0, disruptions_recovered=0,
-            disruption_types_seen=[], max_cascade_depth=0,
+            task_id="test_001",
+            agent_id="test",
+            profile_name="clean",
+            seed=42,
+            success=True,
+            partial_score=1.0,
+            agent_output="OK",
+            resilience_ratio=None,
+            recovery_rate=1.0,
+            mean_steps_to_recovery=0.0,
+            retry_efficiency=1.0,
+            acknowledged_failure=False,
+            attempted_alternative=False,
+            total_tool_calls=1,
+            extra_tool_calls=None,
+            total_latency_ms=10.0,
+            extra_latency_ms=None,
+            disruptions_encountered=0,
+            disruptions_recovered=0,
+            disruption_types_seen=[],
+            max_cascade_depth=0,
         )
 
         with tempfile.TemporaryDirectory() as tmpdir:

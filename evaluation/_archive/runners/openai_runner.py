@@ -30,8 +30,9 @@ import logging
 import os
 from typing import Any
 
-from evaluation.base_runner import BaseAgentRunner, RunnerConfig
 from agentdisruptbench.tasks.schemas import Task
+
+from evaluation.base_runner import BaseAgentRunner, RunnerConfig
 
 logger = logging.getLogger("agentdisruptbench.evaluation.runners.openai")
 
@@ -50,18 +51,20 @@ def _build_tool_schemas(tools: dict[str, Any]) -> list[dict]:
     """Build OpenAI-compatible tool schemas from a tools dict."""
     schemas = []
     for name in tools:
-        schemas.append({
-            "type": "function",
-            "function": {
-                "name": name,
-                "description": f"Execute the {name} tool",
-                "parameters": {
-                    "type": "object",
-                    "properties": {},
-                    "additionalProperties": True,
+        schemas.append(
+            {
+                "type": "function",
+                "function": {
+                    "name": name,
+                    "description": f"Execute the {name} tool",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {},
+                        "additionalProperties": True,
+                    },
                 },
-            },
-        })
+            }
+        )
     return schemas
 
 
@@ -92,17 +95,11 @@ class OpenAIRunner(BaseAgentRunner):
         try:
             from openai import OpenAI
         except ImportError:
-            raise ImportError(
-                "OpenAI runner requires the openai package. "
-                "Install with: pip install openai"
-            )
+            raise ImportError("OpenAI runner requires the openai package. Install with: pip install openai")
 
         api_key = self.config.api_key or os.environ.get("OPENAI_API_KEY")
         if not api_key:
-            raise ValueError(
-                "OpenAI API key required. Set OPENAI_API_KEY env var "
-                "or pass api_key in RunnerConfig."
-            )
+            raise ValueError("OpenAI API key required. Set OPENAI_API_KEY env var or pass api_key in RunnerConfig.")
 
         self._client = OpenAI(api_key=api_key)
         super().setup()
@@ -115,11 +112,14 @@ class OpenAIRunner(BaseAgentRunner):
         tool_schemas = _build_tool_schemas(tools)
         messages = [
             {"role": "system", "content": _SYSTEM_PROMPT},
-            {"role": "user", "content": (
-                f"Task: {task.description}\n\n"
-                f"Available tools: {', '.join(tools.keys())}\n\n"
-                "Please complete this task using the available tools."
-            )},
+            {
+                "role": "user",
+                "content": (
+                    f"Task: {task.description}\n\n"
+                    f"Available tools: {', '.join(tools.keys())}\n\n"
+                    "Please complete this task using the available tools."
+                ),
+            },
         ]
 
         for step in range(self.config.max_steps):
@@ -164,11 +164,13 @@ class OpenAIRunner(BaseAgentRunner):
                     except Exception as exc:
                         tool_result = json.dumps({"error": str(exc)})
 
-                messages.append({
-                    "role": "tool",
-                    "tool_call_id": tc.id,
-                    "content": tool_result,
-                })
+                messages.append(
+                    {
+                        "role": "tool",
+                        "tool_call_id": tc.id,
+                        "content": tool_result,
+                    }
+                )
 
                 if self.config.verbose:
                     print(f"  [tool] {func_name}({func_args}) → {tool_result[:200]}")

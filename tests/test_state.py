@@ -26,7 +26,6 @@ from agentdisruptbench.core.trace import ToolCallTrace
 from agentdisruptbench.tools.mock_tools import RetailTools
 from agentdisruptbench.tools.stateful import SIDE_EFFECT_TOOLS, wrap_tool_with_state
 
-
 # ===================================================================
 # StateManager Tests
 # ===================================================================
@@ -283,12 +282,18 @@ class TestLoopDetection:
     @staticmethod
     def _make_trace(tool_name: str, inputs: dict | None = None, success: bool = True) -> ToolCallTrace:
         return ToolCallTrace(
-            call_id="test", tool_name=tool_name, inputs=inputs or {"q": "widget"},
+            call_id="test",
+            tool_name=tool_name,
+            inputs=inputs or {"q": "widget"},
             real_result={"ok": True},
             observed_result={"ok": True} if success else None,
-            real_success=True, observed_success=success,
-            disruption_fired=None, real_latency_ms=10.0,
-            observed_latency_ms=10.0, error=None, timestamp=0.0,
+            real_success=True,
+            observed_success=success,
+            disruption_fired=None,
+            real_latency_ms=10.0,
+            observed_latency_ms=10.0,
+            error=None,
+            timestamp=0.0,
             call_number=1,
         )
 
@@ -317,10 +322,9 @@ class TestLoopDetection:
 
     def test_multiple_loops(self):
         """Two separate loops."""
-        traces = (
-            [self._make_trace("search_products", {"q": "a"})] * 3
-            + [self._make_trace("check_inventory", {"id": "x"})] * 4
-        )
+        traces = [self._make_trace("search_products", {"q": "a"})] * 3 + [
+            self._make_trace("check_inventory", {"id": "x"})
+        ] * 4
         assert MetricsCalculator._compute_loops(traces) == 2
 
     def test_below_threshold(self):
@@ -353,10 +357,7 @@ class TestSideEffectScore:
     def test_many_changes(self):
         """5+ changes → score = 1.0."""
         diff = {
-            "orders": [
-                {"entity_id": f"ORD-{i}", "type": "created"}
-                for i in range(5)
-            ],
+            "orders": [{"entity_id": f"ORD-{i}", "type": "created"} for i in range(5)],
         }
         score = MetricsCalculator._compute_side_effect_score(diff)
         assert score == 1.0
@@ -366,8 +367,7 @@ class TestSideEffectScore:
         diff = {
             "bookings": [
                 {"entity_id": "BK-001", "type": "deleted"},  # resolved
-                {"entity_id": "BK-002", "type": "modified",
-                 "after": {"status": "cancelled"}},  # resolved
+                {"entity_id": "BK-002", "type": "modified", "after": {"status": "cancelled"}},  # resolved
                 {"entity_id": "BK-003", "type": "created"},  # unresolved
             ],
         }
@@ -386,16 +386,23 @@ class TestEntityCompensation:
 
     @staticmethod
     def _make_trace(
-        tool_name: str, inputs: dict | None = None,
+        tool_name: str,
+        inputs: dict | None = None,
         real_result: dict | None = None,
     ) -> ToolCallTrace:
         return ToolCallTrace(
-            call_id="test", tool_name=tool_name,
-            inputs=inputs or {}, real_result=real_result or {"ok": True},
+            call_id="test",
+            tool_name=tool_name,
+            inputs=inputs or {},
+            real_result=real_result or {"ok": True},
             observed_result={"ok": True},
-            real_success=True, observed_success=True,
-            disruption_fired=None, real_latency_ms=10.0,
-            observed_latency_ms=10.0, error=None, timestamp=0.0,
+            real_success=True,
+            observed_success=True,
+            disruption_fired=None,
+            real_latency_ms=10.0,
+            observed_latency_ms=10.0,
+            error=None,
+            timestamp=0.0,
             call_number=1,
         )
 

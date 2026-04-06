@@ -50,13 +50,13 @@ def resolve_run_dir(run_id: Optional[str], logs_dir: str = "runs") -> Path:
     logs_root = Path(logs_dir)
     if run_id:
         return logs_root / run_id
-    
+
     # Default is finding the most recently modified directory in runs/
     candidates = [p for p in logs_root.iterdir() if p.is_dir()]
     if not candidates:
         console.print(f"[red]No run directories found under {logs_root}/[/red]")
         raise typer.Exit(1)
-    
+
     return max(candidates, key=lambda p: p.stat().st_mtime)
 
 
@@ -66,21 +66,21 @@ def load_events(run_dir: Path) -> dict[str, Any]:
     if not task_logs_dir.exists():
         console.print(f"[red]No task_logs directory found in {run_dir}.[/red]")
         raise typer.Exit(1)
-        
+
     runs = []
     for log_file in sorted(task_logs_dir.glob("*.json")):
         try:
             with open(log_file) as f:
                 runs.append(json.load(f))
-        except Exception as e:
+        except Exception:
             pass
-            
+
     summary_path = run_dir / "summary.json"
     summary = {}
     if summary_path.exists():
         with open(summary_path) as f:
             summary = json.load(f)
-            
+
     return {"runs": runs, "summary": summary}
 
 
@@ -132,25 +132,26 @@ def strategy_style(strat: str) -> str:
 def render_run(data: dict[str, Any], run_dir: Path) -> None:
     runs = data.get("runs", [])
     summary = data.get("summary", {})
-    
+
     if not runs:
         console.print("[yellow]No tasks found to render.[/yellow]")
         return
-        
+
     import sys
-    import os
     from pathlib import Path
+
     try:
         project_root = str(Path(__file__).parent.parent.absolute())
         if project_root not in sys.path:
             sys.path.insert(0, project_root)
         from agentdisruptbench import TaskRegistry
+
         registry = TaskRegistry.from_builtin()
         task_map = {
             t.task_id: {
                 "difficulty": t.difficulty,
-                "ground_truth": getattr(t.ground_truth, "expected_outcome", "?") if t.ground_truth else "?"
-            } 
+                "ground_truth": getattr(t.ground_truth, "expected_outcome", "?") if t.ground_truth else "?",
+            }
             for t in registry.all_tasks()
         }
     except Exception:
@@ -173,7 +174,7 @@ def render_run(data: dict[str, Any], run_dir: Path) -> None:
     # ── PER-TASK BREAKDOWN ────────────────────────────────────────────────────
     for block_idx, r in enumerate(runs):
         tool_calls = r.get("traces", [])
-        rac_events = [] # Not stored in new format yet
+        rac_events = []  # Not stored in new format yet
         completed = r
 
         task_id = r.get("task_id", "")
@@ -184,8 +185,7 @@ def render_run(data: dict[str, Any], run_dir: Path) -> None:
         status_icon = success_icon(success)
         sc = score_color(score)
         console.rule(
-            f"[bold yellow]Task {block_idx + 1}: {task_id}[/bold yellow]  "
-            f"{status_icon}  [{sc}]{score:.0%}[/{sc}]",
+            f"[bold yellow]Task {block_idx + 1}: {task_id}[/bold yellow]  {status_icon}  [{sc}]{score:.0%}[/{sc}]",
             style="yellow",
         )
 
@@ -193,7 +193,7 @@ def render_run(data: dict[str, Any], run_dir: Path) -> None:
         info = Table(show_header=False, box=box.SIMPLE, padding=(0, 1))
         info.add_column("Key", style="bold dim")
         info.add_column("Value")
-        
+
         task_info = task_map.get(task_id, {})
         gt_outcome = task_info.get("ground_truth", "—")
         info.add_row("Ground Truth", f"[bold dim]{gt_outcome}[/bold dim]")
@@ -244,11 +244,13 @@ def render_run(data: dict[str, Any], run_dir: Path) -> None:
                 }.get(level, "white")
                 rac_table.add_row(str(j), f"[{level_style}]{level}[/{level_style}]", msg)
 
-            console.print(Panel(
-                rac_table,
-                title="[bold magenta]RAC Compensation Events[/bold magenta]",
-                border_style="magenta",
-            ))
+            console.print(
+                Panel(
+                    rac_table,
+                    title="[bold magenta]RAC Compensation Events[/bold magenta]",
+                    border_style="magenta",
+                )
+            )
 
         # ── METRICS ───────────────────────────────────────────────────────────
         metrics = Table(show_header=False, box=box.SIMPLE, padding=(0, 1))
@@ -307,10 +309,7 @@ def render_run(data: dict[str, Any], run_dir: Path) -> None:
         if completed.get("failure_categories"):
             metrics.add_row(
                 "Failure Categories",
-                ", ".join(
-                    f"{k}:{v}"
-                    for k, v in sorted(completed["failure_categories"].items())
-                ),
+                ", ".join(f"{k}:{v}" for k, v in sorted(completed["failure_categories"].items())),
             )
 
         console.print(Panel(metrics, title="[bold]Metrics[/bold]", border_style="yellow"))
@@ -328,11 +327,13 @@ def render_run(data: dict[str, Any], run_dir: Path) -> None:
                         parts.append(str(item))
                 output = "\n".join(parts)
             output = str(output)
-            console.print(Panel(
-                Text(output, style="white"),
-                title="[bold]Agent Output[/bold]",
-                border_style="dim",
-            ))
+            console.print(
+                Panel(
+                    Text(output, style="white"),
+                    title="[bold]Agent Output[/bold]",
+                    border_style="dim",
+                )
+            )
 
     # ── RUN SUMMARY ───────────────────────────────────────────────────────────
     if summary:
@@ -375,18 +376,20 @@ def render_run(data: dict[str, Any], run_dir: Path) -> None:
                 ok = r.get("success", False)
                 sc = r.get("partial_score", 0)
                 sc_s = score_color(sc)
-                
+
                 tid = r.get("task_id", "?")
                 task_info = task_map.get(tid, {})
                 diff = str(r.get("difficulty") or task_info.get("difficulty", "?"))
-                
+
                 gt = task_info.get("ground_truth", "—")
                 gt_display = gt[:37] + "..." if len(gt) > 40 else gt
 
                 dist = str(r.get("disruptions_encountered", 0))
                 recv = r.get("recovery_rate", 0)
                 strat = r.get("dominant_strategy") or "—"
-                strat_str = f"[{strategy_style(strat)}]{strat}[/{strategy_style(strat)}]" if strat != "—" else "[dim]—[/dim]"
+                strat_str = (
+                    f"[{strategy_style(strat)}]{strat}[/{strategy_style(strat)}]" if strat != "—" else "[dim]—[/dim]"
+                )
 
                 task_summary.add_row(
                     tid,

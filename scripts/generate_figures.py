@@ -25,20 +25,10 @@ from collections import Counter, defaultdict
 from pathlib import Path
 
 import matplotlib
+
 matplotlib.use("Agg")  # Non-interactive backend
 import matplotlib.pyplot as plt
 import numpy as np
-
-
-# -- Color palette: NeurIPS-friendly, colorblind-safe --
-COLORS = {
-    "primary": "#2E86AB",
-    "secondary": "#A23B72",
-    "accent": "#F18F01",
-    "success": "#2CA58D",
-    "danger": "#E84855",
-    "neutral": "#6C757D",
-}
 
 MODEL_COLORS = ["#2E86AB", "#A23B72", "#F18F01", "#2CA58D", "#E84855", "#8B5CF6"]
 
@@ -47,12 +37,15 @@ def load_results(results_dir: Path) -> list[dict]:
     """Load all results.json files from a baselines run directory."""
     all_results = []
     for results_file in results_dir.rglob("results.json"):
-        with open(results_file) as f:
-            data = json.load(f)
-            if isinstance(data, list):
-                all_results.extend(data)
-            else:
-                all_results.append(data)
+        try:
+            with open(results_file, encoding="utf-8") as f:
+                data = json.load(f)
+                if isinstance(data, list):
+                    all_results.extend(data)
+                else:
+                    all_results.append(data)
+        except (json.JSONDecodeError, OSError) as e:
+            print(f"  ⚠️  Failed to load {results_file}: {e}")
     return all_results
 
 
@@ -71,13 +64,17 @@ def fig_heatmap(results: list[dict], output_dir: Path):
         return
 
     # Build matrix
+    model_idx = {m: i for i, m in enumerate(models)}
+    disruption_idx = {d: i for i, d in enumerate(disruption_types)}
     matrix = np.zeros((len(models), len(disruption_types)))
     counts = np.zeros_like(matrix)
     for r in results:
-        mi = models.index(r.get("runner_name", "unknown"))
+        mi = model_idx.get(r.get("runner_name", "unknown"))
+        if mi is None:
+            continue
         for d in r.get("disruption_types_seen", []):
-            if d in disruption_types:
-                di = disruption_types.index(d)
+            di = disruption_idx.get(d)
+            if di is not None:
                 counts[mi, di] += 1
                 if r.get("success", False):
                     matrix[mi, di] += 1
@@ -149,10 +146,11 @@ def fig_difficulty_degradation(results: list[dict], output_dir: Path):
         ax.errorbar(difficulties, means, yerr=stds, label=profile,
                     marker="o", capsize=3, color=color, linewidth=2)
 
+    all_difficulties = sorted({d for diff_scores in groups.values() for d in diff_scores.keys()})
     ax.set_xlabel("Task Difficulty")
     ax.set_ylabel("Mean Partial Score")
     ax.set_title("Score Degradation by Difficulty Level")
-    ax.set_xticks(range(1, 6))
+    ax.set_xticks(all_difficulties if all_difficulties else range(1, 6))
     ax.set_ylim(-0.05, 1.05)
     ax.legend(fontsize=8)
     ax.grid(alpha=0.3)
@@ -164,7 +162,12 @@ def fig_difficulty_degradation(results: list[dict], output_dir: Path):
 
 def fig_recovery_distribution(results: list[dict], output_dir: Path):
     """Stacked bar chart: recovery strategy distribution per model."""
-    strategy_options = ["RETRY", "ALTERNATIVE", "ESCALATION", "GIVEUP", "LUCKY"]
+    known_order = ["RETRY", "ALTERNATIVE", "ESCALATION", "GIVEUP", "LUCKY"]
+    all_strategies = set()
+    for r in results:
+        all_strategies.update(r.get("recovery_strategies", []))
+    strategy_options = [s for s in known_order if s in all_strategies]
+    strategy_options += sorted(all_strategies - set(known_order))
     models = sorted({r.get("runner_name", "unknown") for r in results})
 
     model_strats: dict[str, Counter] = {m: Counter() for m in models}

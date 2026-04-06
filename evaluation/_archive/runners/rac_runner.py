@@ -39,8 +39,14 @@ from typing import Any
 from agentdisruptbench.tasks.schemas import Task
 
 from evaluation.base_runner import (
-    BaseAgentRunner, RunnerConfig,
-    _RESET, _BOLD, _DIM, _GREEN, _RED, _YELLOW, _CYAN, _MAGENTA,
+    _BOLD,
+    _CYAN,
+    _DIM,
+    _GREEN,
+    _RED,
+    _RESET,
+    BaseAgentRunner,
+    RunnerConfig,
 )
 from evaluation.llm_factory import create_langchain_llm, detect_provider
 
@@ -110,31 +116,35 @@ class RACRunner(BaseAgentRunner):
         #   ToolProxy._fn → may be a stateful_wrapper(**kwargs) or the raw static method
         #   stateful_wrapper closure → contains the real mock tool function
         # We keep unwrapping until we find a function with named parameters.
-        real_fn = getattr(proxy_fn, '_fn', None) or proxy_fn
+        real_fn = getattr(proxy_fn, "_fn", None) or proxy_fn
 
         # If real_fn only has **kwargs, try to find the original fn in its closure
         try:
             sig = inspect.signature(real_fn)
             params = [
-                p for p in sig.parameters.values()
+                p
+                for p in sig.parameters.values()
                 if p.name not in ("self", "cls")
-                and p.kind not in (
+                and p.kind
+                not in (
                     inspect.Parameter.VAR_KEYWORD,
                     inspect.Parameter.VAR_POSITIONAL,
                 )
             ]
             if not params:
                 # Look inside closure cells for a callable with real params
-                closure = getattr(real_fn, '__closure__', None) or []
+                closure = getattr(real_fn, "__closure__", None) or []
                 for cell in closure:
                     try:
                         candidate = cell.cell_contents
                         if callable(candidate) and candidate is not real_fn:
                             csig = inspect.signature(candidate)
                             cparams = [
-                                p for p in csig.parameters.values()
+                                p
+                                for p in csig.parameters.values()
                                 if p.name not in ("self", "cls")
-                                and p.kind not in (
+                                and p.kind
+                                not in (
                                     inspect.Parameter.VAR_KEYWORD,
                                     inspect.Parameter.VAR_POSITIONAL,
                                 )
@@ -210,11 +220,10 @@ class RACRunner(BaseAgentRunner):
 
             def _make_tool_fn(captured_fn=proxy_fn, tool_name=name):
                 """Create a tool function that accepts **kwargs."""
+
                 def tool_fn(**kwargs) -> str:
                     if verbose:
-                        args_str = ", ".join(
-                            f"{k}={repr(v)[:40]}" for k, v in kwargs.items()
-                        )
+                        args_str = ", ".join(f"{k}={repr(v)[:40]}" for k, v in kwargs.items())
                         print(f"    {_CYAN}🔧 {_BOLD}{tool_name}{_RESET}{_CYAN}({args_str}){_RESET}")
                     try:
                         result = captured_fn(**kwargs)
@@ -226,6 +235,7 @@ class RACRunner(BaseAgentRunner):
                         if verbose:
                             print(f"    {_RED}✗  → {exc}{_RESET}")
                         return json.dumps({"error": str(exc), "status": "failed"})
+
                 return tool_fn
 
             # Build Pydantic schema from the underlying mock tool's signature
@@ -335,9 +345,7 @@ class RACRunner(BaseAgentRunner):
                 else:
                     content = str(content)
 
-                self._task_api_calls += sum(
-                    1 for m in messages if getattr(m, "type", "") == "ai"
-                )
+                self._task_api_calls += sum(1 for m in messages if getattr(m, "type", "") == "ai")
 
                 # Step 6: Log RAC transaction log for analysis
                 middleware = get_compensation_middleware(agent)
@@ -346,12 +354,15 @@ class RACRunner(BaseAgentRunner):
                     if log_snapshot:
                         logger.info(
                             "rac_transaction_log task=%s entries=%d",
-                            task.task_id, len(log_snapshot),
+                            task.task_id,
+                            len(log_snapshot),
                         )
                         for rid, record in log_snapshot.items():
                             logger.debug(
                                 "  action=%s status=%s compensator=%s",
-                                record.action, record.status, record.compensator,
+                                record.action,
+                                record.status,
+                                record.compensator,
                             )
 
                 return content or "[No response from agent]"

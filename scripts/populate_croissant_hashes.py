@@ -17,7 +17,6 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 CROISSANT_PATH = PROJECT_ROOT / "croissant.json"
-TASKS_DIR = PROJECT_ROOT / "python" / "agentdisruptbench" / "tasks" / "builtin"
 
 
 def sha256_file(path: Path) -> str:

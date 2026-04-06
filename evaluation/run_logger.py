@@ -60,7 +60,6 @@ class RunLogger:
         self._log_path = self.run_dir / "run_log.jsonl"
         self._f = open(self._log_path, "w")
 
-
     def emit(self, event_type: str, payload: dict[str, Any]) -> None:
         """Append a structured event to the log.
 

@@ -20,10 +20,7 @@ from __future__ import annotations
 import json
 import os
 import sys
-import tempfile
 from pathlib import Path
-
-import pytest
 
 # Ensure project root is on path
 project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -35,7 +32,6 @@ from evaluation.compare_runs import (
     discover_runs,
     load_run_summary,
 )
-
 
 # ─── FIXTURES ─────────────────────────────────────────────────────────────────
 
@@ -74,77 +70,97 @@ def _make_events(
     ]
 
     task_list = tasks or [
-        {"task_id": "task_001", "title": "Test Task", "difficulty": 1,
-         "success": True, "partial_score": 0.8, "total_tool_calls": 3},
-        {"task_id": "task_002", "title": "Test Task 2", "difficulty": 2,
-         "success": False, "partial_score": 0.4, "total_tool_calls": 5},
+        {
+            "task_id": "task_001",
+            "title": "Test Task",
+            "difficulty": 1,
+            "success": True,
+            "partial_score": 0.8,
+            "total_tool_calls": 3,
+        },
+        {
+            "task_id": "task_002",
+            "title": "Test Task 2",
+            "difficulty": 2,
+            "success": False,
+            "partial_score": 0.4,
+            "total_tool_calls": 5,
+        },
     ]
 
-    events.append({
-        "timestamp": "2026-03-25T00:00:00+00:00",
-        "event_type": "tasks_selected",
-        "payload": {
-            "count": len(task_list),
-            "tasks": [
-                {
-                    "id": t["task_id"],
-                    "title": t.get("title", ""),
-                    "difficulty": t.get("difficulty", 1),
-                    "tools": [],
-                    "depth": 1,
-                }
-                for t in task_list
-            ],
-        },
-    })
+    events.append(
+        {
+            "timestamp": "2026-03-25T00:00:00+00:00",
+            "event_type": "tasks_selected",
+            "payload": {
+                "count": len(task_list),
+                "tasks": [
+                    {
+                        "id": t["task_id"],
+                        "title": t.get("title", ""),
+                        "difficulty": t.get("difficulty", 1),
+                        "tools": [],
+                        "depth": 1,
+                    }
+                    for t in task_list
+                ],
+            },
+        }
+    )
 
     successful = 0
     for t in task_list:
-        events.append({
-            "timestamp": "2026-03-25T00:00:01+00:00",
-            "event_type": "task_started",
-            "payload": {
-                "task_id": t["task_id"],
-                "title": t.get("title", ""),
-                "difficulty": t.get("difficulty", 1),
-                "task_type": "standard",
-                "required_tools": [],
-                "expected_depth": 1,
-                "profile": profile,
-            },
-        })
-        events.append({
-            "timestamp": "2026-03-25T00:00:02+00:00",
-            "event_type": "task_completed",
-            "payload": {
-                "task_id": t["task_id"],
-                "success": t.get("success", False),
-                "partial_score": t.get("partial_score", 0.0),
-                "recovery_rate": t.get("recovery_rate", 1.0),
-                "total_tool_calls": t.get("total_tool_calls", 0),
-                "disruptions_encountered": t.get("disruptions_encountered", 0),
-                "duration_seconds": t.get("duration_seconds", 1.0),
-                "recovery_strategies": [],
-                "dominant_strategy": "",
-                "tool_hallucination_rate": 0.0,
-            },
-        })
+        events.append(
+            {
+                "timestamp": "2026-03-25T00:00:01+00:00",
+                "event_type": "task_started",
+                "payload": {
+                    "task_id": t["task_id"],
+                    "title": t.get("title", ""),
+                    "difficulty": t.get("difficulty", 1),
+                    "task_type": "standard",
+                    "required_tools": [],
+                    "expected_depth": 1,
+                    "profile": profile,
+                },
+            }
+        )
+        events.append(
+            {
+                "timestamp": "2026-03-25T00:00:02+00:00",
+                "event_type": "task_completed",
+                "payload": {
+                    "task_id": t["task_id"],
+                    "success": t.get("success", False),
+                    "partial_score": t.get("partial_score", 0.0),
+                    "recovery_rate": t.get("recovery_rate", 1.0),
+                    "total_tool_calls": t.get("total_tool_calls", 0),
+                    "disruptions_encountered": t.get("disruptions_encountered", 0),
+                    "duration_seconds": t.get("duration_seconds", 1.0),
+                    "recovery_strategies": [],
+                    "dominant_strategy": "",
+                    "tool_hallucination_rate": 0.0,
+                },
+            }
+        )
         if t.get("success", False):
             successful += 1
 
     total = len(task_list)
     avg_score = sum(t.get("partial_score", 0.0) for t in task_list) / max(total, 1)
-    events.append({
-        "timestamp": "2026-03-25T00:00:03+00:00",
-        "event_type": "run_completed",
-        "payload": {
-            "total_tasks": total,
-            "successful": successful,
-            "success_rate": round(successful / max(total, 1), 4),
-            "avg_partial_score": round(avg_score, 4),
-            "total_duration_seconds": 2.0,
-        },
-    })
+    events.append(
+        {
+            "timestamp": "2026-03-25T00:00:03+00:00",
+            "event_type": "run_completed",
+            "payload": {
+                "total_tasks": total,
+                "successful": successful,
+                "success_rate": round(successful / max(total, 1), 4),
+                "avg_partial_score": round(avg_score, 4),
+                "total_duration_seconds": 2.0,
+            },
+        }
+    )
 
     return events
 
@@ -201,8 +217,13 @@ class TestLoadRunSummary:
         """Should backfill title and difficulty from task_started events."""
         events = _make_events(
             tasks=[
-                {"task_id": "retail_001", "title": "Search products",
-                 "difficulty": 3, "success": True, "partial_score": 0.9},
+                {
+                    "task_id": "retail_001",
+                    "title": "Search products",
+                    "difficulty": 3,
+                    "success": True,
+                    "partial_score": 0.9,
+                },
             ],
         )
         _write_run_log(tmp_path / "run", events)

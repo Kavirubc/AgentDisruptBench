@@ -26,8 +26,9 @@ import json
 import logging
 from typing import Any
 
-from evaluation.base_runner import BaseAgentRunner, RunnerConfig
 from agentdisruptbench.tasks.schemas import Task
+
+from evaluation.base_runner import BaseAgentRunner, RunnerConfig
 
 logger = logging.getLogger("agentdisruptbench.evaluation.runners.simple")
 
@@ -96,9 +97,7 @@ class SimpleRunner(BaseAgentRunner):
             # Attempt 1
             try:
                 result = tool_fn(**kwargs)
-                results.append(
-                    f"[{tool_name}] OK: {json.dumps(result, default=str)[:300]}"
-                )
+                results.append(f"[{tool_name}] OK: {json.dumps(result, default=str)[:300]}")
                 continue
             except Exception as exc:
                 results.append(f"[{tool_name}] FAIL: {exc}")
@@ -106,9 +105,7 @@ class SimpleRunner(BaseAgentRunner):
             # Retry once
             try:
                 result = tool_fn(**kwargs)
-                results.append(
-                    f"[{tool_name}] RETRY OK: {json.dumps(result, default=str)[:300]}"
-                )
+                results.append(f"[{tool_name}] RETRY OK: {json.dumps(result, default=str)[:300]}")
             except Exception as exc:
                 results.append(f"[{tool_name}] RETRY FAIL: {exc}")
 

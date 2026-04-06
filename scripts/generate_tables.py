@@ -15,7 +15,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
-from collections import defaultdict
+from collections import Counter, defaultdict
 from pathlib import Path
 
 
@@ -41,7 +41,7 @@ def table_overall_success(results: list[dict]) -> str:
         profile = r.get("profile_name", "unknown")
         groups[model][profile].append(r.get("success", False))
 
-    profiles = sorted({r.get("profile_name", "") for r in results})
+    profiles = sorted({r.get("profile_name") for r in results if r.get("profile_name")})
     models = sorted(groups.keys())
 
     lines = [
@@ -82,7 +82,7 @@ def table_per_domain(results: list[dict]) -> str:
         profile = r.get("profile_name", "unknown")
         groups[domain][profile].append(r.get("success", False))
 
-    profiles = sorted({r.get("profile_name", "") for r in results})
+    profiles = sorted({r.get("profile_name") for r in results if r.get("profile_name")})
     domains = sorted(groups.keys())
 
     lines = [
@@ -149,7 +149,6 @@ def table_recovery_metrics(results: list[dict]) -> str:
         avg_comp = sum(r.get("compensation_count", 0) for r in rs) / len(rs)
 
         # Dominant strategy across all results
-        from collections import Counter
         all_strats: list[str] = []
         for r in rs:
             all_strats.extend(r.get("recovery_strategies", []))
@@ -159,7 +158,7 @@ def table_recovery_metrics(results: list[dict]) -> str:
             f"{model} & {avg_recovery:.2f} & {avg_retry:.2f} & {avg_steps:.1f} & "
             f"{avg_side:.2f} & {avg_comp:.1f} & {dominant} \\\\"
         )
-        
+
     if not has_rows:
         lines.append(r"\multicolumn{7}{c}{No data} \\")
 

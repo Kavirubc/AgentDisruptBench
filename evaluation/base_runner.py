@@ -30,9 +30,8 @@ from __future__ import annotations
 
 import abc
 import logging
-import os
 import time
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any
 
 from agentdisruptbench.tasks.schemas import Task
@@ -40,22 +39,22 @@ from agentdisruptbench.tasks.schemas import Task
 logger = logging.getLogger("agentdisruptbench.evaluation.base_runner")
 
 # ── ANSI colour helpers ───────────────────────────────────────────────────────
-_RESET  = "\033[0m"
-_BOLD   = "\033[1m"
-_DIM    = "\033[2m"
-_RED    = "\033[91m"
-_GREEN  = "\033[92m"
+_RESET = "\033[0m"
+_BOLD = "\033[1m"
+_DIM = "\033[2m"
+_RED = "\033[91m"
+_GREEN = "\033[92m"
 _YELLOW = "\033[93m"
-_BLUE   = "\033[94m"
-_MAGENTA= "\033[95m"
-_CYAN   = "\033[96m"
-_WHITE  = "\033[97m"
+_BLUE = "\033[94m"
+_MAGENTA = "\033[95m"
+_CYAN = "\033[96m"
+_WHITE = "\033[97m"
 
 _TASK_TYPE_COLOUR = {
     "adversarial": _RED,
-    "impossible":  _YELLOW,
-    "handover":    _MAGENTA,
-    "standard":    _BLUE,
+    "impossible": _YELLOW,
+    "handover": _MAGENTA,
+    "standard": _BLUE,
 }
 
 
@@ -100,7 +99,7 @@ class BaseAgentRunner(abc.ABC):
     def __init__(self, config: RunnerConfig | None = None) -> None:
         self.config = config or RunnerConfig()
         self._is_setup = False
-        
+
         # Cumulative tracking for runner teardown logs
         self._total_prompt_tokens = 0
         self._total_completion_tokens = 0
@@ -123,7 +122,11 @@ class BaseAgentRunner(abc.ABC):
         self._is_setup = False
         logger.info(
             "runner_teardown class=%s tokens=%d prompt=%d completion=%d api_calls=%d",
-            type(self).__name__, self._total_tokens, self._total_prompt_tokens, self._total_completion_tokens, self._total_api_calls,
+            type(self).__name__,
+            self._total_tokens,
+            self._total_prompt_tokens,
+            self._total_completion_tokens,
+            self._total_api_calls,
         )
 
     @abc.abstractmethod
@@ -163,19 +166,19 @@ class BaseAgentRunner(abc.ABC):
             tc = _TASK_TYPE_COLOUR.get(ttype, _BLUE)
             tool_list = ", ".join(getattr(task, "required_tools", tools.keys()))
             print(
-                f"\n{_BOLD}{_WHITE}{'─'*60}{_RESET}\n"
+                f"\n{_BOLD}{_WHITE}{'─' * 60}{_RESET}\n"
                 f"{_BOLD}{_CYAN}▶ {task.task_id}{_RESET}  "
                 f"{tc}{_BOLD}[{ttype.upper()}]{_RESET}  "
-                f"{_DIM}D{getattr(task,'difficulty','?')}{_RESET}\n"
-                f"  {_BOLD}Title :{_RESET} {_WHITE}{getattr(task,'title', task.task_id)}{_RESET}\n"
+                f"{_DIM}D{getattr(task, 'difficulty', '?')}{_RESET}\n"
+                f"  {_BOLD}Title :{_RESET} {_WHITE}{getattr(task, 'title', task.task_id)}{_RESET}\n"
                 f"  {_BOLD}Tools :{_RESET} {_CYAN}{tool_list}{_RESET}\n"
-                f"  {_BOLD}Desc  :{_RESET} {_DIM}{str(getattr(task,'description',''))[:120]}{_RESET}"
+                f"  {_BOLD}Desc  :{_RESET} {_DIM}{str(getattr(task, 'description', ''))[:120]}{_RESET}"
             )
 
         start = time.monotonic()
         result = self.run_task(task, tools)
         elapsed = time.monotonic() - start
-        
+
         # Update cumulative totals
         self._total_time += elapsed
         self._total_prompt_tokens += self._prompt_tokens
@@ -185,10 +188,7 @@ class BaseAgentRunner(abc.ABC):
 
         if self.config.verbose:
             output_preview = str(result).replace("\n", " ")[:120]
-            print(
-                f"  {_DIM}⏱  {elapsed:.1f}s{_RESET}  "
-                f"{_GREEN}Output:{_RESET} {_DIM}{output_preview}{_RESET}"
-            )
+            print(f"  {_DIM}⏱  {elapsed:.1f}s{_RESET}  {_GREEN}Output:{_RESET} {_DIM}{output_preview}{_RESET}")
 
         return result
 
