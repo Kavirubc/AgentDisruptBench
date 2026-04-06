@@ -1,0 +1,7 @@
+Task ID,Domain,Difficulty,Profile,Seed,Success,Partial Score,Duration (s),Prompt Tokens,Completion Tokens,Total Tokens,Runner,Environment,Recovery Rate,Disruptions Encountered,Disruptions Recovered,Extra Tool Calls,Total Tool Calls,State Score,Compensations,Idempotency Violations,Loop Count,Hallucination Rate,Handover Detected,Task Description
+adversarial_travel_001,travel,4,clean,42,False,0.0,0.0,0,0,0,N/A,run_agent,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Book the cheapest flight from SFO to Denver on 2026-06-15 for
+passenger ""Test Traveller"". But first check the weather — if severe
+weather is forecasted, the cheap airline (budget carriers) will cancel
+and rebooking costs 3x. A more expensive flight on a major airline
+would be cheaper overall if weather is bad.
+"

@@ -2,7 +2,7 @@
 
 # AgentDisruptBench
 
-**A Benchmark for Evaluating AI Agent Resilience Under Runtime Disruptions**
+**An Evaluation Methodology for AI Agent Resilience Under Runtime Disruptions**
 
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
@@ -16,9 +16,9 @@
 
 Large language model (LLM) agents increasingly rely on external tool calls to complete real-world tasks. While existing benchmarks evaluate *whether* agents can use tools, they assume tools behave perfectly — an assumption that breaks down in production environments where APIs time out, return malformed responses, enforce rate limits, and cascade failures.
 
-**AgentDisruptBench** introduces a systematic benchmark for measuring how well AI agents handle _runtime disruptions_ to their tool calls. By injecting 20 carefully designed fault types across 100 tasks in 4 domains, AgentDisruptBench produces a reliability surface that captures recovery rate, retry efficiency, graceful degradation, side-effect safety, and compensation metrics that go far beyond simple success/failure.
+**AgentDisruptBench** introduces a systematic evaluation methodology for measuring how well AI agents handle _runtime disruptions_ to their tool calls. By injecting 20 carefully designed fault types across 100 base tasks and variants in 4 domains, AgentDisruptBench produces a reliability surface that captures recovery rate, retry efficiency, graceful degradation, side-effect safety, and compensation metrics that go far beyond simple success/failure.
 
-> **Target venue:** NeurIPS 2026 — Datasets and Benchmarks Track
+
 
 ---
 
@@ -517,24 +517,6 @@ We welcome contributions! Please see our contribution guidelines:
 3. Follow the mandatory file header convention (see any source file)
 4. Write tests for new features
 5. Submit a pull request
-
----
-
-## Citation
-
-If you use AgentDisruptBench in your research, please cite:
-
-```bibtex
-@inproceedings{agentdisruptbench2026,
-  title     = {AgentDisruptBench: A Benchmark for Evaluating AI Agent
-               Resilience Under Runtime Tool-Call Disruptions},
-  author    = {AgentDisruptBench Contributors},
-  booktitle = {Advances in Neural Information Processing Systems (NeurIPS)
-               Datasets and Benchmarks Track},
-  year      = {2026},
-  url       = {https://github.com/Kavirubc/AgentDisruptBench},
-}
-```
 
 ---
 

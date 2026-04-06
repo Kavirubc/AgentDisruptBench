@@ -1,0 +1,11 @@
+# AgentDisruptBench — LLM Configuration: Gemini 3 Flash
+# ========================================================
+# Use with: python -m evaluation.run_benchmark --llm-config config/llm/gemini-3-flash.yaml
+#
+# Requires: GEMINI_API_KEY or GOOGLE_API_KEY environment variable.
+
+provider: gemini
+model: gemini-3-flash-preview
+temperature: 0.0
+max_retries: 3
+max_steps: 20

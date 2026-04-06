@@ -35,7 +35,6 @@ import sys
 import time
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from pathlib import Path
 
 # Ensure project root is on path
 project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -44,13 +43,13 @@ sys.path.insert(0, project_root)
 # Auto-load .env file if present
 try:
     from dotenv import load_dotenv
+
     load_dotenv(os.path.join(project_root, ".env"))
 except ImportError:
     pass  # python-dotenv is optional
 
 from evaluation.config_loader import load_llm_config
 from evaluation.llm_factory import detect_provider
-
 
 # ─── PROVIDER GROUPING ───────────────────────────────────────────────────────
 
@@ -92,8 +91,11 @@ def run_single_benchmark(
     provider = detect_provider(cfg.model)
 
     cmd = [
-        python_bin, "-m", "evaluation.run_benchmark",
-        "--llm-config", llm_config_path,
+        python_bin,
+        "-m",
+        "evaluation.run_benchmark",
+        "--llm-config",
+        llm_config_path,
     ]
     if benchmark_config_path:
         cmd.extend(["--config", benchmark_config_path])
@@ -123,10 +125,7 @@ def run_single_benchmark(
                     run_ids.append(rid)
 
     status = "✅" if result.returncode == 0 else "❌"
-    print(
-        f"  {status} [{provider}] {cfg.model} "
-        f"completed in {elapsed:.1f}s"
-    )
+    print(f"  {status} [{provider}] {cfg.model} completed in {elapsed:.1f}s")
 
     if result.returncode != 0 and result.stderr:
         # Show last 5 lines of stderr for debugging
@@ -178,10 +177,7 @@ def run_provider_group(
 def main():
     parser = argparse.ArgumentParser(
         prog="run_multi_benchmark",
-        description=(
-            "AgentDisruptBench — Run benchmarks across"
-            " multiple models in parallel"
-        ),
+        description=("AgentDisruptBench — Run benchmarks across multiple models in parallel"),
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
@@ -212,20 +208,23 @@ Examples:
         help="Paths to LLM YAML configs to benchmark",
     )
     parser.add_argument(
-        "--config", "-c",
+        "--config",
+        "-c",
         default=None,
         help="Path to benchmark YAML config",
     )
 
     # Pass-through args for each benchmark run
     parser.add_argument(
-        "--profiles", "-p",
+        "--profiles",
+        "-p",
         nargs="+",
         default=None,
         help="Disruption profiles to evaluate",
     )
     parser.add_argument(
-        "--domains", "-d",
+        "--domains",
+        "-d",
         nargs="+",
         default=None,
         help="Filter to specific domains",
@@ -237,14 +236,16 @@ Examples:
         help="Max task difficulty level",
     )
     parser.add_argument(
-        "--seeds", "-s",
+        "--seeds",
+        "-s",
         nargs="+",
         type=int,
         default=None,
         help="Random seeds",
     )
     parser.add_argument(
-        "--runner", "-r",
+        "--runner",
+        "-r",
         default=None,
         help="Force a specific runner for all configs",
     )
@@ -259,7 +260,8 @@ Examples:
         help="Directory of task YAML files (overrides built-in tasks)",
     )
     parser.add_argument(
-        "--verbose", "-v",
+        "--verbose",
+        "-v",
         action="store_true",
     )
 
@@ -279,10 +281,7 @@ Examples:
         for p in paths:
             cfg = load_llm_config(p)
             models.append(cfg.model)
-        print(
-            f"    {provider}: {', '.join(models)}"
-            f" ({'parallel' if len(groups) > 1 else 'sequential'})"
-        )
+        print(f"    {provider}: {', '.join(models)} ({'parallel' if len(groups) > 1 else 'sequential'})")
     print()
 
     # Build extra args to pass through to run_benchmark
@@ -294,9 +293,7 @@ Examples:
     if args.max_difficulty is not None:
         extra_args.extend(["--max-difficulty", str(args.max_difficulty)])
     if args.seeds:
-        extra_args.extend(
-            ["--seeds"] + [str(s) for s in args.seeds]
-        )
+        extra_args.extend(["--seeds"] + [str(s) for s in args.seeds])
     if args.runner:
         extra_args.extend(["--runner", args.runner])
     if args.task_dir:
@@ -316,7 +313,11 @@ Examples:
         # Single provider — everything sequential
         provider, paths = next(iter(groups.items()))
         results = run_provider_group(
-            provider, paths, args.config, extra_args, python_bin,
+            provider,
+            paths,
+            args.config,
+            extra_args,
+            python_bin,
         )
         all_results.extend(results)
     else:
@@ -328,8 +329,11 @@ Examples:
             for provider, paths in groups.items():
                 fut = executor.submit(
                     run_provider_group,
-                    provider, paths,
-                    args.config, extra_args, python_bin,
+                    provider,
+                    paths,
+                    args.config,
+                    extra_args,
+                    python_bin,
                 )
                 futures[fut] = provider
 
@@ -339,9 +343,7 @@ Examples:
                     results = fut.result()
                     all_results.extend(results)
                 except Exception as exc:
-                    print(
-                        f"  ❌ [{provider}] Failed: {exc}"
-                    )
+                    print(f"  ❌ [{provider}] Failed: {exc}")
 
     elapsed = time.time() - start
 
@@ -351,9 +353,7 @@ Examples:
     print(f"{'=' * 60}")
     print(f"  Total time:    {elapsed:.1f}s")
     print(f"  Models run:    {len(all_results)}")
-    successful = sum(
-        1 for r in all_results if r["returncode"] == 0
-    )
+    successful = sum(1 for r in all_results if r["returncode"] == 0)
     print(f"  Successful:    {successful}/{len(all_results)}")
     print()
 
@@ -376,15 +376,13 @@ Examples:
     if not args.no_compare and len(all_run_ids) >= 2:
         print("\n  📊 Auto-comparing runs...\n")
         compare_cmd = [
-            python_bin, "-m", "evaluation.compare_runs",
+            python_bin,
+            "-m",
+            "evaluation.compare_runs",
         ] + all_run_ids
         subprocess.run(compare_cmd, cwd=project_root)
     elif all_run_ids:
-        print(
-            "\n  💡 View a run: "
-            f"python evaluation/show_run.py "
-            f"--run-id {all_run_ids[0]}\n"
-        )
+        print(f"\n  💡 View a run: python evaluation/show_run.py --run-id {all_run_ids[0]}\n")
 
 
 if __name__ == "__main__":

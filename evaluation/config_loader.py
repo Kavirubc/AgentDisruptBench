@@ -110,9 +110,7 @@ class BenchmarkYAMLConfig:
     """
 
     runner: str | None = None
-    profiles: list[str] = field(
-        default_factory=lambda: ["clean", "mild_production", "hostile_environment"]
-    )
+    profiles: list[str] = field(default_factory=lambda: ["clean", "mild_production", "hostile_environment"])
     domains: list[str] | None = None
     tasks: list[str] | None = None
     max_difficulty: int = 5
@@ -125,13 +123,25 @@ class BenchmarkYAMLConfig:
 # -- Known fields for each config type (used for validation) --------
 
 _LLM_FIELDS = {
-    "provider", "model", "temperature", "max_tokens", "max_retries",
-    "max_steps", "api_key",
+    "provider",
+    "model",
+    "temperature",
+    "max_tokens",
+    "max_retries",
+    "max_steps",
+    "api_key",
 }
 
 _BENCHMARK_FIELDS = {
-    "runner", "profiles", "domains", "tasks", "max_difficulty", "seeds",
-    "output_dir", "verbose", "agent_id",
+    "runner",
+    "profiles",
+    "domains",
+    "tasks",
+    "max_difficulty",
+    "seeds",
+    "output_dir",
+    "verbose",
+    "agent_id",
 }
 
 
@@ -182,7 +192,9 @@ def load_llm_config(path: str | Path) -> LLMConfig:
 
     logger.info(
         "llm_config_loaded path=%s provider=%s model=%s",
-        path, config.provider, config.model,
+        path,
+        config.provider,
+        config.model,
     )
     return config
 
@@ -208,9 +220,7 @@ def load_benchmark_config(path: str | Path) -> BenchmarkYAMLConfig:
         data = yaml.safe_load(fh)
 
     if not isinstance(data, dict):
-        raise ValueError(
-            f"Benchmark config must be a YAML mapping, got: {type(data).__name__}"
-        )
+        raise ValueError(f"Benchmark config must be a YAML mapping, got: {type(data).__name__}")
 
     # Filter to known fields only (ignore unknown keys gracefully)
     known_kwargs: dict[str, Any] = {}
@@ -224,6 +234,8 @@ def load_benchmark_config(path: str | Path) -> BenchmarkYAMLConfig:
 
     logger.info(
         "benchmark_config_loaded path=%s runner=%s profiles=%s",
-        path, config.runner, config.profiles,
+        path,
+        config.runner,
+        config.profiles,
     )
     return config

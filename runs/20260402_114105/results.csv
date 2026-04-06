@@ -1,0 +1,5 @@
+Task ID,Domain,Difficulty,Profile,Seed,Success,Partial Score,Duration (s),Prompt Tokens,Completion Tokens,Total Tokens,Runner,Environment,Recovery Rate,Disruptions Encountered,Disruptions Recovered,Extra Tool Calls,Total Tool Calls,State Score,Compensations,Idempotency Violations,Loop Count,Hallucination Rate,Handover Detected,Task Description
+retail_001,retail,1,clean,42,False,0.0,3.58,0,0,0,N/A,run_agent,1.0,0,0,0,1,0.0,0,0,0,0.0,False,"You are an assistant for an online retail platform.
+A customer asks: ""Find me blue widgets"". Search for blue widgets
+and report the available products with their prices.
+"

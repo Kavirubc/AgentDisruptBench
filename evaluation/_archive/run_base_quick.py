@@ -20,13 +20,13 @@ Convention:
     Every source file MUST include a header block like this one.
 """
 
+import hashlib
+import inspect
+import json
 import os
 import sys
 import time
-import json
 import uuid
-import hashlib
-import inspect
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -37,6 +37,7 @@ sys.path.insert(0, project_root)
 # Auto-load .env
 try:
     from dotenv import load_dotenv
+
     load_dotenv(os.path.join(project_root, ".env"))
 except ImportError:
     pass
@@ -44,16 +45,16 @@ except ImportError:
 import argparse
 import logging
 
-from agentdisruptbench import TaskRegistry, ToolRegistry, MetricsCalculator
-from agentdisruptbench.core.profiles import get_profile
+from agentdisruptbench import MetricsCalculator, TaskRegistry, ToolRegistry
 from agentdisruptbench.core.engine import DisruptionEngine
+from agentdisruptbench.core.profiles import get_profile
 from agentdisruptbench.core.proxy import ToolProxy
 from agentdisruptbench.core.trace import TraceCollector
-
 
 # ──────────────────────────────────────────────────────────────────────────
 # Structured Run Logger
 # ──────────────────────────────────────────────────────────────────────────
+
 
 class RunLogger:
     """Writes structured JSONL events for a single benchmark run."""
@@ -84,11 +85,12 @@ class RunLogger:
 # Helper: build Pydantic schema from tool proxy
 # ──────────────────────────────────────────────────────────────────────────
 
+
 def build_args_schema(tool_name, proxy_fn):
     """Build a Pydantic model from the mock tool's function signature."""
     from pydantic import Field, create_model
 
-    real_fn = getattr(proxy_fn, '_fn', None)
+    real_fn = getattr(proxy_fn, "_fn", None)
     if real_fn is None:
         return None
 
@@ -117,6 +119,7 @@ def build_args_schema(tool_name, proxy_fn):
 # ──────────────────────────────────────────────────────────────────────────
 # Main
 # ──────────────────────────────────────────────────────────────────────────
+
 
 def main():
     parser = argparse.ArgumentParser(description="Quick BASE LangChain runner (no RAC)")
@@ -152,16 +155,19 @@ def main():
     print(f"  Logs:       {run_log.run_dir}")
     print()
 
-    run_log.emit("run_started", {
-        "run_id": run_log.run_id,
-        "runner": "base_langchain",
-        "model": args.model,
-        "profile": args.profile,
-        "domain": args.domain,
-        "seed": args.seed,
-        "min_difficulty": args.min_difficulty,
-        "max_difficulty": args.max_difficulty,
-    })
+    run_log.emit(
+        "run_started",
+        {
+            "run_id": run_log.run_id,
+            "runner": "base_langchain",
+            "model": args.model,
+            "profile": args.profile,
+            "domain": args.domain,
+            "seed": args.seed,
+            "min_difficulty": args.min_difficulty,
+            "max_difficulty": args.max_difficulty,
+        },
+    )
 
     # Load tasks and tools
     task_registry = TaskRegistry.from_builtin()
@@ -176,7 +182,7 @@ def main():
             max_difficulty=args.max_difficulty,
         )
         tasks = [t for t in tasks if t.difficulty >= args.min_difficulty]
-        tasks = tasks[:args.max_tasks]
+        tasks = tasks[: args.max_tasks]
 
     if not tasks:
         print("❌ No tasks found matching filters")
@@ -189,15 +195,26 @@ def main():
         print(f"    Call depth: {t.expected_tool_call_depth}")
     print()
 
-    run_log.emit("tasks_selected", {
-        "count": len(tasks),
-        "tasks": [{"id": t.task_id, "title": t.title, "difficulty": t.difficulty,
-                    "tools": t.required_tools, "depth": t.expected_tool_call_depth} for t in tasks],
-    })
+    run_log.emit(
+        "tasks_selected",
+        {
+            "count": len(tasks),
+            "tasks": [
+                {
+                    "id": t.task_id,
+                    "title": t.title,
+                    "difficulty": t.difficulty,
+                    "tools": t.required_tools,
+                    "depth": t.expected_tool_call_depth,
+                }
+                for t in tasks
+            ],
+        },
+    )
 
     # ── Create LLM ──
-    from evaluation.runners.rac_runner import _is_gemini_model, _create_llm
     from evaluation.base_runner import RunnerConfig
+    from evaluation.runners.rac_runner import _create_llm
 
     runner_config = RunnerConfig(model=args.model, verbose=args.verbose)
     llm = _create_llm(runner_config)
@@ -228,16 +245,19 @@ def main():
         )
         per_task_seed = (args.seed ^ _task_id_hash) & 0x7FFFFFFF
 
-        run_log.emit("task_started", {
-            "task_id": task.task_id,
-            "title": task.title,
-            "difficulty": task.difficulty,
-            "task_type": task.task_type,
-            "required_tools": task.required_tools,
-            "expected_depth": task.expected_tool_call_depth,
-            "profile": args.profile,
-            "disruption_seed": per_task_seed,
-        })
+        run_log.emit(
+            "task_started",
+            {
+                "task_id": task.task_id,
+                "title": task.title,
+                "difficulty": task.difficulty,
+                "task_type": task.task_type,
+                "required_tools": task.required_tools,
+                "expected_depth": task.expected_tool_call_depth,
+                "profile": args.profile,
+                "disruption_seed": per_task_seed,
+            },
+        )
 
         # Create disruption engine with a per-task seed
         engine = DisruptionEngine(configs=profile, seed=per_task_seed)
@@ -269,6 +289,7 @@ def main():
                         return json.dumps(result) if isinstance(result, dict) else str(result)
                     except Exception as exc:
                         return json.dumps({"error": str(exc), "status": "failed"})
+
                 return tool_fn
 
             args_schema = build_args_schema(name, fn)
@@ -356,30 +377,33 @@ def main():
         )
         results.append(metric_result)
 
-        run_log.emit("task_completed", {
-            "task_id": task.task_id,
-            "success": metric_result.success,
-            "partial_score": round(metric_result.partial_score, 4),
-            "recovery_rate": round(metric_result.recovery_rate, 4),
-            "total_tool_calls": metric_result.total_tool_calls,
-            "disruptions_encountered": metric_result.disruptions_encountered,
-            "duration_seconds": round(elapsed, 2),
-            "recovery_strategies": metric_result.recovery_strategies,
-            "dominant_strategy": metric_result.dominant_strategy,
-            # P1/P2 metrics
-            "graceful_giveup": metric_result.graceful_giveup,
-            "compensation_count": metric_result.compensation_count,
-            "compensation_success_rate": round(metric_result.compensation_success_rate, 4),
-            # State-safety metrics require state snapshots; not measured in quick-run
-            "side_effect_score": None,
-            "idempotency_violations": None,
-            "loop_count": metric_result.loop_count,
-            "planning_time_ratio": round(metric_result.planning_time_ratio, 4),
-            "handover_detected": metric_result.handover_detected,
-            "tool_hallucination_rate": round(metric_result.tool_hallucination_rate, 4),
-            "failure_categories": metric_result.failure_categories,
-            "agent_output": agent_output[:500],
-        })
+        run_log.emit(
+            "task_completed",
+            {
+                "task_id": task.task_id,
+                "success": metric_result.success,
+                "partial_score": round(metric_result.partial_score, 4),
+                "recovery_rate": round(metric_result.recovery_rate, 4),
+                "total_tool_calls": metric_result.total_tool_calls,
+                "disruptions_encountered": metric_result.disruptions_encountered,
+                "duration_seconds": round(elapsed, 2),
+                "recovery_strategies": metric_result.recovery_strategies,
+                "dominant_strategy": metric_result.dominant_strategy,
+                # P1/P2 metrics
+                "graceful_giveup": metric_result.graceful_giveup,
+                "compensation_count": metric_result.compensation_count,
+                "compensation_success_rate": round(metric_result.compensation_success_rate, 4),
+                # State-safety metrics require state snapshots; not measured in quick-run
+                "side_effect_score": None,
+                "idempotency_violations": None,
+                "loop_count": metric_result.loop_count,
+                "planning_time_ratio": round(metric_result.planning_time_ratio, 4),
+                "handover_detected": metric_result.handover_detected,
+                "tool_hallucination_rate": round(metric_result.tool_hallucination_rate, 4),
+                "failure_categories": metric_result.failure_categories,
+                "agent_output": agent_output[:500],
+            },
+        )
 
         status = "✅" if metric_result.success else "❌"
         print(f"\n  {status} Success:          {metric_result.success}")
@@ -392,7 +416,7 @@ def main():
             print(f"  🧠 Strategies:      {metric_result.recovery_strategies}")
         if metric_result.dominant_strategy:
             print(f"  👆 Dominant:        {metric_result.dominant_strategy}")
-        print(f"\n  Agent output (first 200 chars):")
+        print("\n  Agent output (first 200 chars):")
         print(f"  {str(agent_output)[:200]}...")
 
     # Summary
@@ -410,13 +434,16 @@ def main():
     print(f"  Logs saved:   {run_log.run_dir}")
     print(f"{'=' * 60}")
 
-    run_log.emit("run_completed", {
-        "total_tasks": len(results),
-        "successful": success_count,
-        "success_rate": round(success_count / max(len(results), 1), 4),
-        "avg_partial_score": round(avg_partial, 4),
-        "total_duration_seconds": round(total_time, 2),
-    })
+    run_log.emit(
+        "run_completed",
+        {
+            "total_tasks": len(results),
+            "successful": success_count,
+            "success_rate": round(success_count / max(len(results), 1), 4),
+            "avg_partial_score": round(avg_partial, 4),
+            "total_duration_seconds": round(total_time, 2),
+        },
+    )
 
     print(f"\n  💡 To analyze: python evaluation/show_run.py --run-id {run_log.run_id}\n")
     run_log.close()

@@ -1,0 +1,208 @@
+{
+  "@context": {
+    "@language": "en",
+    "@vocab": "https://schema.org/",
+    "citeAs": "cr:citeAs",
+    "column": "cr:column",
+    "conformsTo": "dct:conformsTo",
+    "cr": "http://mlcommons.org/croissant/",
+    "data": {
+      "@id": "cr:data",
+      "@type": "@json"
+    },
+    "dataBiases": "cr:dataBiases",
+    "dataCollection": "cr:dataCollection",
+    "dataType": {
+      "@id": "cr:dataType",
+      "@type": "@vocab"
+    },
+    "dct": "http://purl.org/dc/terms/",
+    "extract": "cr:extract",
+    "field": "cr:field",
+    "fileProperty": "cr:fileProperty",
+    "fileSet": "cr:fileSet",
+    "format": "cr:format",
+    "includes": "cr:includes",
+    "isLiveDataset": "cr:isLiveDataset",
+    "jsonPath": "cr:jsonPath",
+    "key": "cr:key",
+    "md5": "cr:md5",
+    "parentField": "cr:parentField",
+    "path": "cr:path",
+    "personalSensitiveInformation": "cr:personalSensitiveInformation",
+    "recordSet": "cr:recordSet",
+    "references": "cr:references",
+    "regex": "cr:regex",
+    "repeated": "cr:repeated",
+    "replace": "cr:replace",
+    "sc": "https://schema.org/",
+    "separator": "cr:separator",
+    "source": "cr:source",
+    "subField": "cr:subField",
+    "transform": "cr:transform"
+  },
+  "@type": "sc:Dataset",
+  "name": "AgentDisruptBench",
+  "description": "An evaluation methodology for evaluating AI agent resilience under runtime tool-call disruptions, designed for the NeurIPS Evaluations & Datasets Track. Contains 100 base tasks and variants across 4 domains (Retail, Travel, Finance, DevOps) with 20 disruption types and 9 disruption profiles.",
+  "conformsTo": "http://mlcommons.org/croissant/1.0",
+  "url": "https://github.com/Kavirubc/AgentDisruptBench",
+  "license": "https://opensource.org/licenses/MIT",
+  "version": "0.1.0",
+  "datePublished": "2026-04-03",
+  "creator": {
+    "@type": "sc:Organization",
+    "name": "AgentDisruptBench Contributors"
+  },
+  "keywords": [
+    "AI agents",
+    "benchmarks",
+    "resilience",
+    "tool-calling",
+    "disruptions",
+    "evaluation",
+    "LLM",
+    "fault-injection",
+    "reliability"
+  ],
+  "isLiveDataset": false,
+  "distribution": [
+    {
+      "@type": "cr:FileObject",
+      "@id": "retail-tasks",
+      "name": "retail.yaml",
+      "description": "20 standard retail domain tasks (difficulty 1-5)",
+      "contentUrl": "python/agentdisruptbench/tasks/builtin/retail.yaml",
+      "encodingFormat": "application/x-yaml",
+      "sha256": "5c00f518f411c868ab8ee81c35c664e443734716ce38944833deffc9ea49b98d"
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "travel-tasks",
+      "name": "travel.yaml",
+      "description": "20 standard travel domain tasks (difficulty 1-5)",
+      "contentUrl": "python/agentdisruptbench/tasks/builtin/travel.yaml",
+      "encodingFormat": "application/x-yaml",
+      "sha256": "2e06442d72fb8d02d098bb1bb08106abce521d0eccf6d044b3354c69689913b7"
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "finance-tasks",
+      "name": "finance.yaml",
+      "description": "20 standard finance domain tasks (difficulty 1-5)",
+      "contentUrl": "python/agentdisruptbench/tasks/builtin/finance.yaml",
+      "encodingFormat": "application/x-yaml",
+      "sha256": "3b5e30eec5b047e2e02b862f7f3e4e1672d16e491aea4990e17440f614bd0594"
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "devops-tasks",
+      "name": "devops.yaml",
+      "description": "20 standard DevOps domain tasks (difficulty 1-5)",
+      "contentUrl": "python/agentdisruptbench/tasks/builtin/devops.yaml",
+      "encodingFormat": "application/x-yaml",
+      "sha256": "4f1f6f83275c6b02802b13dd5a67b1760047376354bf0bb6740489877abde947"
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "adversarial-tasks",
+      "name": "adversarial.yaml",
+      "description": "8 adversarial trap tasks (2 per domain)",
+      "contentUrl": "python/agentdisruptbench/tasks/builtin/adversarial.yaml",
+      "encodingFormat": "application/x-yaml",
+      "sha256": "f089191acdc97f69fb689cad337a68eee1c5460c391bb94f98443cbefd6b414d"
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "impossible-tasks",
+      "name": "impossible.yaml",
+      "description": "8 impossible tasks where no valid solution exists (2 per domain)",
+      "contentUrl": "python/agentdisruptbench/tasks/builtin/impossible.yaml",
+      "encodingFormat": "application/x-yaml",
+      "sha256": "efc67f7b35e356d5ab33cd84f16063a906dd6f3932065f2a127731d2f8f21953"
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "handover-tasks",
+      "name": "handover.yaml",
+      "description": "4 handover tasks requiring human escalation (1 per domain)",
+      "contentUrl": "python/agentdisruptbench/tasks/builtin/handover.yaml",
+      "encodingFormat": "application/x-yaml",
+      "sha256": "fb6d522ca219f0f3634914f7534c45c8bbd5ffcf0088019279b8a468788e6de0"
+    }
+  ],
+  "recordSet": [
+    {
+      "@type": "cr:RecordSet",
+      "@id": "tasks",
+      "name": "Benchmark Tasks",
+      "description": "The 100 benchmark tasks across 4 domains and 3 task types.",
+      "field": [
+        {
+          "@type": "cr:Field",
+          "@id": "tasks/task_id",
+          "name": "task_id",
+          "description": "Unique task identifier (e.g., retail_001)",
+          "dataType": "sc:Text",
+          "source": {
+            "fileSet": {
+              "@id": "retail-tasks"
+            },
+            "extract": {
+              "jsonPath": "$.tasks[*].task_id"
+            }
+          }
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "tasks/title",
+          "name": "title",
+          "description": "Short human-readable task title",
+          "dataType": "sc:Text"
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "tasks/description",
+          "name": "description",
+          "description": "Full natural language prompt given to the agent",
+          "dataType": "sc:Text"
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "tasks/domain",
+          "name": "domain",
+          "description": "Task domain: retail, travel, finance, or devops",
+          "dataType": "sc:Text"
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "tasks/difficulty",
+          "name": "difficulty",
+          "description": "Task difficulty level (1-5)",
+          "dataType": "sc:Integer"
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "tasks/task_type",
+          "name": "task_type",
+          "description": "Task type: standard, adversarial, or impossible",
+          "dataType": "sc:Text"
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "tasks/required_tools",
+          "name": "required_tools",
+          "description": "List of tool names needed to solve the task",
+          "dataType": "sc:Text",
+          "repeated": true
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "tasks/expected_tool_call_depth",
+          "name": "expected_tool_call_depth",
+          "description": "Expected number of tool calls under clean conditions",
+          "dataType": "sc:Integer"
+        }
+      ]
+    }
+  ]
+}

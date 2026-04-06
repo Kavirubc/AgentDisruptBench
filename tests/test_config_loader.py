@@ -42,8 +42,10 @@ class TestLLMConfig:
 
     def test_to_runner_config(self):
         cfg = LLMConfig(
-            provider="openai", model="gpt-4o-mini",
-            temperature=0.5, max_tokens=8192,
+            provider="openai",
+            model="gpt-4o-mini",
+            temperature=0.5,
+            max_tokens=8192,
         )
         rc = cfg.to_runner_config()
         assert rc.model == "gpt-4o-mini"
@@ -82,12 +84,7 @@ class TestLoadLLMConfig:
     """Tests for load_llm_config()."""
 
     def test_load_gemini_yaml(self):
-        yaml_content = (
-            "provider: gemini\n"
-            "model: gemini-2.5-flash\n"
-            "temperature: 0.0\n"
-            "max_tokens: 4096\n"
-        )
+        yaml_content = "provider: gemini\nmodel: gemini-2.5-flash\ntemperature: 0.0\nmax_tokens: 4096\n"
         with tempfile.NamedTemporaryFile(suffix=".yaml", mode="w", delete=False) as f:
             f.write(yaml_content)
             f.flush()
@@ -100,11 +97,7 @@ class TestLoadLLMConfig:
         assert cfg.extra == {}
 
     def test_load_openai_yaml(self):
-        yaml_content = (
-            "provider: openai\n"
-            "model: gpt-4o\n"
-            "temperature: 0.2\n"
-        )
+        yaml_content = "provider: openai\nmodel: gpt-4o\ntemperature: 0.2\n"
         with tempfile.NamedTemporaryFile(suffix=".yaml", mode="w", delete=False) as f:
             f.write(yaml_content)
             f.flush()
@@ -116,12 +109,7 @@ class TestLoadLLMConfig:
 
     def test_extra_fields_captured(self):
         """Provider-specific fields (e.g. thinking_budget) go to extra."""
-        yaml_content = (
-            "provider: gemini\n"
-            "model: gemini-2.5-flash\n"
-            "thinking_budget: 0\n"
-            "reasoning_effort: minimal\n"
-        )
+        yaml_content = "provider: gemini\nmodel: gemini-2.5-flash\nthinking_budget: 0\nreasoning_effort: minimal\n"
         with tempfile.NamedTemporaryFile(suffix=".yaml", mode="w", delete=False) as f:
             f.write(yaml_content)
             f.flush()
@@ -213,10 +201,7 @@ class TestLoadBenchmarkConfig:
         assert cfg.seeds == [42]  # default
 
     def test_unknown_fields_ignored(self):
-        yaml_content = (
-            "runner: simple\n"
-            "unknown_field: some_value\n"
-        )
+        yaml_content = "runner: simple\nunknown_field: some_value\n"
         with tempfile.NamedTemporaryFile(suffix=".yaml", mode="w", delete=False) as f:
             f.write(yaml_content)
             f.flush()

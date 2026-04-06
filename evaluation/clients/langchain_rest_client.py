@@ -8,12 +8,12 @@ Purpose:     Demonstrates an external agent dynamically discovering tools
              ReAct agent with full schema-aware tool binding.
 """
 
-import httpx
 import logging
-from typing import Any, Callable, Optional
+from typing import Callable, Optional
 
-from langchain_google_genai import ChatGoogleGenerativeAI
+import httpx
 from langchain_core.tools import StructuredTool
+from langchain_google_genai import ChatGoogleGenerativeAI
 from langgraph.prebuilt import create_react_agent
 from pydantic import BaseModel, Field, create_model
 
@@ -83,22 +83,22 @@ def build_langchain_client(server_url: str) -> Callable[[str], str]:
     # 2. Dynamically build LangChain tools from the OpenAPI spec with full schemas
     tools = []
 
-    for path, path_item in openapi_spec.get('paths', {}).items():
+    for path, path_item in openapi_spec.get("paths", {}).items():
         # Only expose tool endpoints, skip admin routes
         if not path.startswith("/api/tools/"):
             continue
-        if 'post' not in path_item:
+        if "post" not in path_item:
             continue
 
-        op = path_item['post']
-        tool_name = path.split('/')[-1]
-        desc = op.get('description', op.get('summary', tool_name))
+        op = path_item["post"]
+        tool_name = path.split("/")[-1]
+        desc = op.get("description", op.get("summary", tool_name))
 
         # Build arg schema from the request body
         args_schema = None
-        req_body = op.get('requestBody', {})
-        content = req_body.get('content', {}).get('application/json', {})
-        body_schema = content.get('schema', {})
+        req_body = op.get("requestBody", {})
+        content = req_body.get("content", {}).get("application/json", {})
+        body_schema = content.get("schema", {})
         if body_schema:
             try:
                 model_name = f"{tool_name}_args"
@@ -112,6 +112,7 @@ def build_langchain_client(server_url: str) -> Callable[[str], str]:
                 if r.status_code == 200:
                     return r.json()
                 return {"error": r.text, "status_code": r.status_code}
+
             return call_api
 
         tool_kwargs = dict(

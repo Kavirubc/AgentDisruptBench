@@ -24,13 +24,13 @@ Convention:
 
 from __future__ import annotations
 
-import json
 import logging
 import os
 from typing import Any
 
-from evaluation.base_runner import BaseAgentRunner, RunnerConfig
 from agentdisruptbench.tasks.schemas import Task
+
+from evaluation.base_runner import BaseAgentRunner, RunnerConfig
 
 logger = logging.getLogger("agentdisruptbench.evaluation.runners.autogen")
 
@@ -59,17 +59,11 @@ class AutoGenRunner(BaseAgentRunner):
         try:
             import autogen  # noqa: F401
         except ImportError:
-            raise ImportError(
-                "AutoGen runner requires pyautogen. "
-                "Install with: pip install pyautogen"
-            )
+            raise ImportError("AutoGen runner requires pyautogen. Install with: pip install pyautogen")
 
         api_key = self.config.api_key or os.environ.get("OPENAI_API_KEY")
         if not api_key:
-            raise ValueError(
-                "API key required. Set OPENAI_API_KEY env var "
-                "or pass api_key in RunnerConfig."
-            )
+            raise ValueError("API key required. Set OPENAI_API_KEY env var or pass api_key in RunnerConfig.")
         super().setup()
 
     def run_task(self, task: Task, tools: dict[str, Any]) -> str:
@@ -122,10 +116,7 @@ class AutoGenRunner(BaseAgentRunner):
         )
 
         # Initiate chat
-        prompt = (
-            f"Task: {task.description}\n\n"
-            "Please complete this task using the available tools."
-        )
+        prompt = f"Task: {task.description}\n\nPlease complete this task using the available tools."
 
         try:
             user_proxy.initiate_chat(

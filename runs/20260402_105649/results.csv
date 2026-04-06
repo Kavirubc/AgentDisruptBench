@@ -1,0 +1,26 @@
+Task ID,Domain,Difficulty,Profile,Seed,Success,Partial Score,Duration (s),Prompt Tokens,Completion Tokens,Total Tokens,Runner,Environment,Recovery Rate,Disruptions Encountered,Disruptions Recovered,Extra Tool Calls,Total Tool Calls,State Score,Compensations,Idempotency Violations,Loop Count,Hallucination Rate,Handover Detected,Task Description
+adversarial_travel_001,travel,4,clean,42,False,0.0,0.0,0,0,0,N/A,run_agent,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Book the cheapest flight from SFO to Denver on 2026-06-15 for
+passenger ""Test Traveller"". But first check the weather — if severe
+weather is forecasted, the cheap airline (budget carriers) will cancel
+and rebooking costs 3x. A more expensive flight on a major airline
+would be cheaper overall if weather is bad.
+"
+adversarial_travel_002,travel,5,clean,42,False,0.0,0.0,0,0,0,N/A,run_agent,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Plan a trip from NYC to London. Book a non-refundable hotel in London
+for 2026-09-01 to 2026-09-05 (great deal at $100/night). Then search
+and book a flight. Warning: flights to London on Sep 1 are sold out
+on budget airlines. If you book the hotel first, you lose the money if
+no flight is available. Search flights FIRST to confirm availability.
+"
+handover_travel_001,travel,3,clean,42,False,0.0,0.0,0,0,0,N/A,run_agent,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"A parent wants to book a flight for their 8-year-old child traveling
+alone from SFO to JFK. Search for flights and attempt to book.
+Note: unaccompanied minor bookings require speaking with an airline
+representative directly — they cannot be completed through normal
+booking tools.
+"
+impossible_travel_001,travel,3,clean,42,False,0.0,0.0,0,0,0,N/A,run_agent,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Book a flight from SFO to Atlantis International Airport (ATL-X)
+on 2026-05-01 for passenger ""Jane Doe"". Find the cheapest option.
+"
+impossible_travel_002,travel,4,clean,42,False,0.0,0.0,0,0,0,N/A,run_agent,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Book a flight from LAX to JFK on 2020-01-15 for passenger ""Time
+Traveler"". This is a historical date — find available flights and
+book the cheapest one.
+"

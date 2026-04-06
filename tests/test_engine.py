@@ -20,7 +20,6 @@ from __future__ import annotations
 import pickle
 
 import pytest
-
 from agentdisruptbench.core.engine import (
     DisruptionConfig,
     DisruptionEngine,
@@ -64,9 +63,7 @@ class TestDisruptionEngine:
     def test_clean_passthrough(self):
         """No configs → no disruption."""
         engine = DisruptionEngine(configs=[])
-        result, success, error, dtype = engine.apply(
-            "tool", {}, {"data": 1}, True, None
-        )
+        result, success, error, dtype = engine.apply("tool", {}, {"data": 1}, True, None)
         assert result == {"data": 1}
         assert success is True
         assert error is None
@@ -74,17 +71,13 @@ class TestDisruptionEngine:
 
     def test_timeout_raises(self):
         """Timeout config raises TimeoutError."""
-        engine = DisruptionEngine(
-            configs=[DisruptionConfig(type=DisruptionType.TIMEOUT, probability=1.0)]
-        )
+        engine = DisruptionEngine(configs=[DisruptionConfig(type=DisruptionType.TIMEOUT, probability=1.0)])
         with pytest.raises(TimeoutError):
             engine.apply("tool", {}, {"data": 1}, True, None)
 
     def test_http_429(self):
         """HTTP 429 returns error body."""
-        engine = DisruptionEngine(
-            configs=[DisruptionConfig(type=DisruptionType.HTTP_429, probability=1.0)]
-        )
+        engine = DisruptionEngine(configs=[DisruptionConfig(type=DisruptionType.HTTP_429, probability=1.0)])
         result, success, error, dtype = engine.apply("tool", {}, {}, True, None)
         assert success is False
         assert dtype == DisruptionType.HTTP_429
@@ -92,56 +85,43 @@ class TestDisruptionEngine:
 
     def test_malformed_json(self):
         """Malformed JSON truncates the response."""
-        engine = DisruptionEngine(
-            configs=[DisruptionConfig(type=DisruptionType.MALFORMED_JSON, probability=1.0)]
-        )
-        result, success, error, dtype = engine.apply(
-            "tool", {}, {"key": "value"}, True, None
-        )
+        engine = DisruptionEngine(configs=[DisruptionConfig(type=DisruptionType.MALFORMED_JSON, probability=1.0)])
+        result, success, error, dtype = engine.apply("tool", {}, {"key": "value"}, True, None)
         assert success is False
         assert dtype == DisruptionType.MALFORMED_JSON
 
     def test_null_response(self):
         """Null response returns None."""
-        engine = DisruptionEngine(
-            configs=[DisruptionConfig(type=DisruptionType.NULL_RESPONSE, probability=1.0)]
-        )
-        result, success, error, dtype = engine.apply(
-            "tool", {}, {"data": 1}, True, None
-        )
+        engine = DisruptionEngine(configs=[DisruptionConfig(type=DisruptionType.NULL_RESPONSE, probability=1.0)])
+        result, success, error, dtype = engine.apply("tool", {}, {"data": 1}, True, None)
         assert result is None
         assert dtype == DisruptionType.NULL_RESPONSE
 
     def test_missing_fields(self):
         """Missing fields removes keys from dict."""
-        engine = DisruptionEngine(
-            configs=[DisruptionConfig(type=DisruptionType.MISSING_FIELDS, probability=1.0)]
-        )
+        engine = DisruptionEngine(configs=[DisruptionConfig(type=DisruptionType.MISSING_FIELDS, probability=1.0)])
         original = {"a": 1, "b": 2, "c": 3, "d": 4, "e": 5}
-        result, success, error, dtype = engine.apply(
-            "tool", {}, original, True, None
-        )
+        result, success, error, dtype = engine.apply("tool", {}, original, True, None)
         assert dtype == DisruptionType.MISSING_FIELDS
         assert len(result) < len(original)
 
     def test_wrong_data(self):
         """Wrong data perturbs values."""
-        engine = DisruptionEngine(
-            configs=[DisruptionConfig(type=DisruptionType.WRONG_DATA, probability=1.0)]
-        )
-        result, success, error, dtype = engine.apply(
-            "tool", {}, {"count": 10, "name": "test"}, True, None
-        )
+        engine = DisruptionEngine(configs=[DisruptionConfig(type=DisruptionType.WRONG_DATA, probability=1.0)])
+        result, success, error, dtype = engine.apply("tool", {}, {"count": 10, "name": "test"}, True, None)
         assert dtype == DisruptionType.WRONG_DATA
         assert result != {"count": 10, "name": "test"}
 
     def test_target_filter(self):
         """Config with target_tools only fires for matching tools."""
         engine = DisruptionEngine(
-            configs=[DisruptionConfig(
-                type=DisruptionType.HTTP_500, probability=1.0,
-                target_tools=["targeted_tool"],
-            )]
+            configs=[
+                DisruptionConfig(
+                    type=DisruptionType.HTTP_500,
+                    probability=1.0,
+                    target_tools=["targeted_tool"],
+                )
+            ]
         )
         # Non-targeted tool: no disruption
         _, success, _, dtype = engine.apply("other_tool", {}, {}, True, None)
@@ -154,10 +134,12 @@ class TestDisruptionEngine:
     def test_quota_exhausted(self):
         """Quota exhaustion fires after N calls."""
         engine = DisruptionEngine(
-            configs=[DisruptionConfig(
-                type=DisruptionType.QUOTA_EXHAUSTED,
-                fail_after_n_calls=2,
-            )]
+            configs=[
+                DisruptionConfig(
+                    type=DisruptionType.QUOTA_EXHAUSTED,
+                    fail_after_n_calls=2,
+                )
+            ]
         )
         # Calls 1-2: OK
         _, s1, _, d1 = engine.apply("tool", {}, {}, True, None)
@@ -172,10 +154,13 @@ class TestDisruptionEngine:
     def test_intermittent(self):
         """Intermittent fails every Nth call."""
         engine = DisruptionEngine(
-            configs=[DisruptionConfig(
-                type=DisruptionType.INTERMITTENT,
-                fail_every_n=3, probability=1.0,
-            )]
+            configs=[
+                DisruptionConfig(
+                    type=DisruptionType.INTERMITTENT,
+                    fail_every_n=3,
+                    probability=1.0,
+                )
+            ]
         )
         results = []
         for _ in range(6):
@@ -191,11 +176,14 @@ class TestDisruptionEngine:
     def test_cascading(self):
         """Cascading marks downstream tools."""
         engine = DisruptionEngine(
-            configs=[DisruptionConfig(
-                type=DisruptionType.CASCADING, probability=1.0,
-                target_tools=["upstream"],
-                cascade_targets=["downstream"],
-            )]
+            configs=[
+                DisruptionConfig(
+                    type=DisruptionType.CASCADING,
+                    probability=1.0,
+                    target_tools=["upstream"],
+                    cascade_targets=["downstream"],
+                )
+            ]
         )
         # Trigger cascade on upstream
         _, _, _, dtype = engine.apply("upstream", {}, {}, True, None)
@@ -209,10 +197,12 @@ class TestDisruptionEngine:
     def test_reset(self):
         """Reset clears all state."""
         engine = DisruptionEngine(
-            configs=[DisruptionConfig(
-                type=DisruptionType.QUOTA_EXHAUSTED,
-                fail_after_n_calls=1,
-            )]
+            configs=[
+                DisruptionConfig(
+                    type=DisruptionType.QUOTA_EXHAUSTED,
+                    fail_after_n_calls=1,
+                )
+            ]
         )
         engine.apply("tool", {}, {}, True, None)
         engine.apply("tool", {}, {}, True, None)  # Should fire
@@ -222,9 +212,7 @@ class TestDisruptionEngine:
 
     def test_pickle_roundtrip(self):
         """Engine survives pickle serialisation."""
-        engine = DisruptionEngine(
-            configs=[DisruptionConfig(type=DisruptionType.HTTP_500, probability=1.0)]
-        )
+        engine = DisruptionEngine(configs=[DisruptionConfig(type=DisruptionType.HTTP_500, probability=1.0)])
         pickled = pickle.dumps(engine)
         restored = pickle.loads(pickled)
         _, success, _, dtype = restored.apply("tool", {}, {}, True, None)
@@ -232,9 +220,7 @@ class TestDisruptionEngine:
 
     def test_deterministic_with_seed(self):
         """Same seed produces same disruption sequence."""
-        configs = [
-            DisruptionConfig(type=DisruptionType.WRONG_DATA, probability=0.5)
-        ]
+        configs = [DisruptionConfig(type=DisruptionType.WRONG_DATA, probability=0.5)]
         e1 = DisruptionEngine(configs=configs, seed=99)
         e2 = DisruptionEngine(configs=configs, seed=99)
 

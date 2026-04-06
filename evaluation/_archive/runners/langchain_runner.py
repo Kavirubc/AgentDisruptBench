@@ -35,14 +35,19 @@ from __future__ import annotations
 
 import json
 import logging
-import uuid
 from typing import Any
 
 from agentdisruptbench.tasks.schemas import Task
 
 from evaluation.base_runner import (
-    BaseAgentRunner, RunnerConfig,
-    _RESET, _BOLD, _DIM, _GREEN, _RED, _CYAN,
+    _BOLD,
+    _CYAN,
+    _DIM,
+    _GREEN,
+    _RED,
+    _RESET,
+    BaseAgentRunner,
+    RunnerConfig,
 )
 from evaluation.llm_factory import create_langchain_llm, detect_provider
 
@@ -97,35 +102,40 @@ class LangChainRunner(BaseAgentRunner):
         with the correct parameter names and types.
         """
         import inspect
+
         from pydantic import Field, create_model
 
         # Walk the proxy chain to find the real function with a meaningful signature:
         # ToolProxy._fn → may be a stateful_wrapper(**kwargs) or the raw static method
-        real_fn = getattr(proxy_fn, '_fn', None) or proxy_fn
+        real_fn = getattr(proxy_fn, "_fn", None) or proxy_fn
 
         # If real_fn only has **kwargs, try to find the original fn in its closure
         try:
             sig = inspect.signature(real_fn)
             params = [
-                p for p in sig.parameters.values()
+                p
+                for p in sig.parameters.values()
                 if p.name not in ("self", "cls")
-                and p.kind not in (
+                and p.kind
+                not in (
                     inspect.Parameter.VAR_KEYWORD,
                     inspect.Parameter.VAR_POSITIONAL,
                 )
             ]
             if not params:
                 # Look inside closure cells for a callable with real params
-                closure = getattr(real_fn, '__closure__', None) or []
+                closure = getattr(real_fn, "__closure__", None) or []
                 for cell in closure:
                     try:
                         candidate = cell.cell_contents
                         if callable(candidate) and candidate is not real_fn:
                             csig = inspect.signature(candidate)
                             cparams = [
-                                p for p in csig.parameters.values()
+                                p
+                                for p in csig.parameters.values()
                                 if p.name not in ("self", "cls")
-                                and p.kind not in (
+                                and p.kind
+                                not in (
                                     inspect.Parameter.VAR_KEYWORD,
                                     inspect.Parameter.VAR_POSITIONAL,
                                 )
@@ -163,7 +173,7 @@ class LangChainRunner(BaseAgentRunner):
     def run_task(self, task: Task, tools: dict[str, Any]) -> str:
         """Run the LangChain agent for one task.
 
-        Uses LangGraph's create_react_agent which builds a ReAct
+        Uses LangChain's create_agent which builds a ReAct
         graph under the hood:  LLM → tool call → result → LLM → ...
         """
         if self._llm is None:
@@ -172,10 +182,7 @@ class LangChainRunner(BaseAgentRunner):
         try:
             from langchain_core.tools import StructuredTool
         except ImportError:
-            raise ImportError(
-                "LangChain runner requires langchain-core. "
-                "Install with: pip install langchain-core"
-            )
+            raise ImportError("LangChain runner requires langchain-core. Install with: pip install langchain-core")
 
         # Create Tool wrappers — use StructuredTool with a proper Pydantic schema
         # so that the LLM (Gemini/OpenAI) can see the correct parameter names.
@@ -200,6 +207,7 @@ class LangChainRunner(BaseAgentRunner):
                         if verbose:
                             print(f"    {_RED}✗  → {exc}{_RESET}")
                         return json.dumps({"error": str(exc), "status": "failed"})
+
                 return tool_fn
 
             # Build Pydantic schema from the underlying mock tool's signature
@@ -221,17 +229,18 @@ class LangChainRunner(BaseAgentRunner):
             "summarising what you accomplished."
         )
 
-        # Create the agent using LangGraph's standard ReAct agent
-        from langgraph.prebuilt import create_react_agent
+        # Create the agent using LangChain's standard ReAct agent (v1)
+        from langchain.agents import create_agent
+
         if verbose:
             print(f"    [DEBUG] Creating agent with {len(lc_tools)} tools")
             for t in lc_tools:
                 print(f"    [DEBUG] Tool: {t.name} (args: {t.args_schema.schema() if t.args_schema else 'None'})")
 
-        agent = create_react_agent(
-            model=self._llm,
-            tools=lc_tools,
-            prompt=system_prompt,
+        agent = create_agent(
+            self._llm,
+            lc_tools,
+            system_prompt=system_prompt,
         )
 
         # Build the task input
@@ -273,7 +282,7 @@ class LangChainRunner(BaseAgentRunner):
                         tcalls = getattr(m, "tool_calls", [])
                         if not tcalls and hasattr(m, "additional_kwargs"):
                             tcalls = m.additional_kwargs.get("tool_calls", [])
-                        
+
                         content_preview = str(m.content)[:100].replace("\n", " ")
                         print(f"    [DEBUG] Msg {i} ({msg_type}): {content_preview}")
                         if tcalls:
@@ -296,9 +305,7 @@ class LangChainRunner(BaseAgentRunner):
                 else:
                     content = str(raw_content)
 
-                self._task_api_calls += sum(
-                    1 for m in messages if getattr(m, "type", "") == "ai"
-                )
+                self._task_api_calls += sum(1 for m in messages if getattr(m, "type", "") == "ai")
                 return content or "[No response from agent]"
 
             return "[Agent produced no output]"

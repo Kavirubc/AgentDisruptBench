@@ -41,9 +41,7 @@ except ImportError:
     print("Install with: pip install rich typer")
     raise SystemExit(1)
 
-app = typer.Typer(
-    help="Compare 2+ AgentDisruptBench runs side-by-side."
-)
+app = typer.Typer(help="Compare 2+ AgentDisruptBench runs side-by-side.")
 console = Console()
 
 
@@ -122,29 +120,23 @@ def load_run_summary(run_dir: Path) -> RunSummary:
             summary.total_tasks = p.get("total_tasks", 0)
             summary.successful = p.get("successful", 0)
             summary.success_rate = p.get("success_rate", 0.0)
-            summary.avg_partial_score = p.get(
-                "avg_partial_score", 0.0
-            )
-            summary.total_duration = p.get(
-                "total_duration_seconds", 0.0
-            )
+            summary.avg_partial_score = p.get("avg_partial_score", 0.0)
+            summary.total_duration = p.get("total_duration_seconds", 0.0)
 
         elif et == "task_completed":
-            summary.tasks.append(TaskResult(
-                task_id=p.get("task_id", "?"),
-                success=p.get("success", False),
-                partial_score=p.get("partial_score", 0.0),
-                recovery_rate=p.get("recovery_rate", 0.0),
-                total_tool_calls=p.get("total_tool_calls", 0),
-                disruptions_encountered=p.get(
-                    "disruptions_encountered", 0
-                ),
-                duration_seconds=p.get("duration_seconds", 0.0),
-                dominant_strategy=p.get("dominant_strategy", ""),
-                tool_hallucination_rate=p.get(
-                    "tool_hallucination_rate", 0.0
-                ),
-            ))
+            summary.tasks.append(
+                TaskResult(
+                    task_id=p.get("task_id", "?"),
+                    success=p.get("success", False),
+                    partial_score=p.get("partial_score", 0.0),
+                    recovery_rate=p.get("recovery_rate", 0.0),
+                    total_tool_calls=p.get("total_tool_calls", 0),
+                    disruptions_encountered=p.get("disruptions_encountered", 0),
+                    duration_seconds=p.get("duration_seconds", 0.0),
+                    dominant_strategy=p.get("dominant_strategy", ""),
+                    tool_hallucination_rate=p.get("tool_hallucination_rate", 0.0),
+                )
+            )
 
         elif et == "task_started":
             # Enrich the last task with title/difficulty when
@@ -215,18 +207,21 @@ def discover_runs(
 
 def get_run_label(summary: RunSummary, summaries: list[RunSummary]) -> str:
     """Generate a unique, descriptive label for a run in a set."""
-    # Count how many runs share this model
-    same_model = [s for s in summaries if s.model == summary.model]
-    if len(same_model) == 1:
-        return summary.model
+    label = f"{summary.runner}/{summary.model}"
 
-    # Multiple runs of same model - check profiles
+    # Count how many runs share this particular runner and model
+    same_model = [s for s in summaries if s.model == summary.model and s.runner == summary.runner]
+    if len(same_model) == 1:
+        return label
+
+    # Multiple runs of same runner/model - check profiles
     same_profile = [s for s in same_model if s.profile == summary.profile]
     if len(same_profile) == 1:
-        return f"{summary.model}\n({summary.profile})"
+        return f"{label}\n({summary.profile})"
 
-    # Multiple runs of same model/profile - add run ID suffix
-    return f"{summary.model}\n({summary.profile} / {summary.run_id[-6:]})"
+    # Multiple runs of same runner/model/profile - add timestamp suffix instead of useless _all ending
+    timestamp = summary.run_id[:15] if len(summary.run_id) > 15 else summary.run_id[-6:]
+    return f"{label}\n({summary.profile} / {timestamp})"
 
 
 def _score_color(score: float) -> str:
@@ -338,8 +333,7 @@ def render_aggregate(summaries: list[RunSummary]) -> None:
     table.add_row(
         "Duration",
         *[
-            _highlight(s.total_duration, best_dur, ".1f", higher=False)
-            if s.total_duration > 0 else "[dim]—[/dim]"
+            _highlight(s.total_duration, best_dur, ".1f", higher=False) if s.total_duration > 0 else "[dim]—[/dim]"
             for s in summaries
         ],
     )
@@ -389,11 +383,13 @@ def render_per_task(summaries: list[RunSummary]) -> None:
         label = get_run_label(s, summaries).replace("\n", " ")
         table.add_column(
             f"{label}\nScore",
-            justify="center", width=12,
+            justify="center",
+            width=12,
         )
         table.add_column(
             f"{label}\nTools",
-            justify="center", width=6,
+            justify="center",
+            width=6,
         )
 
     for tid in all_task_ids:
@@ -408,9 +404,7 @@ def render_per_task(summaries: list[RunSummary]) -> None:
             if task:
                 icon = "✅" if task.success else "❌"
                 sc = _score_color(task.partial_score)
-                row.append(
-                    f"{icon} [{sc}]{task.partial_score:.2f}[/{sc}]"
-                )
+                row.append(f"{icon} [{sc}]{task.partial_score:.2f}[/{sc}]")
                 row.append(str(task.total_tool_calls))
             else:
                 row.append("[dim]—[/dim]")
@@ -442,9 +436,7 @@ def render_win_loss(summaries: list[RunSummary]) -> None:
     for tid in all_task_ids:
         scores: list[float] = []
         for s in summaries:
-            task = next(
-                (t for t in s.tasks if t.task_id == tid), None
-            )
+            task = next((t for t in s.tasks if t.task_id == tid), None)
             scores.append(task.partial_score if task else 0.0)
 
         if len(scores) < 2:
@@ -501,9 +493,7 @@ def render_cost_efficiency(summaries: list[RunSummary]) -> None:
         table.add_column(label, min_width=14, justify="center")
 
     # Total tool calls
-    total_calls = [
-        sum(t.total_tool_calls for t in s.tasks) for s in summaries
-    ]
+    total_calls = [sum(t.total_tool_calls for t in s.tasks) for s in summaries]
     table.add_row(
         "Total Tool Calls",
         *[str(c) for c in total_calls],
@@ -512,18 +502,14 @@ def render_cost_efficiency(summaries: list[RunSummary]) -> None:
     # Avg tool calls per task
     table.add_row(
         "Avg Calls/Task",
-        *[
-            f"{c / max(len(s.tasks), 1):.1f}"
-            for c, s in zip(total_calls, summaries)
-        ],
+        *[f"{c / max(len(s.tasks), 1):.1f}" for c, s in zip(total_calls, summaries)],
     )
 
     # Calls per successful task
     table.add_row(
         "Calls/Success",
         *[
-            f"{c / max(s.successful, 1):.1f}"
-            if s.successful > 0 else "[dim]—[/dim]"
+            f"{c / max(s.successful, 1):.1f}" if s.successful > 0 else "[dim]—[/dim]"
             for c, s in zip(total_calls, summaries)
         ],
     )
@@ -531,17 +517,11 @@ def render_cost_efficiency(summaries: list[RunSummary]) -> None:
     # Avg duration per task
     table.add_row(
         "Avg Time/Task",
-        *[
-            f"{s.total_duration / max(len(s.tasks), 1):.1f}s"
-            for s in summaries
-        ],
+        *[f"{s.total_duration / max(len(s.tasks), 1):.1f}s" for s in summaries],
     )
 
     # Total disruptions
-    total_disruptions = [
-        sum(t.disruptions_encountered for t in s.tasks)
-        for s in summaries
-    ]
+    total_disruptions = [sum(t.disruptions_encountered for t in s.tasks) for s in summaries]
     table.add_row(
         "Total Disruptions",
         *[str(d) for d in total_disruptions],
@@ -586,15 +566,21 @@ def main(
         help="Run IDs to compare (space-separated)",
     ),
     latest: Optional[int] = typer.Option(
-        None, "--latest", "-n",
+        None,
+        "--latest",
+        "-n",
         help="Compare the N most recent runs",
     ),
     profile: Optional[str] = typer.Option(
-        None, "--profile", "-p",
+        None,
+        "--profile",
+        "-p",
         help="Filter runs by disruption profile",
     ),
     logs_dir: str = typer.Option(
-        "logs", "--logs-dir", "-d",
+        "logs",
+        "--logs-dir",
+        "-d",
         help="Root directory containing run folders",
     ),
 ) -> None:
@@ -619,14 +605,8 @@ def main(
     )
 
     if len(dirs) < 2:
-        console.print(
-            "[red]Need at least 2 runs to compare. "
-            f"Found {len(dirs)}.[/red]"
-        )
-        console.print(
-            "[dim]Pass run IDs as arguments, or use "
-            "--latest / --profile to select runs.[/dim]"
-        )
+        console.print(f"[red]Need at least 2 runs to compare. Found {len(dirs)}.[/red]")
+        console.print("[dim]Pass run IDs as arguments, or use --latest / --profile to select runs.[/dim]")
         raise typer.Exit(1)
 
     summaries = [load_run_summary(d) for d in dirs]
@@ -635,4 +615,3 @@ def main(
 
 if __name__ == "__main__":
     app()
-

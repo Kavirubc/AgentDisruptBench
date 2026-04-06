@@ -90,6 +90,51 @@ def _compute_k_and_lambda(
     return k_consistency, lambda_fault_tolerance
 
 
+def _base_task_id(task_id: str) -> str:
+    """Strip variant suffix (e.g. _v1, _v2) to get the family base ID.
+
+    Examples:
+        "retail_001"    → "retail_001"
+        "retail_001_v1" → "retail_001"
+        "retail_001_v2" → "retail_001"
+    """
+    import re
+
+    return re.sub(r"_v\d+$", "", task_id)
+
+
+def _compute_epsilon(results: list[BenchmarkResult]) -> float:
+    """Compute ε-robustness: pass rate consistency across task-wording variants.
+
+    Groups results by variant family (base task ID) and profile, then
+    measures how consistently an agent passes across different phrasings.
+
+    Returns 1.0 if no variant families exist (backwards compatible), otherwise
+    returns the average intra-family pass-rate consistency.
+    """
+    # Group results by (base_task_id, profile, variant_task_id) → list of successes
+    variant_groups: dict[tuple[str, str, str], list[bool]] = defaultdict(list)
+    for r in results:
+        base = _base_task_id(r.task_id)
+        variant_groups[(base, r.profile_name, r.task_id)].append(r.success)
+
+    # Compute average pass rate per explicit variant
+    variant_rates: dict[tuple[str, str], list[float]] = defaultdict(list)
+    for (base, profile, _), successes in variant_groups.items():
+        variant_rates[(base, profile)].append(sum(successes) / len(successes))
+
+    # Only consider families with multiple explicit variants (base + at least 1 _vN)
+    multi_variant_rates: list[float] = []
+    for rates in variant_rates.values():
+        if len(rates) > 1:
+            multi_variant_rates.append(sum(rates) / len(rates))
+
+    if not multi_variant_rates:
+        return 1.0  # No variants → placeholder (backward compatible)
+
+    return sum(multi_variant_rates) / len(multi_variant_rates)
+
+
 def compute_reliability_surface(
     results: list[BenchmarkResult],
 ) -> ReliabilitySurface:
@@ -109,8 +154,10 @@ def compute_reliability_surface(
 
     k_consistency, lambda_fault_tolerance = _compute_k_and_lambda(results)
 
-    # ε-robustness: placeholder (no variant tasks yet)
-    epsilon_robustness = 1.0
+    # ε-robustness: pass rate across task-wording variants.
+    # Variant families are identified by stripping the _v1/_v2/... suffix.
+    # E.g., retail_001, retail_001_v1, retail_001_v2 form one family.
+    epsilon_robustness = _compute_epsilon(results)
 
     composite = k_consistency * epsilon_robustness * lambda_fault_tolerance
 
