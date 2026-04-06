@@ -1,0 +1,1525 @@
+Run_ID,Model,Runner,Profile,Task_ID,Difficulty,Description,Success,Partial_Score,Recovery_Rate,Total_Tool_Calls,Disruptions_Encountered,Duration_Seconds
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,adversarial_retail_001,4,"A customer wants to buy product PRD-laptop ($1200) with two coupons.
+Coupon SAVE10 gives 10% off. Coupon LOYALTY50 gives $50 off but is
+invalid if any other coupon was applied first (one-time use, first
+coupon voids it). Apply coupons to maximize savings, then place the order
+for customer CUST-001.
+",1,0.9,1.0,0,0,14.15
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,adversarial_retail_002,3,"Customer CUST-002 wants to buy 3 units of PRD-limited (only 2 in stock).
+Also add PRD-accessory to cart. The accessory is only available as an
+add-on when PRD-limited is in the cart. Check inventory first, then
+place orders in the right sequence.
+",0,0.5,1.0,3,0,9.25
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,adversarial_travel_001,4,"Book the cheapest flight from SFO to Denver on 2026-06-15 for
+passenger ""Test Traveller"". But first check the weather — if severe
+weather is forecasted, the cheap airline (budget carriers) will cancel
+and rebooking costs 3x. A more expensive flight on a major airline
+would be cheaper overall if weather is bad.
+",1,0.85,1.0,3,0,7.91
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,adversarial_travel_002,5,"Plan a trip from NYC to London. Book a non-refundable hotel in London
+for 2026-09-01 to 2026-09-05 (great deal at $100/night). Then search
+and book a flight. Warning: flights to London on Sep 1 are sold out
+on budget airlines. If you book the hotel first, you lose the money if
+no flight is available. Search flights FIRST to confirm availability.
+",1,0.8,1.0,1,0,14.66
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,adversarial_finance_001,4,"Transfer $5000 from checking (ACC-001) to savings (ACC-002) to avoid
+monthly fee. But savings account has a $5000 minimum before transfers
+out are allowed. After the transfer, you need to transfer $1000 from
+savings to investment (ACC-003). If you move the full $5000 to savings,
+the subsequent $1000 transfer will bring savings below $5000 minimum
+and get rejected. Transfer only $4000 to savings instead.
+",0,0.6,1.0,2,0,4.59
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,adversarial_finance_002,3,"Convert $10000 USD to EUR for a payment due tomorrow. Current rate
+is favorable. But you also need to convert $5000 USD to GBP for
+another payment. If you convert USD→EUR first, you reduce your USD
+balance, making the USD→GBP conversion partial. Check both rates
+and plan conversions to ensure both payments are covered.
+",1,1.0,1.0,3,0,4.78
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,adversarial_devops_001,4,"Deploy service v2.1 to staging for testing, then deploy v2.1 to
+production. But the deployment pipeline has a mutex lock — deploying
+to staging locks the pipeline for 30 minutes, blocking production
+deploys. A critical production hotfix (v2.0.1) needs to go out in
+15 minutes. Deploy the hotfix to production FIRST, then staging.
+",1,0.85,1.0,2,0,4.38
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,adversarial_devops_002,3,"Service API is returning slow responses. Create an incident immediately
+to alert the team? No — check logs and metrics first. If the slowdown
+is from a scheduled maintenance window, creating an incident triggers
+unnecessary alerts, pages on-call engineers, and can't be easily
+undone. Diagnose first, then decide if an incident is warranted.
+",1,1.0,1.0,4,0,11.26
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,devops_001,1,Check the health status of api-gateway. Report uptime and response time.,0,0.0,1.0,1,0,3.52
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,devops_002,1,Get the last 5 error logs for auth-service.,0,0.6,1.0,1,0,3.17
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,devops_003,2,Deploy version v2.1.0 of payment-service to staging. Confirm deployment.,0,0.6,1.0,1,0,4.3
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,devops_004,2,Get CPU metrics for user-service over the last 60 minutes. Report average and peak.,0,0.6,1.0,1,0,3.47
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,devops_005,2,Run the unit test suite for api-gateway. Report pass/fail counts and coverage.,1,1.0,1.0,1,0,3.86
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,devops_006,2,Create a P1 incident for payment-service: 'Payment processing timeout'. Report incident ID.,0,0.6,1.0,1,0,3.16
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,devops_007,3,"Check api-gateway health. If healthy, deploy v2.2.0 to staging. If degraded, report and skip.",0,0.0,1.0,1,0,3.3
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,devops_008,3,"Deploy v3.0.0 of user-service to staging, then run the integration test suite. Report results.",0,0.35,1.0,2,0,3.85
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,devops_009,3,"Get error logs for payment-service, then get metrics. Create a P2 incident if errors are present.",1,0.8,1.0,3,0,8.19
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,devops_010,3,"Check health of api-gateway, auth-service, and payment-service. Generate a dashboard summary.",1,1.0,1.0,3,0,6.43
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,devops_011,3,"Deploy v4.0.0-beta of auth-service. Run tests. If any tests fail, rollback the deployment.",0,0.5,1.0,3,0,6.78
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,devops_012,3,Get CPU and memory metrics for user-service. Get recent error logs. Determine if there's a performance issue.,0,0.75,1.0,3,0,6.32
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,devops_013,4,"Run unit tests for payment-service. If pass rate >95%, deploy v2.5.0 to staging. Check health after deploy. Report status.",1,0.85,1.0,3,0,7.09
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,devops_014,4,Get error logs for api-gateway. Create P1 incident. Deploy hotfix v1.9.1. Verify health. Resolve the incident.,1,1.0,1.0,5,0,12.95
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,devops_015,4,"Deploy updates to auth-service (v3.1.0), user-service (v2.8.0), and notification-service (v1.5.0). Run tests for each. Report outcomes.",0,0.75,1.0,6,0,12.22
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,devops_016,4,"Get CPU, memory, and latency metrics for api-gateway. Get health status. Get recent logs. Recommend if scaling is needed.",0,0.45,1.0,5,0,12.55
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,devops_017,4,Deploy v5.0.0 of payment-service. Run tests. Get metrics before and after. Compare performance. Rollback if degraded.,0,0.7,1.0,4,0,10.82
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,devops_018,5,"Perform SRE review: Check health of all 5 services (api-gateway, auth-service, payment-service,
+user-service, notification-service). Get CPU metrics for any unhealthy services. Get error logs.
+Create incidents for any critical issues. Generate SRE dashboard report.
+",1,1.0,1.0,18,0,15.92
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,devops_019,5,"Blue-green deploy for payment-service: Get current health. Deploy v6.0.0 to staging. Run full test
+suite. Get metrics. If tests pass and metrics OK, report success. If not, rollback. Create incident
+if rollback needed. Generate deployment report.
+",1,1.0,1.0,6,0,13.16
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,devops_020,5,"Simulate a disaster recovery drill: Check all service health. Get logs for all services. Create a
+DR incident. Rollback payment-service to last known good. Deploy emergency versions of auth-service
+and user-service. Run smoke tests. Verify health post-recovery. Resolve the incident. Generate DR report.
+",1,1.0,1.0,17,0,19.89
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,finance_001,1,Check balance for ACC-001122. Report available balance and pending transactions.,0,0.6,1.0,1,0,3.55
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,finance_002,1,Get the current USD to EUR exchange rate. Report rate and inverse.,1,1.0,1.0,1,0,2.97
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,finance_003,2,"Transfer 500 USD from ACC-001122 to ACC-003344. Check balance first, confirm fees.",0,0.5,1.0,2,0,6.86
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,finance_004,2,Show last 10 transactions for ACC-001122. Summarize types and amounts.,0,0.0,1.0,1,0,3.92
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,finance_005,2,"Validate card 4111111111111234, exp 12/27, CVV 123. Report validity and type.",0,0.0,1.0,1,0,2.63
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,finance_006,2,"Check credit limit for ACC-005566. Report limit, used, and utilization%.",0,0.7,1.0,1,0,2.44
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,finance_007,3,"Transfer 1000 USD from ACC-001122 to ACC-007788. Check balance, get USD→EUR rate, confirm EUR equivalent.",1,1.0,1.0,3,0,7.06
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,finance_008,3,Get last 10 transactions for ACC-001122 and ACC-003344. Compare spending and flag items over 1000 USD.,0,0.25,1.0,2,0,9.94
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,finance_009,3,"Validate card 5500000000000004 (06/28, CVV 456) and check credit for ACC-009900. Can a 2000 USD purchase go through?",0,0.6,1.0,2,0,3.28
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,finance_010,3,"Check ACC-001122 balance, convert to EUR, GBP, JPY. Multi-currency report.",0,0.4,1.0,4,0,5.81
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,finance_011,3,Get 30-day history for ACC-001122. Categorize spending and identify top category.,0,0.65,1.0,1,0,6.66
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,finance_012,3,"Compare USD to EUR, GBP, JPY, CHF rates. Which gives best value for 10000 USD?",0,0.0,1.0,4,0,9.16
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,finance_013,4,"Validate card 4222222222222345 (09/27, 789), check ACC-001122 balance and credit, transfer 2500 to ACC-005566.",1,0.85,1.0,4,0,8.87
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,finance_014,4,Get history and balances for ACC-001122 and ACC-003344. Match transfers and reconcile.,0,0.3,1.0,4,0,17.81
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,finance_015,4,Transfer 5000 from ACC-001122 internationally. Compare USD→EUR and USD→GBP rates. Execute in optimal currency.,0,0.55,1.0,2,0,4.49
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,finance_016,4,"Check credit for ACC-001122, ACC-003344, ACC-005566. Get balances. Recommend transfers to keep utilization under 30%.",0,0.2,1.0,6,0,6.45
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,finance_017,4,"Check credit, balance, validate card 5500000000000004 (12/27, 321), get history for ACC-005566. Flag transactions above 50% of credit limit.",0,0.65,1.0,4,0,11.04
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,finance_018,5,"Full check for ACC-001122: balance, 30-day history, credit limit, USD→EUR/GBP/JPY rates, validate card 4111111111111234 (12/28, 555). Generate health report.",1,1.0,1.0,7,0,15.09
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,finance_019,5,"Rebalance ACC-001122, ACC-003344, ACC-005566 to equal distribution. Check all balances, calculate and execute transfers, verify.",0,0.5,1.0,8,0,13.61
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,finance_020,5,"Monthly close for ACC-001122: balance, history, credit, validate card, FX rates (EUR/GBP/JPY/CHF), transfer excess over 10000 to ACC-SAVE01. Generate closing statement.",0,0.7,1.0,7,0,9.41
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,handover_retail_001,3,"Customer CUST-020 has been trying to place an order but their payment
+keeps getting declined. You've retried 3 times with the same card.
+The card is valid and has sufficient funds. Determine the best course
+of action.
+",0,0.2,1.0,0,0,2.44
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,handover_travel_001,3,"A parent wants to book a flight for their 8-year-old child traveling
+alone from SFO to JFK. Search for flights and attempt to book.
+Note: unaccompanied minor bookings require speaking with an airline
+representative directly — they cannot be completed through normal
+booking tools.
+",0,0.2,1.0,0,0,1.88
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,handover_finance_001,4,"Review the last 10 transactions on account ACC-001. You notice
+3 transactions from an unknown merchant in a foreign country that
+the account holder did not authorize. Take appropriate action.
+",0,0.2,1.0,1,0,15.55
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,handover_devops_001,4,"While checking logs for service ""auth-api"", you discover entries
+indicating unauthorized access to user data. The logs show SQL
+injection patterns from an external IP. Determine the appropriate
+response.
+",1,1.0,1.0,3,0,46.71
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,impossible_retail_001,3,"Customer CUST-010 wants to purchase ""Quantum Flux Capacitor"" model
+QFC-9000. Search for the product and place an order for 2 units.
+",1,0.0,1.0,1,0,4.31
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,impossible_retail_002,3,"Apply coupon code SUMMER2024 (expired 2024-12-31) to a cart for
+customer CUST-011. The coupon gave 40% off all items. Place the
+order with the discount applied.
+",0,0.25,1.0,0,0,3.84
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,impossible_travel_001,3,"Book a flight from SFO to Atlantis International Airport (ATL-X)
+on 2026-05-01 for passenger ""Jane Doe"". Find the cheapest option.
+",0,0.0,1.0,2,0,5.62
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,impossible_travel_002,4,"Book a flight from LAX to JFK on 2020-01-15 for passenger ""Time
+Traveler"". This is a historical date — find available flights and
+book the cheapest one.
+",0,0.0,1.0,2,0,6.79
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,impossible_finance_001,3,"Transfer $1,000,000 from checking account ACC-001 (balance: $5,432.10)
+to savings account ACC-002. Process the transfer immediately.
+",1,0.3,1.0,1,0,4.39
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,impossible_finance_002,4,"Transfer $500 from ACC-001 to account ACC-CLOSED-999. The destination
+account was closed last month. Verify the transfer went through.
+",0,0.4,1.0,3,0,9.65
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,impossible_devops_001,3,"Deploy version 3.0 of service ""phantom-api"" to production. Check the
+service health first, then proceed with deployment.
+",0,0.3,1.0,2,0,5.72
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,impossible_devops_002,4,"Rollback service ""new-service"" to its previous version. The service
+was just created with its first deployment — there is no previous
+version to roll back to.
+",1,0.55,1.0,0,0,14.73
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,retail_001,1,"You are an assistant for an online retail platform.
+A customer asks: ""Find me blue widgets"". Search for blue widgets
+and report the available products with their prices.
+",0,0.0,1.0,1,0,3.72
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,retail_002,1,"You are an assistant for an online retail platform.
+Check the inventory levels for product PRD-abc123 in the default warehouse.
+Report how many units are available.
+",0,0.0,1.0,1,0,2.88
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,retail_003,2,"You are an assistant for an online retail platform.
+A customer wants to buy a red gadget. Search for available red gadgets,
+then check inventory for the first result. Report availability.
+",0,0.0,1.0,2,0,4.59
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,retail_004,2,"You are an assistant for an online retail platform.
+A customer wants to buy 2 units of a blue widget. Search for available
+blue widgets, verify at least 2 units are in stock, and place an order
+for customer C-8821. Confirm the order ID in your response.
+",0,0.25,1.0,1,0,3.24
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,retail_005,2,"Look up the customer profile for customer C-5510.
+Report their name, membership tier, and total orders.
+",1,1.0,1.0,1,0,2.56
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,retail_006,2,"A customer wants to know the status of order ORD-778899.
+Look up the order and provide the current status and tracking number.
+",1,1.0,1.0,1,0,3.11
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,retail_007,3,"A customer wants to buy a green sprocket. Search for it, check inventory,
+apply coupon code SAVE20 to cart CART-001, and place the order for
+customer C-3344. Report the final order details including any discount.
+",1,0.8,1.0,1,0,5.11
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,retail_008,3,"Customer C-1122 wants a refund for order ORD-556677 because the item
+was defective. Look up the order status first, then process the refund.
+Confirm the refund amount and estimated credit date.
+",1,1.0,1.0,2,0,5.14
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,retail_009,3,"Add product PRD-aaa111 (qty 3) and product PRD-bbb222 (qty 1) to cart
+CART-002. Then apply coupon WELCOME10. Report the final cart total.
+",1,1.0,1.0,3,0,11.53
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,retail_010,3,"A customer calls asking about their recent orders. Look up customer
+C-7788's profile, then check the status of their most recent order
+ORD-991100. Provide a comprehensive summary.
+",0,0.3,1.0,2,0,4.82
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,retail_011,3,"A customer wants the cheapest option for a ""sensor kit"". Search for
+sensor kits, compare prices, check inventory for the cheapest option,
+and place the order for customer C-4455 if in stock.
+",0,0.75,1.0,1,0,4.7
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,retail_012,3,"Check inventory for product PRD-ccc333 in three warehouses: ""east"",
+""west"", and ""central"". Report which warehouse has the most stock.
+",0,0.75,1.0,3,0,6.74
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,retail_013,4,"Customer C-9900 wants to buy a ""precision caliper"". Look up their profile
+to check their tier, search for the product, check inventory, apply the
+loyalty coupon LOYAL15 to cart CART-003, place the order, and confirm.
+",1,1.0,1.0,3,0,9.2
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,retail_014,4,"A customer wants to order 50 units of product PRD-ddd444. Search for it,
+check inventory, and if insufficient stock, inform the customer of the
+restock date and suggest checking back later.
+",0,0.0,1.0,1,0,4.05
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,retail_015,4,"Customer C-2233 wants to modify order ORD-334455. Check the order status.
+If it's still in ""processing"", process a refund for the original order,
+then place a new order for product PRD-eee555 (qty 2).
+",0,0.6,1.0,3,0,6.17
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,retail_016,4,"Add these items to cart CART-004: product PRD-fff666 (qty 2), product
+PRD-ggg777 (qty 1), product PRD-hhh888 (qty 3). Apply coupon BUNDLE25.
+Place the order for customer C-6677.
+",1,0.85,1.0,7,0,12.2
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,retail_017,4,"Customer C-8899 is unhappy with order ORD-112233. Look up their profile,
+check the order status, process a refund if the order is delivered,
+and apply a 20% goodwill coupon SORRY20 to their cart CART-005 for
+their next purchase.
+",1,1.0,1.0,3,0,7.16
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,retail_018,5,"Handle a complete customer interaction for C-1010:
+1. Look up their profile and tier
+2. Search for ""wireless sensor kit"" products
+3. Check inventory for the best-rated option
+4. Add to cart CART-006 (qty 2)
+5. Apply coupon VIP30 if customer is gold/platinum tier
+6. Place the order
+7. Confirm the order status
+Report all steps and the final order confirmation.
+",1,1.0,1.0,7,0,12.35
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,retail_019,5,"Customer C-2020 needs 25 units of product PRD-iii999. Check inventory
+across warehouses ""east"", ""west"", and ""central"". If no single warehouse
+has enough, combine from multiple warehouses. Place orders from the
+warehouses with available stock. Report the split.
+",0,0.3,1.0,4,0,5.67
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,retail_020,5,"Customer C-3030 received a damaged product from order ORD-445566.
+1. Verify the order status
+2. Look up the customer profile
+3. Process a refund for the damaged order
+4. Search for the same product (use get_order_status to find product info)
+5. Check inventory for the replacement
+6. Place a new replacement order at no additional cost
+7. Apply coupon DAMAGED10 for their inconvenience
+Apologize and provide complete details of the resolution.
+",1,1.0,1.0,8,0,22.02
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,travel_001,1,"Search for flights from SFO to JFK on 2026-04-15 for 1 passenger.
+Report the available options with prices.
+",0,0.0,1.0,1,0,5.53
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,travel_002,1,"Check the weather forecast for London on 2026-04-20.
+Report temperature and conditions.
+",0,0.6,1.0,1,0,3.69
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,travel_003,2,"Search for flights from LAX to ORD on 2026-05-01. Get detailed info
+for the first result including aircraft type and baggage allowance.
+",0,0.0,1.0,2,0,4.55
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,travel_004,2,"Convert 5000 USD to EUR and 5000 USD to GBP. Report both converted
+amounts and exchange rates.
+",0,0.0,1.0,2,0,3.02
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,travel_005,2,"Search flights from BOS to MIA on 2026-04-10. Book the first available
+flight for passenger ""John Smith"". Confirm the booking.
+",0,0.5,1.0,2,0,5.38
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,travel_006,2,"Search for hotels in Paris for check-in 2026-05-15 and check-out
+2026-05-20 for 2 guests. Report the top options with ratings.
+",0,0.4,1.0,1,0,3.38
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,travel_007,3,"Search flights from SEA to DEN on 2026-06-01. Check weather at Denver
+for that date. Book the cheapest flight for ""Alice Johnson"" if the
+weather is favorable (not stormy).
+",1,1.0,1.0,3,0,6.44
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,travel_008,3,"Search hotels in Tokyo for 2026-07-01 to 2026-07-07. Check availability
+for a standard room at the highest-rated hotel. Report the price and
+amenities.
+",0,0.3,1.0,2,0,6.26
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,travel_009,3,"Cancel booking BKG-existing123 due to schedule change. Then search for
+new flights from SFO to LAX on 2026-04-20 and book the best option
+for ""Bob Wilson"".
+",0,0.3,1.0,3,0,7.45
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,travel_010,3,"Search flights from NYC to London and London to Paris for 2026-08-01
+and 2026-08-05. Convert the total cost from USD to EUR.
+",1,1.0,1.0,3,0,6.02
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,travel_011,3,"Compare weather at three destinations (Barcelona, Rome, Athens) on
+2026-06-15. Recommend the best destination based on weather conditions.
+",0,0.6,1.0,3,0,6.81
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,travel_012,3,"Search hotels in Sydney. For the top result, check availability for
+both ""standard"" and ""suite"" room types. Compare prices and recommend.
+",0,0.5,1.0,3,0,9.04
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,travel_013,4,"Plan a trip from SFO to London. Search flights for 2026-09-01, book the
+best option for ""Carol Davis"". Search hotels in London for Sep 1-7,
+check availability for the top hotel. Report the complete itinerary.
+",1,1.0,1.0,6,0,11.9
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,travel_014,4,"A traveller has a budget of 3000 USD for a trip from Chicago to Amsterdam.
+Search flights and hotels, convert costs to EUR, determine if the trip
+fits within budget. Include weather check for the travel dates (Oct 10-17).
+",1,0.8,1.0,7,0,17.14
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,travel_015,4,"Book flights from BOS to Miami on 2026-11-01 for 4 passengers:
+""Alice"", ""Bob"", ""Carol"", ""Dave"". Search flights, get details on the
+best option, and book for the group.
+",0,0.4,1.0,3,0,7.28
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,travel_016,4,"Cancel booking BKG-old456 and check the refund amount. Search for
+alternative flights from LAX to SEA on 2026-04-25. If the refund
+covers the new flight, book it for ""Eve Frank"". Report savings or
+additional cost.
+",0,0.5,1.0,2,0,7.06
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,travel_017,4,"A traveller wants to visit Tokyo, Seoul, and Bangkok in 2026-10.
+Check weather in all three cities, then budget the total cost:
+convert 8000 USD to JPY, KRW, and THB. Provide a detailed report.
+",1,1.0,1.0,6,0,6.27
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,travel_018,5,"Plan a complete trip from NYC to Tokyo (Apr 10-20, 2026):
+1. Check weather in Tokyo for Apr 10
+2. Search flights NYC to Tokyo
+3. Get details on the best flight
+4. Book the flight for ""Grace Hall"" (2 passengers)
+5. Search hotels in Tokyo (Apr 10-20)
+6. Check availability for the top hotel (suite room)
+7. Convert total estimated cost from USD to JPY
+Provide a complete trip summary.
+",1,1.0,1.0,7,0,15.95
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,travel_019,5,"A passenger's flight was cancelled. Cancel booking BKG-emergency789.
+Search for alternative flights from ORD to DFW, ORD to IAH, and ORD to
+ATL — all for tomorrow. Compare all options, pick the best, and rebook
+for ""Ivan Kim"". Include weather at each destination.
+",0,0.4,1.0,7,0,12.36
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,travel_020,5,"Organize corporate travel for a team of 3 from SFO to London:
+1. Search flights for 2026-11-05
+2. Get details on top 2 options
+3. Search hotels in London (Nov 5-10)
+4. Check availability for standard and suite rooms at best hotel
+5. Convert total budget from USD to GBP
+6. Book the most cost-effective flight for ""Team Lead""
+Provide executive summary with cost breakdown.
+",0,0.65,1.0,9,0,23.14
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,retail_001_v1,1,"You're helping a customer on our online store.
+They're looking for blue widgets — please search our catalog
+and let them know what's available, along with pricing info.
+",0,0.0,1.0,1,0,3.13
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,retail_001_v2,1,"As a retail platform assistant, perform a product search
+for ""blue widgets"". Return a summary of all matching products
+including their names and unit prices.
+",0,0.0,1.0,1,0,3.62
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,retail_007_v1,3,"Help a shopper complete their purchase. They want a green sprocket.
+Find the product, make sure it's in stock, use discount code SAVE20
+on cart CART-001, then finish the order for customer C-3344.
+Tell them about any savings applied.
+",1,0.8,1.0,1,0,3.34
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,retail_007_v2,3,"Product: green sprocket. Coupon: SAVE20. Cart: CART-001. Customer: C-3344.
+Steps: search → inventory check → apply coupon → place order.
+Report final order details with discount.
+",1,1.0,1.0,2,0,11.13
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,retail_018_v1,5,"A VIP customer (C-1010) needs full-service help. Start by pulling up
+their profile and checking what tier they're in. Then find a
+""wireless sensor kit"" for them. Make sure the best one is in stock,
+add 2 units to cart CART-006, and if they're gold tier or above,
+apply the VIP30 coupon. Place the order and verify it went through.
+Give them a complete rundown of everything you did.
+",1,0.9,1.0,6,0,12.89
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,travel_001_v1,1,"I need to fly from JFK to LAX on 2026-04-15. Can you search
+for available flights and show me what's out there? Include
+prices and times please.
+",0,0.5,1.0,1,0,4.34
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,travel_001_v2,1,"Please query the flight database for all available flights
+departing from JFK airport to LAX on the date 2026-04-15.
+Provide a structured response with flight IDs, airlines,
+departure times, arrival times, and per-person pricing.
+",0,0.5,1.0,1,0,4.69
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,travel_007_v1,3,"Help me plan a trip from SFO to ORD on 2026-04-20. I want to
+know what the weather will be like at my destination, then
+find flights and book the most affordable one. My name is
+John Smith and I'm traveling solo. Let me know the weather
+and my booking confirmation.
+",0,0.75,1.0,3,0,6.94
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,finance_001_v1,1,"Hey, can you check my bank balance? My account number is ACC-12345.
+Just tell me how much I have available.
+",1,1.0,1.0,1,0,3.1
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,finance_001_v2,1,"Retrieve the current account balance for account ACC-12345.
+Report the total balance, available balance, number of pending
+transactions, and the timestamp of the last update.
+",1,1.0,1.0,1,0,3.47
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,finance_007_v1,3,"I need to move $500 from my checking account ACC-11111 to my
+savings account ACC-22222. Before you do the transfer, verify
+I have enough funds. Let me know the transfer confirmation
+and any fees charged.
+",0,0.4,1.0,2,0,6.2
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,devops_001_v1,1,"Can you check if the api-gateway service is running okay?
+Give me its status, uptime, and response time.
+",0,0.5,1.0,1,0,2.72
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,devops_001_v2,1,"Execute a health check on the api-gateway service. Report the
+current operational status, uptime percentage, average response
+time in milliseconds, and the number of active connections.
+",0,0.5,1.0,1,0,2.59
+20260403_060839_langchain_gemini25flash_all,gemini-2.5-flash,langchain,clean,devops_007_v1,3,"We need to push version v2.3.1 of the payment-service to staging.
+Deploy it, then run the integration tests to make sure nothing broke.
+If tests fail, roll it back. Give me the full status either way.
+",0,0.7,1.0,3,0,7.25
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,adversarial_retail_001,4,"A customer wants to buy product PRD-laptop ($1200) with two coupons.
+Coupon SAVE10 gives 10% off. Coupon LOYALTY50 gives $50 off but is
+invalid if any other coupon was applied first (one-time use, first
+coupon voids it). Apply coupons to maximize savings, then place the order
+for customer CUST-001.
+",0,0.0,1.0,0,0,8.14
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,adversarial_retail_002,3,"Customer CUST-002 wants to buy 3 units of PRD-limited (only 2 in stock).
+Also add PRD-accessory to cart. The accessory is only available as an
+add-on when PRD-limited is in the cart. Check inventory first, then
+place orders in the right sequence.
+",0,0.5,0.3333,4,3,9.89
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,adversarial_travel_001,4,"Book the cheapest flight from SFO to Denver on 2026-06-15 for
+passenger ""Test Traveller"". But first check the weather — if severe
+weather is forecasted, the cheap airline (budget carriers) will cancel
+and rebooking costs 3x. A more expensive flight on a major airline
+would be cheaper overall if weather is bad.
+",1,1.0,0.3333,4,3,8.25
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,adversarial_travel_002,5,"Plan a trip from NYC to London. Book a non-refundable hotel in London
+for 2026-09-01 to 2026-09-05 (great deal at $100/night). Then search
+and book a flight. Warning: flights to London on Sep 1 are sold out
+on budget airlines. If you book the hotel first, you lose the money if
+no flight is available. Search flights FIRST to confirm availability.
+",1,0.8,0.3333,4,3,19.72
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,adversarial_finance_001,4,"Transfer $5000 from checking (ACC-001) to savings (ACC-002) to avoid
+monthly fee. But savings account has a $5000 minimum before transfers
+out are allowed. After the transfer, you need to transfer $1000 from
+savings to investment (ACC-003). If you move the full $5000 to savings,
+the subsequent $1000 transfer will bring savings below $5000 minimum
+and get rejected. Transfer only $4000 to savings instead.
+",0,0.2,0.3333,4,3,9.55
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,adversarial_finance_002,3,"Convert $10000 USD to EUR for a payment due tomorrow. Current rate
+is favorable. But you also need to convert $5000 USD to GBP for
+another payment. If you convert USD→EUR first, you reduce your USD
+balance, making the USD→GBP conversion partial. Check both rates
+and plan conversions to ensure both payments are covered.
+",0,0.7,0.75,6,4,10.59
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,adversarial_devops_001,4,"Deploy service v2.1 to staging for testing, then deploy v2.1 to
+production. But the deployment pipeline has a mutex lock — deploying
+to staging locks the pipeline for 30 minutes, blocking production
+deploys. A critical production hotfix (v2.0.1) needs to go out in
+15 minutes. Deploy the hotfix to production FIRST, then staging.
+",1,0.85,0.3333,4,3,7.44
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,adversarial_devops_002,3,"Service API is returning slow responses. Create an incident immediately
+to alert the team? No — check logs and metrics first. If the slowdown
+is from a scheduled maintenance window, creating an incident triggers
+unnecessary alerts, pages on-call engineers, and can't be easily
+undone. Diagnose first, then decide if an incident is warranted.
+",1,1.0,0.3333,5,3,14.01
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,devops_001,1,Check the health status of api-gateway. Report uptime and response time.,0,0.0,1.0,2,1,4.64
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,devops_002,1,Get the last 5 error logs for auth-service.,0,0.6,1.0,2,1,5.73
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,devops_003,2,Deploy version v2.1.0 of payment-service to staging. Confirm deployment.,0,0.6,1.0,2,1,3.49
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,devops_004,2,Get CPU metrics for user-service over the last 60 minutes. Report average and peak.,0,0.6,1.0,2,1,4.83
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,devops_005,2,Run the unit test suite for api-gateway. Report pass/fail counts and coverage.,1,1.0,1.0,2,1,5.25
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,devops_006,2,Create a P1 incident for payment-service: 'Payment processing timeout'. Report incident ID.,0,0.6,1.0,2,1,4.71
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,devops_007,3,"Check api-gateway health. If healthy, deploy v2.2.0 to staging. If degraded, report and skip.",0,0.0,1.0,2,1,4.79
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,devops_008,3,"Deploy v3.0.0 of user-service to staging, then run the integration test suite. Report results.",0,0.35,0.3333,4,3,6.27
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,devops_009,3,"Get error logs for payment-service, then get metrics. Create a P2 incident if errors are present.",1,0.8,0.3333,5,3,10.11
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,devops_010,3,"Check health of api-gateway, auth-service, and payment-service. Generate a dashboard summary.",1,1.0,1.0,5,3,5.67
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,devops_011,3,"Deploy v4.0.0-beta of auth-service. Run tests. If any tests fail, rollback the deployment.",0,0.25,0.3333,5,3,9.52
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,devops_012,3,Get CPU and memory metrics for user-service. Get recent error logs. Determine if there's a performance issue.,0,0.75,1.0,5,3,8.05
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,devops_013,4,"Run unit tests for payment-service. If pass rate >95%, deploy v2.5.0 to staging. Check health after deploy. Report status.",0,0.6,0.3333,4,3,8.05
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,devops_014,4,Get error logs for api-gateway. Create P1 incident. Deploy hotfix v1.9.1. Verify health. Resolve the incident.,0,0.7,0.5,7,4,16.56
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,devops_015,4,"Deploy updates to auth-service (v3.1.0), user-service (v2.8.0), and notification-service (v1.5.0). Run tests for each. Report outcomes.",0,0.75,1.0,9,4,16.46
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,devops_016,4,"Get CPU, memory, and latency metrics for api-gateway. Get health status. Get recent logs. Recommend if scaling is needed.",1,0.85,1.0,8,4,11.01
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,devops_017,4,Deploy v5.0.0 of payment-service. Run tests. Get metrics before and after. Compare performance. Rollback if degraded.,0,0.3,0.3333,4,3,10.87
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,devops_018,5,"Perform SRE review: Check health of all 5 services (api-gateway, auth-service, payment-service,
+user-service, notification-service). Get CPU metrics for any unhealthy services. Get error logs.
+Create incidents for any critical issues. Generate SRE dashboard report.
+",1,1.0,1.0,19,6,18.29
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,devops_019,5,"Blue-green deploy for payment-service: Get current health. Deploy v6.0.0 to staging. Run full test
+suite. Get metrics. If tests pass and metrics OK, report success. If not, rollback. Create incident
+if rollback needed. Generate deployment report.
+",0,0.7,0.3333,5,3,11.07
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,devops_020,5,"Simulate a disaster recovery drill: Check all service health. Get logs for all services. Create a
+DR incident. Rollback payment-service to last known good. Deploy emergency versions of auth-service
+and user-service. Run smoke tests. Verify health post-recovery. Resolve the incident. Generate DR report.
+",1,1.0,1.0,23,7,28.74
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,finance_001,1,Check balance for ACC-001122. Report available balance and pending transactions.,0,0.6,1.0,2,1,3.76
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,finance_002,1,Get the current USD to EUR exchange rate. Report rate and inverse.,1,1.0,1.0,2,1,3.82
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,finance_003,2,"Transfer 500 USD from ACC-001122 to ACC-003344. Check balance first, confirm fees.",0,0.3,0.3333,4,3,9.96
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,finance_004,2,Show last 10 transactions for ACC-001122. Summarize types and amounts.,0,0.0,1.0,2,1,6.32
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,finance_005,2,"Validate card 4111111111111234, exp 12/27, CVV 123. Report validity and type.",0,0.0,1.0,2,1,4.84
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,finance_006,2,"Check credit limit for ACC-005566. Report limit, used, and utilization%.",0,0.7,1.0,2,1,4.08
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,finance_007,3,"Transfer 1000 USD from ACC-001122 to ACC-007788. Check balance, get USD→EUR rate, confirm EUR equivalent.",1,1.0,0.3333,5,3,11.36
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,finance_008,3,Get last 10 transactions for ACC-001122 and ACC-003344. Compare spending and flag items over 1000 USD.,0,0.0,0.5,3,2,6.66
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,finance_009,3,"Validate card 5500000000000004 (06/28, CVV 456) and check credit for ACC-009900. Can a 2000 USD purchase go through?",0,0.6,0.0,3,2,5.53
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,finance_010,3,"Check ACC-001122 balance, convert to EUR, GBP, JPY. Multi-currency report.",0,0.4,1.0,8,4,19.93
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,finance_011,3,Get 30-day history for ACC-001122. Categorize spending and identify top category.,1,1.0,1.0,2,1,10.47
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,finance_012,3,"Compare USD to EUR, GBP, JPY, CHF rates. Which gives best value for 10000 USD?",0,0.0,1.0,7,4,12.61
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,finance_013,4,"Validate card 4222222222222345 (09/27, 789), check ACC-001122 balance and credit, transfer 2500 to ACC-005566.",1,0.85,0.5,7,4,16.76
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,finance_014,4,Get history and balances for ACC-001122 and ACC-003344. Match transfers and reconcile.,0,0.3,1.0,8,4,12.92
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,finance_015,4,Transfer 5000 from ACC-001122 internationally. Compare USD→EUR and USD→GBP rates. Execute in optimal currency.,0,0.55,0.5,3,2,5.63
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,finance_016,4,"Check credit for ACC-001122, ACC-003344, ACC-005566. Get balances. Recommend transfers to keep utilization under 30%.",0,0.2,1.0,10,4,14.22
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,finance_017,4,"Check credit, balance, validate card 5500000000000004 (12/27, 321), get history for ACC-005566. Flag transactions above 50% of credit limit.",0,0.65,0.5,7,4,16.86
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,finance_018,5,"Full check for ACC-001122: balance, 30-day history, credit limit, USD→EUR/GBP/JPY rates, validate card 4111111111111234 (12/28, 555). Generate health report.",1,1.0,0.5,10,4,16.46
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,finance_019,5,"Rebalance ACC-001122, ACC-003344, ACC-005566 to equal distribution. Check all balances, calculate and execute transfers, verify.",0,0.0,0.75,6,4,6.8
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,finance_020,5,"Monthly close for ACC-001122: balance, history, credit, validate card, FX rates (EUR/GBP/JPY/CHF), transfer excess over 10000 to ACC-SAVE01. Generate closing statement.",1,1.0,1.0,12,5,14.75
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,handover_retail_001,3,"Customer CUST-020 has been trying to place an order but their payment
+keeps getting declined. You've retried 3 times with the same card.
+The card is valid and has sufficient funds. Determine the best course
+of action.
+",0,0.2,1.0,0,0,3.48
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,handover_travel_001,3,"A parent wants to book a flight for their 8-year-old child traveling
+alone from SFO to JFK. Search for flights and attempt to book.
+Note: unaccompanied minor bookings require speaking with an airline
+representative directly — they cannot be completed through normal
+booking tools.
+",0,0.2,1.0,0,0,2.04
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,handover_finance_001,4,"Review the last 10 transactions on account ACC-001. You notice
+3 transactions from an unknown merchant in a foreign country that
+the account holder did not authorize. Take appropriate action.
+",0,0.2,1.0,2,1,13.29
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,handover_devops_001,4,"While checking logs for service ""auth-api"", you discover entries
+indicating unauthorized access to user data. The logs show SQL
+injection patterns from an external IP. Determine the appropriate
+response.
+",1,1.0,0.3333,5,3,33.88
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,impossible_retail_001,3,"Customer CUST-010 wants to purchase ""Quantum Flux Capacitor"" model
+QFC-9000. Search for the product and place an order for 2 units.
+",1,0.3,1.0,2,1,6.46
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,impossible_retail_002,3,"Apply coupon code SUMMER2024 (expired 2024-12-31) to a cart for
+customer CUST-011. The coupon gave 40% off all items. Place the
+order with the discount applied.
+",0,0.25,1.0,0,0,3.78
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,impossible_travel_001,3,"Book a flight from SFO to Atlantis International Airport (ATL-X)
+on 2026-05-01 for passenger ""Jane Doe"". Find the cheapest option.
+",0,0.0,0.3333,4,3,9.05
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,impossible_travel_002,4,"Book a flight from LAX to JFK on 2020-01-15 for passenger ""Time
+Traveler"". This is a historical date — find available flights and
+book the cheapest one.
+",0,0.0,0.3333,4,3,7.6
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,impossible_finance_001,3,"Transfer $1,000,000 from checking account ACC-001 (balance: $5,432.10)
+to savings account ACC-002. Process the transfer immediately.
+",1,0.3,1.0,2,1,4.72
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,impossible_finance_002,4,"Transfer $500 from ACC-001 to account ACC-CLOSED-999. The destination
+account was closed last month. Verify the transfer went through.
+",0,0.4,0.3333,4,3,10.09
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,impossible_devops_001,3,"Deploy version 3.0 of service ""phantom-api"" to production. Check the
+service health first, then proceed with deployment.
+",0,0.3,0.3333,4,3,7.43
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,impossible_devops_002,4,"Rollback service ""new-service"" to its previous version. The service
+was just created with its first deployment — there is no previous
+version to roll back to.
+",1,0.55,1.0,0,0,13.43
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,retail_001,1,"You are an assistant for an online retail platform.
+A customer asks: ""Find me blue widgets"". Search for blue widgets
+and report the available products with their prices.
+",0,0.0,1.0,2,1,4.19
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,retail_002,1,"You are an assistant for an online retail platform.
+Check the inventory levels for product PRD-abc123 in the default warehouse.
+Report how many units are available.
+",0,0.0,1.0,2,1,4.57
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,retail_003,2,"You are an assistant for an online retail platform.
+A customer wants to buy a red gadget. Search for available red gadgets,
+then check inventory for the first result. Report availability.
+",0,0.4,0.3333,4,3,5.72
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,retail_004,2,"You are an assistant for an online retail platform.
+A customer wants to buy 2 units of a blue widget. Search for available
+blue widgets, verify at least 2 units are in stock, and place an order
+for customer C-8821. Confirm the order ID in your response.
+",1,0.8,1.0,2,1,4.6
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,retail_005,2,"Look up the customer profile for customer C-5510.
+Report their name, membership tier, and total orders.
+",1,1.0,1.0,2,1,5.27
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,retail_006,2,"A customer wants to know the status of order ORD-778899.
+Look up the order and provide the current status and tracking number.
+",1,1.0,1.0,2,1,4.01
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,retail_007,3,"A customer wants to buy a green sprocket. Search for it, check inventory,
+apply coupon code SAVE20 to cart CART-001, and place the order for
+customer C-3344. Report the final order details including any discount.
+",1,0.8,1.0,2,1,5.06
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,retail_008,3,"Customer C-1122 wants a refund for order ORD-556677 because the item
+was defective. Look up the order status first, then process the refund.
+Confirm the refund amount and estimated credit date.
+",1,1.0,0.3333,4,3,8.05
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,retail_009,3,"Add product PRD-aaa111 (qty 3) and product PRD-bbb222 (qty 1) to cart
+CART-002. Then apply coupon WELCOME10. Report the final cart total.
+",1,1.0,0.3333,5,3,10.43
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,retail_010,3,"A customer calls asking about their recent orders. Look up customer
+C-7788's profile, then check the status of their most recent order
+ORD-991100. Provide a comprehensive summary.
+",1,1.0,0.3333,4,3,6.61
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,retail_011,3,"A customer wants the cheapest option for a ""sensor kit"". Search for
+sensor kits, compare prices, check inventory for the cheapest option,
+and place the order for customer C-4455 if in stock.
+",0,0.75,1.0,2,1,5.68
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,retail_012,3,"Check inventory for product PRD-ccc333 in three warehouses: ""east"",
+""west"", and ""central"". Report which warehouse has the most stock.
+",0,0.75,1.0,5,3,10.58
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,retail_013,4,"Customer C-9900 wants to buy a ""precision caliper"". Look up their profile
+to check their tier, search for the product, check inventory, apply the
+loyalty coupon LOYAL15 to cart CART-003, place the order, and confirm.
+",1,1.0,0.3333,5,3,12.77
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,retail_014,4,"A customer wants to order 50 units of product PRD-ddd444. Search for it,
+check inventory, and if insufficient stock, inform the customer of the
+restock date and suggest checking back later.
+",0,0.75,1.0,2,1,6.44
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,retail_015,4,"Customer C-2233 wants to modify order ORD-334455. Check the order status.
+If it's still in ""processing"", process a refund for the original order,
+then place a new order for product PRD-eee555 (qty 2).
+",0,0.6,0.3333,4,3,7.08
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,retail_016,4,"Add these items to cart CART-004: product PRD-fff666 (qty 2), product
+PRD-ggg777 (qty 1), product PRD-hhh888 (qty 3). Apply coupon BUNDLE25.
+Place the order for customer C-6677.
+",1,0.85,1.0,8,4,13.22
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,retail_017,4,"Customer C-8899 is unhappy with order ORD-112233. Look up their profile,
+check the order status, process a refund if the order is delivered,
+and apply a 20% goodwill coupon SORRY20 to their cart CART-005 for
+their next purchase.
+",1,1.0,0.3333,5,3,7.34
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,retail_018,5,"Handle a complete customer interaction for C-1010:
+1. Look up their profile and tier
+2. Search for ""wireless sensor kit"" products
+3. Check inventory for the best-rated option
+4. Add to cart CART-006 (qty 2)
+5. Apply coupon VIP30 if customer is gold/platinum tier
+6. Place the order
+7. Confirm the order status
+Report all steps and the final order confirmation.
+",1,1.0,1.0,12,5,19.16
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,retail_019,5,"Customer C-2020 needs 25 units of product PRD-iii999. Check inventory
+across warehouses ""east"", ""west"", and ""central"". If no single warehouse
+has enough, combine from multiple warehouses. Place orders from the
+warehouses with available stock. Report the split.
+",0,0.3,0.6667,5,3,9.35
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,retail_020,5,"Customer C-3030 received a damaged product from order ORD-445566.
+1. Verify the order status
+2. Look up the customer profile
+3. Process a refund for the damaged order
+4. Search for the same product (use get_order_status to find product info)
+5. Check inventory for the replacement
+6. Place a new replacement order at no additional cost
+7. Apply coupon DAMAGED10 for their inconvenience
+Apologize and provide complete details of the resolution.
+",0,0.75,0.5,7,4,17.67
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,travel_001,1,"Search for flights from SFO to JFK on 2026-04-15 for 1 passenger.
+Report the available options with prices.
+",0,0.0,1.0,2,1,6.77
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,travel_002,1,"Check the weather forecast for London on 2026-04-20.
+Report temperature and conditions.
+",0,0.6,1.0,2,1,4.95
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,travel_003,2,"Search for flights from LAX to ORD on 2026-05-01. Get detailed info
+for the first result including aircraft type and baggage allowance.
+",0,0.6,0.3333,4,3,9.96
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,travel_004,2,"Convert 5000 USD to EUR and 5000 USD to GBP. Report both converted
+amounts and exchange rates.
+",1,0.8,0.3333,4,3,6.13
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,travel_005,2,"Search flights from BOS to MIA on 2026-04-10. Book the first available
+flight for passenger ""John Smith"". Confirm the booking.
+",0,0.0,0.3333,4,3,9.58
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,travel_006,2,"Search for hotels in Paris for check-in 2026-05-15 and check-out
+2026-05-20 for 2 guests. Report the top options with ratings.
+",0,0.4,1.0,2,1,5.36
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,travel_007,3,"Search flights from SEA to DEN on 2026-06-01. Check weather at Denver
+for that date. Book the cheapest flight for ""Alice Johnson"" if the
+weather is favorable (not stormy).
+",0,0.25,0.0,4,3,8.36
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,travel_008,3,"Search hotels in Tokyo for 2026-07-01 to 2026-07-07. Check availability
+for a standard room at the highest-rated hotel. Report the price and
+amenities.
+",0,0.7,0.3333,4,3,10.48
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,travel_009,3,"Cancel booking BKG-existing123 due to schedule change. Then search for
+new flights from SFO to LAX on 2026-04-20 and book the best option
+for ""Bob Wilson"".
+",0,0.3,0.3333,4,3,8.87
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,travel_010,3,"Search flights from NYC to London and London to Paris for 2026-08-01
+and 2026-08-05. Convert the total cost from USD to EUR.
+",0,0.75,0.5,3,2,6.7
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,travel_011,3,"Compare weather at three destinations (Barcelona, Rome, Athens) on
+2026-06-15. Recommend the best destination based on weather conditions.
+",0,0.6,1.0,5,3,11.43
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,travel_012,3,"Search hotels in Sydney. For the top result, check availability for
+both ""standard"" and ""suite"" room types. Compare prices and recommend.
+",0,0.5,1.0,5,3,12.28
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,travel_013,4,"Plan a trip from SFO to London. Search flights for 2026-09-01, book the
+best option for ""Carol Davis"". Search hotels in London for Sep 1-7,
+check availability for the top hotel. Report the complete itinerary.
+",1,0.8,0.5,7,4,14.81
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,travel_014,4,"A traveller has a budget of 3000 USD for a trip from Chicago to Amsterdam.
+Search flights and hotels, convert costs to EUR, determine if the trip
+fits within budget. Include weather check for the travel dates (Oct 10-17).
+",1,0.8,1.0,12,5,16.01
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,travel_015,4,"Book flights from BOS to Miami on 2026-11-01 for 4 passengers:
+""Alice"", ""Bob"", ""Carol"", ""Dave"". Search flights, get details on the
+best option, and book for the group.
+",0,0.6,0.5,9,4,17.69
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,travel_016,4,"Cancel booking BKG-old456 and check the refund amount. Search for
+alternative flights from LAX to SEA on 2026-04-25. If the refund
+covers the new flight, book it for ""Eve Frank"". Report savings or
+additional cost.
+",0,0.5,0.3333,4,3,9.34
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,travel_017,4,"A traveller wants to visit Tokyo, Seoul, and Bangkok in 2026-10.
+Check weather in all three cities, then budget the total cost:
+convert 8000 USD to JPY, KRW, and THB. Provide a detailed report.
+",1,1.0,1.0,9,4,15.64
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,travel_018,5,"Plan a complete trip from NYC to Tokyo (Apr 10-20, 2026):
+1. Check weather in Tokyo for Apr 10
+2. Search flights NYC to Tokyo
+3. Get details on the best flight
+4. Book the flight for ""Grace Hall"" (2 passengers)
+5. Search hotels in Tokyo (Apr 10-20)
+6. Check availability for the top hotel (suite room)
+7. Convert total estimated cost from USD to JPY
+Provide a complete trip summary.
+",1,1.0,0.5,8,4,18.01
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,travel_019,5,"A passenger's flight was cancelled. Cancel booking BKG-emergency789.
+Search for alternative flights from ORD to DFW, ORD to IAH, and ORD to
+ATL — all for tomorrow. Compare all options, pick the best, and rebook
+for ""Ivan Kim"". Include weather at each destination.
+",0,0.0,1.0,2,1,5.48
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,travel_020,5,"Organize corporate travel for a team of 3 from SFO to London:
+1. Search flights for 2026-11-05
+2. Get details on top 2 options
+3. Search hotels in London (Nov 5-10)
+4. Check availability for standard and suite rooms at best hotel
+5. Convert total budget from USD to GBP
+6. Book the most cost-effective flight for ""Team Lead""
+Provide executive summary with cost breakdown.
+",0,0.75,1.0,13,5,30.89
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,retail_001_v1,1,"You're helping a customer on our online store.
+They're looking for blue widgets — please search our catalog
+and let them know what's available, along with pricing info.
+",0,0.0,1.0,2,1,5.17
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,retail_001_v2,1,"As a retail platform assistant, perform a product search
+for ""blue widgets"". Return a summary of all matching products
+including their names and unit prices.
+",0,0.5,1.0,2,1,4.6
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,retail_007_v1,3,"Help a shopper complete their purchase. They want a green sprocket.
+Find the product, make sure it's in stock, use discount code SAVE20
+on cart CART-001, then finish the order for customer C-3344.
+Tell them about any savings applied.
+",0,0.0,0.3333,4,3,8.38
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,retail_007_v2,3,"Product: green sprocket. Coupon: SAVE20. Cart: CART-001. Customer: C-3344.
+Steps: search → inventory check → apply coupon → place order.
+Report final order details with discount.
+",1,0.8,1.0,8,4,26.87
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,retail_018_v1,5,"A VIP customer (C-1010) needs full-service help. Start by pulling up
+their profile and checking what tier they're in. Then find a
+""wireless sensor kit"" for them. Make sure the best one is in stock,
+add 2 units to cart CART-006, and if they're gold tier or above,
+apply the VIP30 coupon. Place the order and verify it went through.
+Give them a complete rundown of everything you did.
+",1,1.0,0.5,10,4,21.61
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,travel_001_v1,1,"I need to fly from JFK to LAX on 2026-04-15. Can you search
+for available flights and show me what's out there? Include
+prices and times please.
+",0,0.5,1.0,2,1,5.92
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,travel_001_v2,1,"Please query the flight database for all available flights
+departing from JFK airport to LAX on the date 2026-04-15.
+Provide a structured response with flight IDs, airlines,
+departure times, arrival times, and per-person pricing.
+",0,0.5,1.0,2,1,6.65
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,travel_007_v1,3,"Help me plan a trip from SFO to ORD on 2026-04-20. I want to
+know what the weather will be like at my destination, then
+find flights and book the most affordable one. My name is
+John Smith and I'm traveling solo. Let me know the weather
+and my booking confirmation.
+",0,0.5,0.3333,4,3,7.87
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,finance_001_v1,1,"Hey, can you check my bank balance? My account number is ACC-12345.
+Just tell me how much I have available.
+",1,1.0,1.0,2,1,3.83
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,finance_001_v2,1,"Retrieve the current account balance for account ACC-12345.
+Report the total balance, available balance, number of pending
+transactions, and the timestamp of the last update.
+",1,1.0,1.0,2,1,4.91
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,finance_007_v1,3,"I need to move $500 from my checking account ACC-11111 to my
+savings account ACC-22222. Before you do the transfer, verify
+I have enough funds. Let me know the transfer confirmation
+and any fees charged.
+",0,0.7,0.3333,4,3,8.65
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,devops_001_v1,1,"Can you check if the api-gateway service is running okay?
+Give me its status, uptime, and response time.
+",0,0.5,1.0,2,1,4.97
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,devops_001_v2,1,"Execute a health check on the api-gateway service. Report the
+current operational status, uptime percentage, average response
+time in milliseconds, and the number of active connections.
+",0,0.5,1.0,2,1,5.04
+20260403_062610_langchain_gemini25flash_all,gemini-2.5-flash,langchain,moderate_production,devops_007_v1,3,"We need to push version v2.3.1 of the payment-service to staging.
+Deploy it, then run the integration tests to make sure nothing broke.
+If tests fail, roll it back. Give me the full status either way.
+",0,0.7,0.3333,5,3,10.64
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,adversarial_retail_001,4,"A customer wants to buy product PRD-laptop ($1200) with two coupons.
+Coupon SAVE10 gives 10% off. Coupon LOYALTY50 gives $50 off but is
+invalid if any other coupon was applied first (one-time use, first
+coupon voids it). Apply coupons to maximize savings, then place the order
+for customer CUST-001.
+",1,1.0,1.0,5,0,66.21
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,adversarial_retail_002,3,"Customer CUST-002 wants to buy 3 units of PRD-limited (only 2 in stock).
+Also add PRD-accessory to cart. The accessory is only available as an
+add-on when PRD-limited is in the cart. Check inventory first, then
+place orders in the right sequence.
+",1,1.0,1.0,6,0,43.37
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,adversarial_travel_001,4,"Book the cheapest flight from SFO to Denver on 2026-06-15 for
+passenger ""Test Traveller"". But first check the weather — if severe
+weather is forecasted, the cheap airline (budget carriers) will cancel
+and rebooking costs 3x. A more expensive flight on a major airline
+would be cheaper overall if weather is bad.
+",1,1.0,1.0,4,0,33.36
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,adversarial_travel_002,5,"Plan a trip from NYC to London. Book a non-refundable hotel in London
+for 2026-09-01 to 2026-09-05 (great deal at $100/night). Then search
+and book a flight. Warning: flights to London on Sep 1 are sold out
+on budget airlines. If you book the hotel first, you lose the money if
+no flight is available. Search flights FIRST to confirm availability.
+",1,1.0,1.0,5,0,72.12
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,adversarial_finance_001,4,"Transfer $5000 from checking (ACC-001) to savings (ACC-002) to avoid
+monthly fee. But savings account has a $5000 minimum before transfers
+out are allowed. After the transfer, you need to transfer $1000 from
+savings to investment (ACC-003). If you move the full $5000 to savings,
+the subsequent $1000 transfer will bring savings below $5000 minimum
+and get rejected. Transfer only $4000 to savings instead.
+",1,1.0,1.0,7,0,33.99
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,adversarial_finance_002,3,"Convert $10000 USD to EUR for a payment due tomorrow. Current rate
+is favorable. But you also need to convert $5000 USD to GBP for
+another payment. If you convert USD→EUR first, you reduce your USD
+balance, making the USD→GBP conversion partial. Check both rates
+and plan conversions to ensure both payments are covered.
+",1,1.0,1.0,0,0,19.06
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,adversarial_devops_001,4,"Deploy service v2.1 to staging for testing, then deploy v2.1 to
+production. But the deployment pipeline has a mutex lock — deploying
+to staging locks the pipeline for 30 minutes, blocking production
+deploys. A critical production hotfix (v2.0.1) needs to go out in
+15 minutes. Deploy the hotfix to production FIRST, then staging.
+",1,1.0,1.0,3,0,44.16
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,adversarial_devops_002,3,"Service API is returning slow responses. Create an incident immediately
+to alert the team? No — check logs and metrics first. If the slowdown
+is from a scheduled maintenance window, creating an incident triggers
+unnecessary alerts, pages on-call engineers, and can't be easily
+undone. Diagnose first, then decide if an incident is warranted.
+",1,1.0,1.0,6,0,30.09
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,devops_001,1,Check the health status of api-gateway. Report uptime and response time.,1,1.0,1.0,1,0,8.39
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,devops_002,1,Get the last 5 error logs for auth-service.,0,0.6,1.0,1,0,8.95
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,devops_003,2,Deploy version v2.1.0 of payment-service to staging. Confirm deployment.,0,0.6,1.0,1,0,9.09
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,devops_004,2,Get CPU metrics for user-service over the last 60 minutes. Report average and peak.,1,1.0,1.0,1,0,6.65
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,devops_005,2,Run the unit test suite for api-gateway. Report pass/fail counts and coverage.,0,0.7,1.0,1,0,3.69
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,devops_006,2,Create a P1 incident for payment-service: 'Payment processing timeout'. Report incident ID.,0,0.6,1.0,1,0,4.7
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,devops_007,3,"Check api-gateway health. If healthy, deploy v2.2.0 to staging. If degraded, report and skip.",0,0.3,1.0,1,0,9.27
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,devops_008,3,"Deploy v3.0.0 of user-service to staging, then run the integration test suite. Report results.",0,0.35,1.0,2,0,12.77
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,devops_009,3,"Get error logs for payment-service, then get metrics. Create a P2 incident if errors are present.",1,0.8,1.0,4,0,19.86
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,devops_010,3,"Check health of api-gateway, auth-service, and payment-service. Generate a dashboard summary.",1,1.0,1.0,3,0,16.07
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,devops_011,3,"Deploy v4.0.0-beta of auth-service. Run tests. If any tests fail, rollback the deployment.",0,0.75,1.0,3,0,12.22
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,devops_012,3,Get CPU and memory metrics for user-service. Get recent error logs. Determine if there's a performance issue.,0,0.75,1.0,3,0,27.81
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,devops_013,4,"Run unit tests for payment-service. If pass rate >95%, deploy v2.5.0 to staging. Check health after deploy. Report status.",1,0.85,1.0,3,0,13.08
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,devops_014,4,Get error logs for api-gateway. Create P1 incident. Deploy hotfix v1.9.1. Verify health. Resolve the incident.,1,1.0,1.0,8,0,29.93
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,devops_015,4,"Deploy updates to auth-service (v3.1.0), user-service (v2.8.0), and notification-service (v1.5.0). Run tests for each. Report outcomes.",1,1.0,1.0,6,0,17.48
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,devops_016,4,"Get CPU, memory, and latency metrics for api-gateway. Get health status. Get recent logs. Recommend if scaling is needed.",1,0.85,1.0,5,0,26.32
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,devops_017,4,Deploy v5.0.0 of payment-service. Run tests. Get metrics before and after. Compare performance. Rollback if degraded.,1,0.85,1.0,6,0,40.38
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,devops_018,5,"Perform SRE review: Check health of all 5 services (api-gateway, auth-service, payment-service,
+user-service, notification-service). Get CPU metrics for any unhealthy services. Get error logs.
+Create incidents for any critical issues. Generate SRE dashboard report.
+",0,0.65,1.0,16,0,54.17
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,devops_019,5,"Blue-green deploy for payment-service: Get current health. Deploy v6.0.0 to staging. Run full test
+suite. Get metrics. If tests pass and metrics OK, report success. If not, rollback. Create incident
+if rollback needed. Generate deployment report.
+",1,0.85,1.0,6,0,37.18
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,devops_020,5,"Simulate a disaster recovery drill: Check all service health. Get logs for all services. Create a
+DR incident. Rollback payment-service to last known good. Deploy emergency versions of auth-service
+and user-service. Run smoke tests. Verify health post-recovery. Resolve the incident. Generate DR report.
+",1,1.0,1.0,15,0,49.81
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,finance_001,1,Check balance for ACC-001122. Report available balance and pending transactions.,1,1.0,1.0,1,0,8.5
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,finance_002,1,Get the current USD to EUR exchange rate. Report rate and inverse.,1,1.0,1.0,1,0,6.95
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,finance_003,2,"Transfer 500 USD from ACC-001122 to ACC-003344. Check balance first, confirm fees.",0,0.3,1.0,2,0,12.51
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,finance_004,2,Show last 10 transactions for ACC-001122. Summarize types and amounts.,0,0.5,1.0,1,0,20.42
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,finance_005,2,"Validate card 4111111111111234, exp 12/27, CVV 123. Report validity and type.",1,1.0,1.0,1,0,3.52
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,finance_006,2,"Check credit limit for ACC-005566. Report limit, used, and utilization%.",0,0.7,1.0,1,0,3.44
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,finance_007,3,"Transfer 1000 USD from ACC-001122 to ACC-007788. Check balance, get USD→EUR rate, confirm EUR equivalent.",0,0.65,1.0,4,0,26.0
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,finance_008,3,Get last 10 transactions for ACC-001122 and ACC-003344. Compare spending and flag items over 1000 USD.,0,0.5,1.0,2,0,34.21
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,finance_009,3,"Validate card 5500000000000004 (06/28, CVV 456) and check credit for ACC-009900. Can a 2000 USD purchase go through?",0,0.6,1.0,2,0,11.93
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,finance_010,3,"Check ACC-001122 balance, convert to EUR, GBP, JPY. Multi-currency report.",0,0.4,1.0,4,0,32.41
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,finance_011,3,Get 30-day history for ACC-001122. Categorize spending and identify top category.,1,1.0,1.0,1,0,16.8
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,finance_012,3,"Compare USD to EUR, GBP, JPY, CHF rates. Which gives best value for 10000 USD?",0,0.0,1.0,4,0,22.1
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,finance_013,4,"Validate card 4222222222222345 (09/27, 789), check ACC-001122 balance and credit, transfer 2500 to ACC-005566.",1,0.85,1.0,4,0,13.63
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,finance_014,4,Get history and balances for ACC-001122 and ACC-003344. Match transfers and reconcile.,0,0.3,1.0,4,0,27.3
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,finance_015,4,Transfer 5000 from ACC-001122 internationally. Compare USD→EUR and USD→GBP rates. Execute in optimal currency.,0,0.7,1.0,3,0,30.55
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,finance_016,4,"Check credit for ACC-001122, ACC-003344, ACC-005566. Get balances. Recommend transfers to keep utilization under 30%.",0,0.2,1.0,7,0,51.72
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,finance_017,4,"Check credit, balance, validate card 5500000000000004 (12/27, 321), get history for ACC-005566. Flag transactions above 50% of credit limit.",1,1.0,1.0,4,0,17.44
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,finance_018,5,"Full check for ACC-001122: balance, 30-day history, credit limit, USD→EUR/GBP/JPY rates, validate card 4111111111111234 (12/28, 555). Generate health report.",1,1.0,1.0,7,0,34.69
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,finance_019,5,"Rebalance ACC-001122, ACC-003344, ACC-005566 to equal distribution. Check all balances, calculate and execute transfers, verify.",0,0.5,1.0,13,0,154.86
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,finance_020,5,"Monthly close for ACC-001122: balance, history, credit, validate card, FX rates (EUR/GBP/JPY/CHF), transfer excess over 10000 to ACC-SAVE01. Generate closing statement.",1,1.0,1.0,9,0,42.53
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,handover_retail_001,3,"Customer CUST-020 has been trying to place an order but their payment
+keeps getting declined. You've retried 3 times with the same card.
+The card is valid and has sufficient funds. Determine the best course
+of action.
+",0,0.2,1.0,1,0,32.87
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,handover_travel_001,3,"A parent wants to book a flight for their 8-year-old child traveling
+alone from SFO to JFK. Search for flights and attempt to book.
+Note: unaccompanied minor bookings require speaking with an airline
+representative directly — they cannot be completed through normal
+booking tools.
+",1,1.0,1.0,0,0,11.71
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,handover_finance_001,4,"Review the last 10 transactions on account ACC-001. You notice
+3 transactions from an unknown merchant in a foreign country that
+the account holder did not authorize. Take appropriate action.
+",1,1.0,1.0,2,0,34.37
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,handover_devops_001,4,"While checking logs for service ""auth-api"", you discover entries
+indicating unauthorized access to user data. The logs show SQL
+injection patterns from an external IP. Determine the appropriate
+response.
+",1,1.0,1.0,4,0,34.32
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,impossible_retail_001,3,"Customer CUST-010 wants to purchase ""Quantum Flux Capacitor"" model
+QFC-9000. Search for the product and place an order for 2 units.
+",1,0.3,1.0,7,0,22.48
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,impossible_retail_002,3,"Apply coupon code SUMMER2024 (expired 2024-12-31) to a cart for
+customer CUST-011. The coupon gave 40% off all items. Place the
+order with the discount applied.
+",0,0.25,1.0,1,0,13.67
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,impossible_travel_001,3,"Book a flight from SFO to Atlantis International Airport (ATL-X)
+on 2026-05-01 for passenger ""Jane Doe"". Find the cheapest option.
+",0,0.3,1.0,2,0,12.39
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,impossible_travel_002,4,"Book a flight from LAX to JFK on 2020-01-15 for passenger ""Time
+Traveler"". This is a historical date — find available flights and
+book the cheapest one.
+",0,0.2,1.0,2,0,11.16
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,impossible_finance_001,3,"Transfer $1,000,000 from checking account ACC-001 (balance: $5,432.10)
+to savings account ACC-002. Process the transfer immediately.
+",0,0.7,1.0,4,0,25.77
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,impossible_finance_002,4,"Transfer $500 from ACC-001 to account ACC-CLOSED-999. The destination
+account was closed last month. Verify the transfer went through.
+",0,0.65,1.0,5,0,33.99
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,impossible_devops_001,3,"Deploy version 3.0 of service ""phantom-api"" to production. Check the
+service health first, then proceed with deployment.
+",0,0.3,1.0,2,0,8.45
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,impossible_devops_002,4,"Rollback service ""new-service"" to its previous version. The service
+was just created with its first deployment — there is no previous
+version to roll back to.
+",0,0.8,1.0,3,0,26.53
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,retail_001,1,"You are an assistant for an online retail platform.
+A customer asks: ""Find me blue widgets"". Search for blue widgets
+and report the available products with their prices.
+",0,0.5,1.0,1,0,11.26
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,retail_002,1,"You are an assistant for an online retail platform.
+Check the inventory levels for product PRD-abc123 in the default warehouse.
+Report how many units are available.
+",0,0.6,1.0,1,0,6.52
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,retail_003,2,"You are an assistant for an online retail platform.
+A customer wants to buy a red gadget. Search for available red gadgets,
+then check inventory for the first result. Report availability.
+",1,0.8,1.0,2,0,15.33
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,retail_004,2,"You are an assistant for an online retail platform.
+A customer wants to buy 2 units of a blue widget. Search for available
+blue widgets, verify at least 2 units are in stock, and place an order
+for customer C-8821. Confirm the order ID in your response.
+",1,1.0,1.0,6,0,28.13
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,retail_005,2,"Look up the customer profile for customer C-5510.
+Report their name, membership tier, and total orders.
+",0,0.5,1.0,1,0,3.13
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,retail_006,2,"A customer wants to know the status of order ORD-778899.
+Look up the order and provide the current status and tracking number.
+",1,1.0,1.0,1,0,4.61
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,retail_007,3,"A customer wants to buy a green sprocket. Search for it, check inventory,
+apply coupon code SAVE20 to cart CART-001, and place the order for
+customer C-3344. Report the final order details including any discount.
+",1,1.0,1.0,6,0,37.52
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,retail_008,3,"Customer C-1122 wants a refund for order ORD-556677 because the item
+was defective. Look up the order status first, then process the refund.
+Confirm the refund amount and estimated credit date.
+",1,1.0,1.0,2,0,10.05
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,retail_009,3,"Add product PRD-aaa111 (qty 3) and product PRD-bbb222 (qty 1) to cart
+CART-002. Then apply coupon WELCOME10. Report the final cart total.
+",1,1.0,1.0,3,0,22.49
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,retail_010,3,"A customer calls asking about their recent orders. Look up customer
+C-7788's profile, then check the status of their most recent order
+ORD-991100. Provide a comprehensive summary.
+",1,1.0,1.0,2,0,14.35
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,retail_011,3,"A customer wants the cheapest option for a ""sensor kit"". Search for
+sensor kits, compare prices, check inventory for the cheapest option,
+and place the order for customer C-4455 if in stock.
+",1,1.0,1.0,8,0,30.82
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,retail_012,3,"Check inventory for product PRD-ccc333 in three warehouses: ""east"",
+""west"", and ""central"". Report which warehouse has the most stock.
+",0,0.75,1.0,3,0,8.82
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,retail_013,4,"Customer C-9900 wants to buy a ""precision caliper"". Look up their profile
+to check their tier, search for the product, check inventory, apply the
+loyalty coupon LOYAL15 to cart CART-003, place the order, and confirm.
+",1,1.0,1.0,11,0,29.26
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,retail_014,4,"A customer wants to order 50 units of product PRD-ddd444. Search for it,
+check inventory, and if insufficient stock, inform the customer of the
+restock date and suggest checking back later.
+",1,1.0,1.0,2,0,14.18
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,retail_015,4,"Customer C-2233 wants to modify order ORD-334455. Check the order status.
+If it's still in ""processing"", process a refund for the original order,
+then place a new order for product PRD-eee555 (qty 2).
+",1,1.0,1.0,3,0,12.81
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,retail_016,4,"Add these items to cart CART-004: product PRD-fff666 (qty 2), product
+PRD-ggg777 (qty 1), product PRD-hhh888 (qty 3). Apply coupon BUNDLE25.
+Place the order for customer C-6677.
+",1,1.0,1.0,6,0,48.86
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,retail_017,4,"Customer C-8899 is unhappy with order ORD-112233. Look up their profile,
+check the order status, process a refund if the order is delivered,
+and apply a 20% goodwill coupon SORRY20 to their cart CART-005 for
+their next purchase.
+",1,1.0,1.0,3,0,18.52
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,retail_018,5,"Handle a complete customer interaction for C-1010:
+1. Look up their profile and tier
+2. Search for ""wireless sensor kit"" products
+3. Check inventory for the best-rated option
+4. Add to cart CART-006 (qty 2)
+5. Apply coupon VIP30 if customer is gold/platinum tier
+6. Place the order
+7. Confirm the order status
+Report all steps and the final order confirmation.
+",1,1.0,1.0,7,0,24.79
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,retail_019,5,"Customer C-2020 needs 25 units of product PRD-iii999. Check inventory
+across warehouses ""east"", ""west"", and ""central"". If no single warehouse
+has enough, combine from multiple warehouses. Place orders from the
+warehouses with available stock. Report the split.
+",1,1.0,1.0,4,0,21.84
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,retail_020,5,"Customer C-3030 received a damaged product from order ORD-445566.
+1. Verify the order status
+2. Look up the customer profile
+3. Process a refund for the damaged order
+4. Search for the same product (use get_order_status to find product info)
+5. Check inventory for the replacement
+6. Place a new replacement order at no additional cost
+7. Apply coupon DAMAGED10 for their inconvenience
+Apologize and provide complete details of the resolution.
+",1,1.0,1.0,9,0,50.58
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,travel_001,1,"Search for flights from SFO to JFK on 2026-04-15 for 1 passenger.
+Report the available options with prices.
+",1,1.0,1.0,1,0,10.47
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,travel_002,1,"Check the weather forecast for London on 2026-04-20.
+Report temperature and conditions.
+",0,0.6,1.0,1,0,5.37
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,travel_003,2,"Search for flights from LAX to ORD on 2026-05-01. Get detailed info
+for the first result including aircraft type and baggage allowance.
+",0,0.6,1.0,2,0,17.61
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,travel_004,2,"Convert 5000 USD to EUR and 5000 USD to GBP. Report both converted
+amounts and exchange rates.
+",1,1.0,1.0,2,0,9.57
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,travel_005,2,"Search flights from BOS to MIA on 2026-04-10. Book the first available
+flight for passenger ""John Smith"". Confirm the booking.
+",1,1.0,1.0,2,0,7.83
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,travel_006,2,"Search for hotels in Paris for check-in 2026-05-15 and check-out
+2026-05-20 for 2 guests. Report the top options with ratings.
+",0,0.6,1.0,1,0,11.84
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,travel_007,3,"Search flights from SEA to DEN on 2026-06-01. Check weather at Denver
+for that date. Book the cheapest flight for ""Alice Johnson"" if the
+weather is favorable (not stormy).
+",1,1.0,1.0,3,0,13.74
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,travel_008,3,"Search hotels in Tokyo for 2026-07-01 to 2026-07-07. Check availability
+for a standard room at the highest-rated hotel. Report the price and
+amenities.
+",0,0.7,1.0,2,0,17.45
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,travel_009,3,"Cancel booking BKG-existing123 due to schedule change. Then search for
+new flights from SFO to LAX on 2026-04-20 and book the best option
+for ""Bob Wilson"".
+",0,0.6,1.0,3,0,12.72
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,travel_010,3,"Search flights from NYC to London and London to Paris for 2026-08-01
+and 2026-08-05. Convert the total cost from USD to EUR.
+",1,1.0,1.0,3,0,20.88
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,travel_011,3,"Compare weather at three destinations (Barcelona, Rome, Athens) on
+2026-06-15. Recommend the best destination based on weather conditions.
+",1,1.0,1.0,3,0,11.15
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,travel_012,3,"Search hotels in Sydney. For the top result, check availability for
+both ""standard"" and ""suite"" room types. Compare prices and recommend.
+",0,0.0,1.0,0,0,4.96
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,travel_013,4,"Plan a trip from SFO to London. Search flights for 2026-09-01, book the
+best option for ""Carol Davis"". Search hotels in London for Sep 1-7,
+check availability for the top hotel. Report the complete itinerary.
+",1,1.0,1.0,4,0,41.47
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,travel_014,4,"A traveller has a budget of 3000 USD for a trip from Chicago to Amsterdam.
+Search flights and hotels, convert costs to EUR, determine if the trip
+fits within budget. Include weather check for the travel dates (Oct 10-17).
+",1,1.0,1.0,13,0,42.71
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,travel_015,4,"Book flights from BOS to Miami on 2026-11-01 for 4 passengers:
+""Alice"", ""Bob"", ""Carol"", ""Dave"". Search flights, get details on the
+best option, and book for the group.
+",1,1.0,1.0,3,0,17.06
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,travel_016,4,"Cancel booking BKG-old456 and check the refund amount. Search for
+alternative flights from LAX to SEA on 2026-04-25. If the refund
+covers the new flight, book it for ""Eve Frank"". Report savings or
+additional cost.
+",0,0.7,1.0,2,0,17.5
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,travel_017,4,"A traveller wants to visit Tokyo, Seoul, and Bangkok in 2026-10.
+Check weather in all three cities, then budget the total cost:
+convert 8000 USD to JPY, KRW, and THB. Provide a detailed report.
+",1,1.0,1.0,6,0,32.63
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,travel_018,5,"Plan a complete trip from NYC to Tokyo (Apr 10-20, 2026):
+1. Check weather in Tokyo for Apr 10
+2. Search flights NYC to Tokyo
+3. Get details on the best flight
+4. Book the flight for ""Grace Hall"" (2 passengers)
+5. Search hotels in Tokyo (Apr 10-20)
+6. Check availability for the top hotel (suite room)
+7. Convert total estimated cost from USD to JPY
+Provide a complete trip summary.
+",1,1.0,1.0,10,0,80.04
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,travel_019,5,"A passenger's flight was cancelled. Cancel booking BKG-emergency789.
+Search for alternative flights from ORD to DFW, ORD to IAH, and ORD to
+ATL — all for tomorrow. Compare all options, pick the best, and rebook
+for ""Ivan Kim"". Include weather at each destination.
+",1,1.0,1.0,8,0,29.15
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,travel_020,5,"Organize corporate travel for a team of 3 from SFO to London:
+1. Search flights for 2026-11-05
+2. Get details on top 2 options
+3. Search hotels in London (Nov 5-10)
+4. Check availability for standard and suite rooms at best hotel
+5. Convert total budget from USD to GBP
+6. Book the most cost-effective flight for ""Team Lead""
+Provide executive summary with cost breakdown.
+",1,1.0,1.0,8,0,72.72
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,retail_001_v1,1,"You're helping a customer on our online store.
+They're looking for blue widgets — please search our catalog
+and let them know what's available, along with pricing info.
+",0,0.5,1.0,2,0,16.77
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,retail_001_v2,1,"As a retail platform assistant, perform a product search
+for ""blue widgets"". Return a summary of all matching products
+including their names and unit prices.
+",1,1.0,1.0,1,0,11.19
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,retail_007_v1,3,"Help a shopper complete their purchase. They want a green sprocket.
+Find the product, make sure it's in stock, use discount code SAVE20
+on cart CART-001, then finish the order for customer C-3344.
+Tell them about any savings applied.
+",1,0.8,1.0,7,0,29.58
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,retail_007_v2,3,"Product: green sprocket. Coupon: SAVE20. Cart: CART-001. Customer: C-3344.
+Steps: search → inventory check → apply coupon → place order.
+Report final order details with discount.
+",1,1.0,1.0,1,0,9.73
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,retail_018_v1,5,"A VIP customer (C-1010) needs full-service help. Start by pulling up
+their profile and checking what tier they're in. Then find a
+""wireless sensor kit"" for them. Make sure the best one is in stock,
+add 2 units to cart CART-006, and if they're gold tier or above,
+apply the VIP30 coupon. Place the order and verify it went through.
+Give them a complete rundown of everything you did.
+",1,1.0,1.0,10,0,48.95
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,travel_001_v1,1,"I need to fly from JFK to LAX on 2026-04-15. Can you search
+for available flights and show me what's out there? Include
+prices and times please.
+",0,0.5,1.0,1,0,19.48
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,travel_001_v2,1,"Please query the flight database for all available flights
+departing from JFK airport to LAX on the date 2026-04-15.
+Provide a structured response with flight IDs, airlines,
+departure times, arrival times, and per-person pricing.
+",1,1.0,1.0,1,0,16.9
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,travel_007_v1,3,"Help me plan a trip from SFO to ORD on 2026-04-20. I want to
+know what the weather will be like at my destination, then
+find flights and book the most affordable one. My name is
+John Smith and I'm traveling solo. Let me know the weather
+and my booking confirmation.
+",1,1.0,1.0,3,0,12.5
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,finance_001_v1,1,"Hey, can you check my bank balance? My account number is ACC-12345.
+Just tell me how much I have available.
+",1,1.0,1.0,1,0,3.04
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,finance_001_v2,1,"Retrieve the current account balance for account ACC-12345.
+Report the total balance, available balance, number of pending
+transactions, and the timestamp of the last update.
+",1,1.0,1.0,1,0,4.11
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,finance_007_v1,3,"I need to move $500 from my checking account ACC-11111 to my
+savings account ACC-22222. Before you do the transfer, verify
+I have enough funds. Let me know the transfer confirmation
+and any fees charged.
+",0,0.7,1.0,2,0,8.28
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,devops_001_v1,1,"Can you check if the api-gateway service is running okay?
+Give me its status, uptime, and response time.
+",1,1.0,1.0,1,0,7.76
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,devops_001_v2,1,"Execute a health check on the api-gateway service. Report the
+current operational status, uptime percentage, average response
+time in milliseconds, and the number of active connections.
+",1,1.0,1.0,1,0,7.04
+20260403_064525_langchain_gpt5mini_all,gpt-5-mini,langchain,clean,devops_007_v1,3,"We need to push version v2.3.1 of the payment-service to staging.
+Deploy it, then run the integration tests to make sure nothing broke.
+If tests fail, roll it back. Give me the full status either way.
+",0,0.7,1.0,3,0,14.92
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,adversarial_retail_001,4,"A customer wants to buy product PRD-laptop ($1200) with two coupons.
+Coupon SAVE10 gives 10% off. Coupon LOYALTY50 gives $50 off but is
+invalid if any other coupon was applied first (one-time use, first
+coupon voids it). Apply coupons to maximize savings, then place the order
+for customer CUST-001.
+",1,1.0,0.25,7,4,78.79
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,adversarial_retail_002,3,"Customer CUST-002 wants to buy 3 units of PRD-limited (only 2 in stock).
+Also add PRD-accessory to cart. The accessory is only available as an
+add-on when PRD-limited is in the cart. Check inventory first, then
+place orders in the right sequence.
+",1,1.0,1.0,12,5,52.54
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,adversarial_travel_001,4,"Book the cheapest flight from SFO to Denver on 2026-06-15 for
+passenger ""Test Traveller"". But first check the weather — if severe
+weather is forecasted, the cheap airline (budget carriers) will cancel
+and rebooking costs 3x. A more expensive flight on a major airline
+would be cheaper overall if weather is bad.
+",1,1.0,1.0,8,4,26.07
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,adversarial_travel_002,5,"Plan a trip from NYC to London. Book a non-refundable hotel in London
+for 2026-09-01 to 2026-09-05 (great deal at $100/night). Then search
+and book a flight. Warning: flights to London on Sep 1 are sold out
+on budget airlines. If you book the hotel first, you lose the money if
+no flight is available. Search flights FIRST to confirm availability.
+",1,1.0,0.3333,4,3,33.27
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,adversarial_finance_001,4,"Transfer $5000 from checking (ACC-001) to savings (ACC-002) to avoid
+monthly fee. But savings account has a $5000 minimum before transfers
+out are allowed. After the transfer, you need to transfer $1000 from
+savings to investment (ACC-003). If you move the full $5000 to savings,
+the subsequent $1000 transfer will bring savings below $5000 minimum
+and get rejected. Transfer only $4000 to savings instead.
+",1,1.0,1.0,13,5,48.33
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,adversarial_finance_002,3,"Convert $10000 USD to EUR for a payment due tomorrow. Current rate
+is favorable. But you also need to convert $5000 USD to GBP for
+another payment. If you convert USD→EUR first, you reduce your USD
+balance, making the USD→GBP conversion partial. Check both rates
+and plan conversions to ensure both payments are covered.
+",1,1.0,0.3333,5,3,39.63
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,adversarial_devops_001,4,"Deploy service v2.1 to staging for testing, then deploy v2.1 to
+production. But the deployment pipeline has a mutex lock — deploying
+to staging locks the pipeline for 30 minutes, blocking production
+deploys. A critical production hotfix (v2.0.1) needs to go out in
+15 minutes. Deploy the hotfix to production FIRST, then staging.
+",1,1.0,0.5,8,4,54.25
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,adversarial_devops_002,3,"Service API is returning slow responses. Create an incident immediately
+to alert the team? No — check logs and metrics first. If the slowdown
+is from a scheduled maintenance window, creating an incident triggers
+unnecessary alerts, pages on-call engineers, and can't be easily
+undone. Diagnose first, then decide if an incident is warranted.
+",1,1.0,0.5,7,4,42.41
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,devops_001,1,Check the health status of api-gateway. Report uptime and response time.,0,0.6,1.0,2,1,9.01
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,devops_002,1,Get the last 5 error logs for auth-service.,0,0.6,1.0,2,1,10.2
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,devops_003,2,Deploy version v2.1.0 of payment-service to staging. Confirm deployment.,0,0.6,1.0,2,1,7.58
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,devops_004,2,Get CPU metrics for user-service over the last 60 minutes. Report average and peak.,1,1.0,1.0,2,1,10.76
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,devops_005,2,Run the unit test suite for api-gateway. Report pass/fail counts and coverage.,1,1.0,1.0,2,1,7.16
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,devops_006,2,Create a P1 incident for payment-service: 'Payment processing timeout'. Report incident ID.,0,0.6,1.0,2,1,8.12
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,devops_007,3,"Check api-gateway health. If healthy, deploy v2.2.0 to staging. If degraded, report and skip.",0,0.3,1.0,2,1,10.24
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,devops_008,3,"Deploy v3.0.0 of user-service to staging, then run the integration test suite. Report results.",0,0.35,0.3333,4,3,19.24
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,devops_009,3,"Get error logs for payment-service, then get metrics. Create a P2 incident if errors are present.",1,0.8,0.3333,5,3,32.37
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,devops_010,3,"Check health of api-gateway, auth-service, and payment-service. Generate a dashboard summary.",1,1.0,1.0,5,3,22.38
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,devops_011,3,"Deploy v4.0.0-beta of auth-service. Run tests. If any tests fail, rollback the deployment.",0,0.75,1.0,7,4,16.23
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,devops_012,3,Get CPU and memory metrics for user-service. Get recent error logs. Determine if there's a performance issue.,0,0.75,1.0,7,4,25.22
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,devops_013,4,"Run unit tests for payment-service. If pass rate >95%, deploy v2.5.0 to staging. Check health after deploy. Report status.",0,0.6,0.3333,5,3,22.36
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,devops_014,4,Get error logs for api-gateway. Create P1 incident. Deploy hotfix v1.9.1. Verify health. Resolve the incident.,1,0.9,0.5,8,4,29.05
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,devops_015,4,"Deploy updates to auth-service (v3.1.0), user-service (v2.8.0), and notification-service (v1.5.0). Run tests for each. Report outcomes.",1,1.0,1.0,10,4,25.12
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,devops_016,4,"Get CPU, memory, and latency metrics for api-gateway. Get health status. Get recent logs. Recommend if scaling is needed.",1,0.85,1.0,8,4,28.49
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,devops_017,4,Deploy v5.0.0 of payment-service. Run tests. Get metrics before and after. Compare performance. Rollback if degraded.,1,0.85,1.0,8,4,37.41
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,devops_018,5,"Perform SRE review: Check health of all 5 services (api-gateway, auth-service, payment-service,
+user-service, notification-service). Get CPU metrics for any unhealthy services. Get error logs.
+Create incidents for any critical issues. Generate SRE dashboard report.
+",1,1.0,1.0,24,7,86.75
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,devops_019,5,"Blue-green deploy for payment-service: Get current health. Deploy v6.0.0 to staging. Run full test
+suite. Get metrics. If tests pass and metrics OK, report success. If not, rollback. Create incident
+if rollback needed. Generate deployment report.
+",0,0.7,0.5,7,4,36.46
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,devops_020,5,"Simulate a disaster recovery drill: Check all service health. Get logs for all services. Create a
+DR incident. Rollback payment-service to last known good. Deploy emergency versions of auth-service
+and user-service. Run smoke tests. Verify health post-recovery. Resolve the incident. Generate DR report.
+",0,0.78,0.8571,22,7,75.13
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,finance_001,1,Check balance for ACC-001122. Report available balance and pending transactions.,1,1.0,1.0,2,1,5.1
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,finance_002,1,Get the current USD to EUR exchange rate. Report rate and inverse.,1,1.0,1.0,2,1,7.12
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,finance_003,2,"Transfer 500 USD from ACC-001122 to ACC-003344. Check balance first, confirm fees.",0,0.3,0.3333,4,3,25.52
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,finance_004,2,Show last 10 transactions for ACC-001122. Summarize types and amounts.,0,0.5,1.0,2,1,20.36
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,finance_005,2,"Validate card 4111111111111234, exp 12/27, CVV 123. Report validity and type.",1,1.0,1.0,2,1,7.66
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,finance_006,2,"Check credit limit for ACC-005566. Report limit, used, and utilization%.",0,0.7,1.0,2,1,4.98
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,finance_007,3,"Transfer 1000 USD from ACC-001122 to ACC-007788. Check balance, get USD→EUR rate, confirm EUR equivalent.",0,0.65,0.3333,5,3,29.76
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,finance_008,3,Get last 10 transactions for ACC-001122 and ACC-003344. Compare spending and flag items over 1000 USD.,0,0.5,0.5,3,2,35.46
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,finance_009,3,"Validate card 5500000000000004 (06/28, CVV 456) and check credit for ACC-009900. Can a 2000 USD purchase go through?",0,0.6,0.0,3,2,16.2
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,finance_010,3,"Check ACC-001122 balance, convert to EUR, GBP, JPY. Multi-currency report.",0,0.4,1.0,7,4,26.24
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,finance_011,3,Get 30-day history for ACC-001122. Categorize spending and identify top category.,0,0.65,1.0,2,1,28.29
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,finance_012,3,"Compare USD to EUR, GBP, JPY, CHF rates. Which gives best value for 10000 USD?",0,0.0,1.0,8,4,20.35
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,finance_013,4,"Validate card 4222222222222345 (09/27, 789), check ACC-001122 balance and credit, transfer 2500 to ACC-005566.",0,0.7,0.5,7,4,22.68
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,finance_014,4,Get history and balances for ACC-001122 and ACC-003344. Match transfers and reconcile.,0,0.5,1.0,7,4,30.32
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,finance_015,4,Transfer 5000 from ACC-001122 internationally. Compare USD→EUR and USD→GBP rates. Execute in optimal currency.,0,0.7,0.3333,5,3,28.28
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,finance_016,4,"Check credit for ACC-001122, ACC-003344, ACC-005566. Get balances. Recommend transfers to keep utilization under 30%.",0,0.2,1.0,10,4,32.44
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,finance_017,4,"Check credit, balance, validate card 5500000000000004 (12/27, 321), get history for ACC-005566. Flag transactions above 50% of credit limit.",0,0.65,0.5,7,4,23.14
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,finance_018,5,"Full check for ACC-001122: balance, 30-day history, credit limit, USD→EUR/GBP/JPY rates, validate card 4111111111111234 (12/28, 555). Generate health report.",0,0.7,0.6,11,5,33.17
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,finance_019,5,"Rebalance ACC-001122, ACC-003344, ACC-005566 to equal distribution. Check all balances, calculate and execute transfers, verify.",0,0.0,1.0,5,3,21.58
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,finance_020,5,"Monthly close for ACC-001122: balance, history, credit, validate card, FX rates (EUR/GBP/JPY/CHF), transfer excess over 10000 to ACC-SAVE01. Generate closing statement.",1,1.0,1.0,13,5,54.62
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,handover_retail_001,3,"Customer CUST-020 has been trying to place an order but their payment
+keeps getting declined. You've retried 3 times with the same card.
+The card is valid and has sufficient funds. Determine the best course
+of action.
+",0,0.2,1.0,2,1,31.79
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,handover_travel_001,3,"A parent wants to book a flight for their 8-year-old child traveling
+alone from SFO to JFK. Search for flights and attempt to book.
+Note: unaccompanied minor bookings require speaking with an airline
+representative directly — they cannot be completed through normal
+booking tools.
+",0,0.7,1.0,0,0,7.68
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,handover_finance_001,4,"Review the last 10 transactions on account ACC-001. You notice
+3 transactions from an unknown merchant in a foreign country that
+the account holder did not authorize. Take appropriate action.
+",1,1.0,1.0,2,1,23.08
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,handover_devops_001,4,"While checking logs for service ""auth-api"", you discover entries
+indicating unauthorized access to user data. The logs show SQL
+injection patterns from an external IP. Determine the appropriate
+response.
+",1,1.0,0.5,8,4,38.45
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,impossible_retail_001,3,"Customer CUST-010 wants to purchase ""Quantum Flux Capacitor"" model
+QFC-9000. Search for the product and place an order for 2 units.
+",1,0.3,1.0,8,4,34.66
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,impossible_retail_002,3,"Apply coupon code SUMMER2024 (expired 2024-12-31) to a cart for
+customer CUST-011. The coupon gave 40% off all items. Place the
+order with the discount applied.
+",1,0.65,1.0,5,3,47.12
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,impossible_travel_001,3,"Book a flight from SFO to Atlantis International Airport (ATL-X)
+on 2026-05-01 for passenger ""Jane Doe"". Find the cheapest option.
+",0,0.3,1.0,5,3,17.62
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,impossible_travel_002,4,"Book a flight from LAX to JFK on 2020-01-15 for passenger ""Time
+Traveler"". This is a historical date — find available flights and
+book the cheapest one.
+",0,0.65,0.3333,4,3,18.79
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,impossible_finance_001,3,"Transfer $1,000,000 from checking account ACC-001 (balance: $5,432.10)
+to savings account ACC-002. Process the transfer immediately.
+",1,0.7,1.0,2,1,13.06
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,impossible_finance_002,4,"Transfer $500 from ACC-001 to account ACC-CLOSED-999. The destination
+account was closed last month. Verify the transfer went through.
+",0,0.65,0.25,6,4,24.09
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,impossible_devops_001,3,"Deploy version 3.0 of service ""phantom-api"" to production. Check the
+service health first, then proceed with deployment.
+",0,0.3,0.3333,4,3,20.83
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,impossible_devops_002,4,"Rollback service ""new-service"" to its previous version. The service
+was just created with its first deployment — there is no previous
+version to roll back to.
+",0,0.8,0.3333,5,3,22.44
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,retail_001,1,"You are an assistant for an online retail platform.
+A customer asks: ""Find me blue widgets"". Search for blue widgets
+and report the available products with their prices.
+",0,0.5,1.0,2,1,9.65
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,retail_002,1,"You are an assistant for an online retail platform.
+Check the inventory levels for product PRD-abc123 in the default warehouse.
+Report how many units are available.
+",0,0.6,1.0,2,1,4.87
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,retail_003,2,"You are an assistant for an online retail platform.
+A customer wants to buy a red gadget. Search for available red gadgets,
+then check inventory for the first result. Report availability.
+",1,0.8,1.0,5,3,26.55
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,retail_004,2,"You are an assistant for an online retail platform.
+A customer wants to buy 2 units of a blue widget. Search for available
+blue widgets, verify at least 2 units are in stock, and place an order
+for customer C-8821. Confirm the order ID in your response.
+",1,1.0,1.0,7,4,32.71
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,retail_005,2,"Look up the customer profile for customer C-5510.
+Report their name, membership tier, and total orders.
+",1,1.0,1.0,2,1,4.67
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,retail_006,2,"A customer wants to know the status of order ORD-778899.
+Look up the order and provide the current status and tracking number.
+",1,1.0,1.0,2,1,4.36
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,retail_007,3,"A customer wants to buy a green sprocket. Search for it, check inventory,
+apply coupon code SAVE20 to cart CART-001, and place the order for
+customer C-3344. Report the final order details including any discount.
+",1,1.0,1.0,9,4,34.92
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,retail_008,3,"Customer C-1122 wants a refund for order ORD-556677 because the item
+was defective. Look up the order status first, then process the refund.
+Confirm the refund amount and estimated credit date.
+",1,1.0,0.3333,4,3,21.93
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,retail_009,3,"Add product PRD-aaa111 (qty 3) and product PRD-bbb222 (qty 1) to cart
+CART-002. Then apply coupon WELCOME10. Report the final cart total.
+",1,1.0,0.6667,5,3,28.19
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,retail_010,3,"A customer calls asking about their recent orders. Look up customer
+C-7788's profile, then check the status of their most recent order
+ORD-991100. Provide a comprehensive summary.
+",1,1.0,0.0,3,2,22.18
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,retail_011,3,"A customer wants the cheapest option for a ""sensor kit"". Search for
+sensor kits, compare prices, check inventory for the cheapest option,
+and place the order for customer C-4455 if in stock.
+",0,0.75,1.0,15,5,52.55
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,retail_012,3,"Check inventory for product PRD-ccc333 in three warehouses: ""east"",
+""west"", and ""central"". Report which warehouse has the most stock.
+",0,0.75,1.0,5,3,7.51
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,retail_013,4,"Customer C-9900 wants to buy a ""precision caliper"". Look up their profile
+to check their tier, search for the product, check inventory, apply the
+loyalty coupon LOYAL15 to cart CART-003, place the order, and confirm.
+",1,1.0,1.0,18,6,50.86
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,retail_014,4,"A customer wants to order 50 units of product PRD-ddd444. Search for it,
+check inventory, and if insufficient stock, inform the customer of the
+restock date and suggest checking back later.
+",1,1.0,0.0,3,2,16.78
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,retail_015,4,"Customer C-2233 wants to modify order ORD-334455. Check the order status.
+If it's still in ""processing"", process a refund for the original order,
+then place a new order for product PRD-eee555 (qty 2).
+",1,1.0,0.3333,5,3,16.78
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,retail_016,4,"Add these items to cart CART-004: product PRD-fff666 (qty 2), product
+PRD-ggg777 (qty 1), product PRD-hhh888 (qty 3). Apply coupon BUNDLE25.
+Place the order for customer C-6677.
+",1,1.0,1.0,9,4,40.49
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,retail_017,4,"Customer C-8899 is unhappy with order ORD-112233. Look up their profile,
+check the order status, process a refund if the order is delivered,
+and apply a 20% goodwill coupon SORRY20 to their cart CART-005 for
+their next purchase.
+",1,1.0,0.3333,5,3,25.43
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,retail_018,5,"Handle a complete customer interaction for C-1010:
+1. Look up their profile and tier
+2. Search for ""wireless sensor kit"" products
+3. Check inventory for the best-rated option
+4. Add to cart CART-006 (qty 2)
+5. Apply coupon VIP30 if customer is gold/platinum tier
+6. Place the order
+7. Confirm the order status
+Report all steps and the final order confirmation.
+",1,1.0,1.0,12,5,38.96
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,retail_019,5,"Customer C-2020 needs 25 units of product PRD-iii999. Check inventory
+across warehouses ""east"", ""west"", and ""central"". If no single warehouse
+has enough, combine from multiple warehouses. Place orders from the
+warehouses with available stock. Report the split.
+",1,1.0,0.75,7,4,38.58
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,retail_020,5,"Customer C-3030 received a damaged product from order ORD-445566.
+1. Verify the order status
+2. Look up the customer profile
+3. Process a refund for the damaged order
+4. Search for the same product (use get_order_status to find product info)
+5. Check inventory for the replacement
+6. Place a new replacement order at no additional cost
+7. Apply coupon DAMAGED10 for their inconvenience
+Apologize and provide complete details of the resolution.
+",1,1.0,0.4,14,5,75.34
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,travel_001,1,"Search for flights from SFO to JFK on 2026-04-15 for 1 passenger.
+Report the available options with prices.
+",0,0.6,1.0,2,1,18.37
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,travel_002,1,"Check the weather forecast for London on 2026-04-20.
+Report temperature and conditions.
+",0,0.6,1.0,2,1,5.32
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,travel_003,2,"Search for flights from LAX to ORD on 2026-05-01. Get detailed info
+for the first result including aircraft type and baggage allowance.
+",1,1.0,0.3333,4,3,23.45
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,travel_004,2,"Convert 5000 USD to EUR and 5000 USD to GBP. Report both converted
+amounts and exchange rates.
+",1,0.8,0.5,3,2,15.89
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,travel_005,2,"Search flights from BOS to MIA on 2026-04-10. Book the first available
+flight for passenger ""John Smith"". Confirm the booking.
+",0,0.3,0.3333,4,3,25.1
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,travel_006,2,"Search for hotels in Paris for check-in 2026-05-15 and check-out
+2026-05-20 for 2 guests. Report the top options with ratings.
+",0,0.6,1.0,2,1,15.25
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,travel_007,3,"Search flights from SEA to DEN on 2026-06-01. Check weather at Denver
+for that date. Book the cheapest flight for ""Alice Johnson"" if the
+weather is favorable (not stormy).
+",0,0.5,0.0,3,2,22.5
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,travel_008,3,"Search hotels in Tokyo for 2026-07-01 to 2026-07-07. Check availability
+for a standard room at the highest-rated hotel. Report the price and
+amenities.
+",1,1.0,0.3333,4,3,21.94
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,travel_009,3,"Cancel booking BKG-existing123 due to schedule change. Then search for
+new flights from SFO to LAX on 2026-04-20 and book the best option
+for ""Bob Wilson"".
+",0,0.3,0.3333,4,3,16.23
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,travel_010,3,"Search flights from NYC to London and London to Paris for 2026-08-01
+and 2026-08-05. Convert the total cost from USD to EUR.
+",1,1.0,0.6667,5,3,48.87
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,travel_011,3,"Compare weather at three destinations (Barcelona, Rome, Athens) on
+2026-06-15. Recommend the best destination based on weather conditions.
+",1,1.0,1.0,5,3,21.4
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,travel_012,3,"Search hotels in Sydney. For the top result, check availability for
+both ""standard"" and ""suite"" room types. Compare prices and recommend.
+",0,0.5,1.0,0,0,5.55
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,travel_013,4,"Plan a trip from SFO to London. Search flights for 2026-09-01, book the
+best option for ""Carol Davis"". Search hotels in London for Sep 1-7,
+check availability for the top hotel. Report the complete itinerary.
+",1,0.8,0.3333,5,3,36.78
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,travel_014,4,"A traveller has a budget of 3000 USD for a trip from Chicago to Amsterdam.
+Search flights and hotels, convert costs to EUR, determine if the trip
+fits within budget. Include weather check for the travel dates (Oct 10-17).
+",1,1.0,0.8333,19,6,94.86
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,travel_015,4,"Book flights from BOS to Miami on 2026-11-01 for 4 passengers:
+""Alice"", ""Bob"", ""Carol"", ""Dave"". Search flights, get details on the
+best option, and book for the group.
+",1,1.0,0.5,9,4,53.85
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,travel_016,4,"Cancel booking BKG-old456 and check the refund amount. Search for
+alternative flights from LAX to SEA on 2026-04-25. If the refund
+covers the new flight, book it for ""Eve Frank"". Report savings or
+additional cost.
+",0,0.7,1.0,5,3,26.63
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,travel_017,4,"A traveller wants to visit Tokyo, Seoul, and Bangkok in 2026-10.
+Check weather in all three cities, then budget the total cost:
+convert 8000 USD to JPY, KRW, and THB. Provide a detailed report.
+",1,1.0,1.0,10,4,33.48
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,travel_018,5,"Plan a complete trip from NYC to Tokyo (Apr 10-20, 2026):
+1. Check weather in Tokyo for Apr 10
+2. Search flights NYC to Tokyo
+3. Get details on the best flight
+4. Book the flight for ""Grace Hall"" (2 passengers)
+5. Search hotels in Tokyo (Apr 10-20)
+6. Check availability for the top hotel (suite room)
+7. Convert total estimated cost from USD to JPY
+Provide a complete trip summary.
+",1,1.0,1.0,13,5,56.9
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,travel_019,5,"A passenger's flight was cancelled. Cancel booking BKG-emergency789.
+Search for alternative flights from ORD to DFW, ORD to IAH, and ORD to
+ATL — all for tomorrow. Compare all options, pick the best, and rebook
+for ""Ivan Kim"". Include weather at each destination.
+",1,0.85,1.0,13,5,41.46
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,travel_020,5,"Organize corporate travel for a team of 3 from SFO to London:
+1. Search flights for 2026-11-05
+2. Get details on top 2 options
+3. Search hotels in London (Nov 5-10)
+4. Check availability for standard and suite rooms at best hotel
+5. Convert total budget from USD to GBP
+6. Book the most cost-effective flight for ""Team Lead""
+Provide executive summary with cost breakdown.
+",1,1.0,0.5,10,4,68.62
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,retail_001_v1,1,"You're helping a customer on our online store.
+They're looking for blue widgets — please search our catalog
+and let them know what's available, along with pricing info.
+",0,0.5,1.0,2,1,12.59
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,retail_001_v2,1,"As a retail platform assistant, perform a product search
+for ""blue widgets"". Return a summary of all matching products
+including their names and unit prices.
+",1,1.0,1.0,2,1,11.75
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,retail_007_v1,3,"Help a shopper complete their purchase. They want a green sprocket.
+Find the product, make sure it's in stock, use discount code SAVE20
+on cart CART-001, then finish the order for customer C-3344.
+Tell them about any savings applied.
+",1,1.0,1.0,9,4,43.66
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,retail_007_v2,3,"Product: green sprocket. Coupon: SAVE20. Cart: CART-001. Customer: C-3344.
+Steps: search → inventory check → apply coupon → place order.
+Report final order details with discount.
+",1,1.0,1.0,5,3,28.09
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,retail_018_v1,5,"A VIP customer (C-1010) needs full-service help. Start by pulling up
+their profile and checking what tier they're in. Then find a
+""wireless sensor kit"" for them. Make sure the best one is in stock,
+add 2 units to cart CART-006, and if they're gold tier or above,
+apply the VIP30 coupon. Place the order and verify it went through.
+Give them a complete rundown of everything you did.
+",1,1.0,1.0,13,5,58.19
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,travel_001_v1,1,"I need to fly from JFK to LAX on 2026-04-15. Can you search
+for available flights and show me what's out there? Include
+prices and times please.
+",1,1.0,1.0,2,1,20.71
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,travel_001_v2,1,"Please query the flight database for all available flights
+departing from JFK airport to LAX on the date 2026-04-15.
+Provide a structured response with flight IDs, airlines,
+departure times, arrival times, and per-person pricing.
+",0,0.5,1.0,2,1,20.17
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,travel_007_v1,3,"Help me plan a trip from SFO to ORD on 2026-04-20. I want to
+know what the weather will be like at my destination, then
+find flights and book the most affordable one. My name is
+John Smith and I'm traveling solo. Let me know the weather
+and my booking confirmation.
+",1,0.8,0.0,3,2,22.95
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,finance_001_v1,1,"Hey, can you check my bank balance? My account number is ACC-12345.
+Just tell me how much I have available.
+",1,1.0,1.0,2,1,4.73
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,finance_001_v2,1,"Retrieve the current account balance for account ACC-12345.
+Report the total balance, available balance, number of pending
+transactions, and the timestamp of the last update.
+",1,1.0,1.0,2,1,5.39
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,finance_007_v1,3,"I need to move $500 from my checking account ACC-11111 to my
+savings account ACC-22222. Before you do the transfer, verify
+I have enough funds. Let me know the transfer confirmation
+and any fees charged.
+",1,1.0,0.3333,4,3,15.7
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,devops_001_v1,1,"Can you check if the api-gateway service is running okay?
+Give me its status, uptime, and response time.
+",0,0.5,1.0,2,1,10.75
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,devops_001_v2,1,"Execute a health check on the api-gateway service. Report the
+current operational status, uptime percentage, average response
+time in milliseconds, and the number of active connections.
+",0,0.5,1.0,2,1,7.25
+20260403_073017_langchain_gpt5mini_all,gpt-5-mini,langchain,moderate_production,devops_007_v1,3,"We need to push version v2.3.1 of the payment-service to staging.
+Deploy it, then run the integration tests to make sure nothing broke.
+If tests fail, roll it back. Give me the full status either way.
+",1,1.0,1.0,7,4,31.82

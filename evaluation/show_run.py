@@ -137,6 +137,25 @@ def render_run(data: dict[str, Any], run_dir: Path) -> None:
         console.print("[yellow]No tasks found to render.[/yellow]")
         return
         
+    import sys
+    import os
+    from pathlib import Path
+    try:
+        project_root = str(Path(__file__).parent.parent.absolute())
+        if project_root not in sys.path:
+            sys.path.insert(0, project_root)
+        from agentdisruptbench import TaskRegistry
+        registry = TaskRegistry.from_builtin()
+        task_map = {
+            t.task_id: {
+                "difficulty": t.difficulty,
+                "ground_truth": getattr(t.ground_truth, "expected_outcome", "?") if t.ground_truth else "?"
+            } 
+            for t in registry.all_tasks()
+        }
+    except Exception:
+        task_map = {}
+
     # ── RUN HEADER ────────────────────────────────────────────────────────────
     run_id = run_dir.name
     console.rule(f"[bold cyan]AgentDisruptBench Run: {run_id}[/bold cyan]", style="cyan")
@@ -174,6 +193,10 @@ def render_run(data: dict[str, Any], run_dir: Path) -> None:
         info = Table(show_header=False, box=box.SIMPLE, padding=(0, 1))
         info.add_column("Key", style="bold dim")
         info.add_column("Value")
+        
+        task_info = task_map.get(task_id, {})
+        gt_outcome = task_info.get("ground_truth", "—")
+        info.add_row("Ground Truth", f"[bold dim]{gt_outcome}[/bold dim]")
         info.add_row("Duration", f"{r.get('duration_seconds', 0):.2f}s")
         err = r.get("error_msg") or "None"
         info.add_row("Agent Error", f"[red]{err}[/red]")
@@ -191,8 +214,8 @@ def render_run(data: dict[str, Any], run_dir: Path) -> None:
             for j, tc in enumerate(tool_calls, 1):
                 tool_name = tc.get("tool_name", "?")
                 ok = tc.get("success", True)
-                dtype = tc.get("disruption_type")
-                latency = tc.get("latency_ms")
+                dtype = tc.get("disruption_fired") or tc.get("disruption_type")
+                latency = tc.get("latency_ms") or tc.get("observed_latency_ms")
 
                 status = "[green]OK[/green]" if ok else "[red]FAIL[/red]"
                 dc = disruption_color(dtype)
@@ -305,10 +328,8 @@ def render_run(data: dict[str, Any], run_dir: Path) -> None:
                         parts.append(str(item))
                 output = "\n".join(parts)
             output = str(output)
-            # Truncate long outputs
-            display_output = output[:600] + ("..." if len(output) > 600 else "")
             console.print(Panel(
-                Text(display_output, style="white"),
+                Text(output, style="white"),
                 title="[bold]Agent Output[/bold]",
                 border_style="dim",
             ))
@@ -340,22 +361,44 @@ def render_run(data: dict[str, Any], run_dir: Path) -> None:
         if runs:
             task_summary = Table(show_header=True, box=box.SIMPLE_HEAD, padding=(0, 1))
             task_summary.add_column("Task", style="cyan")
+            task_summary.add_column("Diff", justify="center", width=4)
             task_summary.add_column("Status", justify="center", width=6)
             task_summary.add_column("Score", justify="right", width=6)
             task_summary.add_column("Tools", justify="right", width=5)
+            task_summary.add_column("Disr.", justify="right", width=5)
+            task_summary.add_column("Recv.", justify="right", width=6)
+            task_summary.add_column("Strategy", justify="left", width=12)
             task_summary.add_column("Time", justify="right", width=6)
+            task_summary.add_column("Ground Truth", justify="left", style="dim", width=40)
 
             for r in runs:
                 ok = r.get("success", False)
                 sc = r.get("partial_score", 0)
                 sc_s = score_color(sc)
+                
+                tid = r.get("task_id", "?")
+                task_info = task_map.get(tid, {})
+                diff = str(r.get("difficulty") or task_info.get("difficulty", "?"))
+                
+                gt = task_info.get("ground_truth", "—")
+                gt_display = gt[:37] + "..." if len(gt) > 40 else gt
+
+                dist = str(r.get("disruptions_encountered", 0))
+                recv = r.get("recovery_rate", 0)
+                strat = r.get("dominant_strategy") or "—"
+                strat_str = f"[{strategy_style(strat)}]{strat}[/{strategy_style(strat)}]" if strat != "—" else "[dim]—[/dim]"
 
                 task_summary.add_row(
-                    r.get("task_id", "?"),
+                    tid,
+                    f"D{diff}",
                     success_icon(ok),
                     f"[{sc_s}]{sc:.2f}[/{sc_s}]",
                     str(r.get("total_tool_calls", 0)),
+                    dist,
+                    f"{recv:.0%}",
+                    strat_str,
                     f"{r.get('duration_seconds', 0):.1f}s",
+                    gt_display,
                 )
 
             console.print(task_summary)

@@ -215,18 +215,21 @@ def discover_runs(
 
 def get_run_label(summary: RunSummary, summaries: list[RunSummary]) -> str:
     """Generate a unique, descriptive label for a run in a set."""
-    # Count how many runs share this model
-    same_model = [s for s in summaries if s.model == summary.model]
-    if len(same_model) == 1:
-        return summary.model
+    label = f"{summary.runner}/{summary.model}"
 
-    # Multiple runs of same model - check profiles
+    # Count how many runs share this particular runner and model
+    same_model = [s for s in summaries if s.model == summary.model and s.runner == summary.runner]
+    if len(same_model) == 1:
+        return label
+
+    # Multiple runs of same runner/model - check profiles
     same_profile = [s for s in same_model if s.profile == summary.profile]
     if len(same_profile) == 1:
-        return f"{summary.model}\n({summary.profile})"
+        return f"{label}\n({summary.profile})"
 
-    # Multiple runs of same model/profile - add run ID suffix
-    return f"{summary.model}\n({summary.profile} / {summary.run_id[-6:]})"
+    # Multiple runs of same runner/model/profile - add timestamp suffix instead of useless _all ending
+    timestamp = summary.run_id[:15] if len(summary.run_id) > 15 else summary.run_id[-6:]
+    return f"{label}\n({summary.profile} / {timestamp})"
 
 
 def _score_color(score: float) -> str:

@@ -1,0 +1,17 @@
+{
+  "generated": "2026-04-03T08:23:04.382825+00:00",
+  "total_runs": 114,
+  "profiles": {
+    "moderate_production": {
+      "tasks_evaluated": 114,
+      "success_rate": 0.5614035087719298,
+      "avg_partial_score": 0.77,
+      "avg_recovery_rate": 0.758249791144528,
+      "avg_retry_efficiency": 0.7448621553884711,
+      "total_disruptions": 330,
+      "total_recovered": 244,
+      "avg_extra_tool_calls": 0.0,
+      "avg_duration_seconds": 27.78013541113244
+    }
+  }
+}

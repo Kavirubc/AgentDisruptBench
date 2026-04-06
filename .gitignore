@@ -40,8 +40,8 @@ legacy_traces/
 # Track curated run outputs — runs/ is intentionally NOT ignored
 # Only commit the summary-level files: results.csv, results.json,
 # summary.json, report.md, and run logs. Exclude verbose traces.
-runs/*/task_logs/
-runs/*/run_log.jsonl
+task_logs/
+run_log.jsonl
 
 # Ignore loose root-level log files only
 *.log
