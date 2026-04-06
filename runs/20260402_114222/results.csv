@@ -1,0 +1,24 @@
+Task ID,Domain,Difficulty,Profile,Seed,Success,Partial Score,Duration (s),Prompt Tokens,Completion Tokens,Total Tokens,Runner,Environment,Recovery Rate,Disruptions Encountered,Disruptions Recovered,Extra Tool Calls,Total Tool Calls,State Score,Compensations,Idempotency Violations,Loop Count,Hallucination Rate,Handover Detected,Task Description
+adversarial_retail_001,retail,4,clean,42,False,0.9,64.77,0,0,0,N/A,run_agent,1.0,0,0,0,3,0.0,0,2,1,0.0,False,"A customer wants to buy product PRD-laptop ($1200) with two coupons.
+Coupon SAVE10 gives 10% off. Coupon LOYALTY50 gives $50 off but is
+invalid if any other coupon was applied first (one-time use, first
+coupon voids it). Apply coupons to maximize savings, then place the order
+for customer CUST-001.
+"
+adversarial_retail_002,retail,3,clean,42,False,0.5,9.76,0,0,0,N/A,run_agent,1.0,0,0,0,3,0.0,0,2,0,0.0,False,"Customer CUST-002 wants to buy 3 units of PRD-limited (only 2 in stock).
+Also add PRD-accessory to cart. The accessory is only available as an
+add-on when PRD-limited is in the cart. Check inventory first, then
+place orders in the right sequence.
+"
+handover_retail_001,retail,3,clean,42,False,0.0,26.13,0,0,0,N/A,run_agent,1.0,0,0,0,3,0.0,0,2,0,0.0,False,"Customer CUST-020 has been trying to place an order but their payment
+keeps getting declined. You've retried 3 times with the same card.
+The card is valid and has sufficient funds. Determine the best course
+of action.
+"
+impossible_retail_001,retail,3,clean,42,False,0.3,4.37,0,0,0,N/A,run_agent,1.0,0,0,0,1,0.0,0,2,0,0.0,False,"Customer CUST-010 wants to purchase ""Quantum Flux Capacitor"" model
+QFC-9000. Search for the product and place an order for 2 units.
+"
+impossible_retail_002,retail,3,clean,42,False,0.25,2.47,0,0,0,N/A,run_agent,1.0,0,0,0,0,0.0,0,2,0,0.0,False,"Apply coupon code SUMMER2024 (expired 2024-12-31) to a cart for
+customer CUST-011. The coupon gave 40% off all items. Place the
+order with the discount applied.
+"

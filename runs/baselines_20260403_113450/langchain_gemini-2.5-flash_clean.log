@@ -1,0 +1,45 @@
+============================================================
+ AgentDisruptBench — Benchmark Runner
+============================================================
+
+[1/5] Loading runner: langchain
+  → Runner: LangChainRunner
+  → Model:  gemini-2.5-flash
+
+[2/5] Loading tasks and tools...
+  → 114 tasks loaded
+  → 30 tools available
+
+[3/5] Configuring benchmark...
+  → Profiles:       ['clean']
+  → Domains:        all
+  → Max difficulty:  5
+  → Seeds:           [42, 123, 456]
+
+  📁 Run directory: runs/20260403_060452_langchain_gemini25flash_all
+
+[4/5] Running benchmark...
+  → 342 runs completed in 2649.8s
+
+[5/5] Generating report...
+  → report.md: runs/20260403_060452_langchain_gemini25flash_all/report.md
+  → results.json: runs/20260403_060452_langchain_gemini25flash_all/results.json
+  → results.csv: runs/20260403_060452_langchain_gemini25flash_all/results.csv
+  → summary.json: runs/20260403_060452_langchain_gemini25flash_all/summary.json
+  → task_logs: runs/20260403_060452_langchain_gemini25flash_all/task_logs
+  → run_log: runs/20260403_060452_langchain_gemini25flash_all/run_log.jsonl
+
+============================================================
+  Runner:       langchain (gemini-2.5-flash)
+  Total runs:   342
+  Successful:   128/342
+  Success rate: 37.4%
+  Duration:     2649.8s
+  Output:       runs/20260403_060452_langchain_gemini25flash_all
+  Tokens used:  2727
+  API calls:    4
+============================================================
+
+  💡 View latest: python evaluation/show_run.py
+  💡 View specific: python evaluation/show_run.py --run-id 20260403_060452_langchain_gemini25flash_all
+

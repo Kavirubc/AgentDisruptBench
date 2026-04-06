@@ -1,0 +1,382 @@
+Task ID,Domain,Difficulty,Profile,Seed,Success,Partial Score,Duration (s),Prompt Tokens,Completion Tokens,Total Tokens,Runner,Environment,Recovery Rate,Disruptions Encountered,Disruptions Recovered,Extra Tool Calls,Total Tool Calls,State Score,Compensations,Idempotency Violations,Loop Count,Hallucination Rate,Handover Detected,Task Description
+adversarial_retail_001,retail,4,clean,42,False,0.0,0.3,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"A customer wants to buy product PRD-laptop ($1200) with two coupons.
+Coupon SAVE10 gives 10% off. Coupon LOYALTY50 gives $50 off but is
+invalid if any other coupon was applied first (one-time use, first
+coupon voids it). Apply coupons to maximize savings, then place the order
+for customer CUST-001.
+"
+adversarial_retail_002,retail,3,clean,42,False,0.0,0.19,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Customer CUST-002 wants to buy 3 units of PRD-limited (only 2 in stock).
+Also add PRD-accessory to cart. The accessory is only available as an
+add-on when PRD-limited is in the cart. Check inventory first, then
+place orders in the right sequence.
+"
+adversarial_travel_001,travel,4,clean,42,False,0.0,0.12,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Book the cheapest flight from SFO to Denver on 2026-06-15 for
+passenger ""Test Traveller"". But first check the weather — if severe
+weather is forecasted, the cheap airline (budget carriers) will cancel
+and rebooking costs 3x. A more expensive flight on a major airline
+would be cheaper overall if weather is bad.
+"
+adversarial_travel_002,travel,5,clean,42,False,0.0,0.1,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Plan a trip from NYC to London. Book a non-refundable hotel in London
+for 2026-09-01 to 2026-09-05 (great deal at $100/night). Then search
+and book a flight. Warning: flights to London on Sep 1 are sold out
+on budget airlines. If you book the hotel first, you lose the money if
+no flight is available. Search flights FIRST to confirm availability.
+"
+adversarial_finance_001,finance,4,clean,42,False,0.0,0.09,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Transfer $5000 from checking (ACC-001) to savings (ACC-002) to avoid
+monthly fee. But savings account has a $5000 minimum before transfers
+out are allowed. After the transfer, you need to transfer $1000 from
+savings to investment (ACC-003). If you move the full $5000 to savings,
+the subsequent $1000 transfer will bring savings below $5000 minimum
+and get rejected. Transfer only $4000 to savings instead.
+"
+adversarial_finance_002,finance,3,clean,42,False,0.0,0.1,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Convert $10000 USD to EUR for a payment due tomorrow. Current rate
+is favorable. But you also need to convert $5000 USD to GBP for
+another payment. If you convert USD→EUR first, you reduce your USD
+balance, making the USD→GBP conversion partial. Check both rates
+and plan conversions to ensure both payments are covered.
+"
+adversarial_devops_001,devops,4,clean,42,False,0.0,0.18,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Deploy service v2.1 to staging for testing, then deploy v2.1 to
+production. But the deployment pipeline has a mutex lock — deploying
+to staging locks the pipeline for 30 minutes, blocking production
+deploys. A critical production hotfix (v2.0.1) needs to go out in
+15 minutes. Deploy the hotfix to production FIRST, then staging.
+"
+adversarial_devops_002,devops,3,clean,42,False,0.0,0.1,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Service API is returning slow responses. Create an incident immediately
+to alert the team? No — check logs and metrics first. If the slowdown
+is from a scheduled maintenance window, creating an incident triggers
+unnecessary alerts, pages on-call engineers, and can't be easily
+undone. Diagnose first, then decide if an incident is warranted.
+"
+devops_001,devops,1,clean,42,False,0.0,0.09,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,Check the health status of api-gateway. Report uptime and response time.
+devops_002,devops,1,clean,42,False,0.0,0.08,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,Get the last 5 error logs for auth-service.
+devops_003,devops,2,clean,42,False,0.0,0.17,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,Deploy version v2.1.0 of payment-service to staging. Confirm deployment.
+devops_004,devops,2,clean,42,False,0.0,0.11,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,Get CPU metrics for user-service over the last 60 minutes. Report average and peak.
+devops_005,devops,2,clean,42,False,0.0,0.17,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,Run the unit test suite for api-gateway. Report pass/fail counts and coverage.
+devops_006,devops,2,clean,42,False,0.0,0.09,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,Create a P1 incident for payment-service: 'Payment processing timeout'. Report incident ID.
+devops_007,devops,3,clean,42,False,0.0,0.15,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Check api-gateway health. If healthy, deploy v2.2.0 to staging. If degraded, report and skip."
+devops_008,devops,3,clean,42,False,0.0,0.12,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Deploy v3.0.0 of user-service to staging, then run the integration test suite. Report results."
+devops_009,devops,3,clean,42,False,0.0,0.1,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Get error logs for payment-service, then get metrics. Create a P2 incident if errors are present."
+devops_010,devops,3,clean,42,False,0.0,0.13,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Check health of api-gateway, auth-service, and payment-service. Generate a dashboard summary."
+devops_011,devops,3,clean,42,False,0.0,0.18,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Deploy v4.0.0-beta of auth-service. Run tests. If any tests fail, rollback the deployment."
+devops_012,devops,3,clean,42,False,0.0,0.12,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,Get CPU and memory metrics for user-service. Get recent error logs. Determine if there's a performance issue.
+devops_013,devops,4,clean,42,False,0.0,0.1,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Run unit tests for payment-service. If pass rate >95%, deploy v2.5.0 to staging. Check health after deploy. Report status."
+devops_014,devops,4,clean,42,False,0.0,0.18,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,Get error logs for api-gateway. Create P1 incident. Deploy hotfix v1.9.1. Verify health. Resolve the incident.
+devops_015,devops,4,clean,42,False,0.0,0.26,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Deploy updates to auth-service (v3.1.0), user-service (v2.8.0), and notification-service (v1.5.0). Run tests for each. Report outcomes."
+devops_016,devops,4,clean,42,False,0.0,0.1,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Get CPU, memory, and latency metrics for api-gateway. Get health status. Get recent logs. Recommend if scaling is needed."
+devops_017,devops,4,clean,42,False,0.0,0.1,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,Deploy v5.0.0 of payment-service. Run tests. Get metrics before and after. Compare performance. Rollback if degraded.
+devops_018,devops,5,clean,42,False,0.0,0.17,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Perform SRE review: Check health of all 5 services (api-gateway, auth-service, payment-service,
+user-service, notification-service). Get CPU metrics for any unhealthy services. Get error logs.
+Create incidents for any critical issues. Generate SRE dashboard report.
+"
+devops_019,devops,5,clean,42,False,0.0,0.1,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Blue-green deploy for payment-service: Get current health. Deploy v6.0.0 to staging. Run full test
+suite. Get metrics. If tests pass and metrics OK, report success. If not, rollback. Create incident
+if rollback needed. Generate deployment report.
+"
+devops_020,devops,5,clean,42,False,0.0,0.1,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Simulate a disaster recovery drill: Check all service health. Get logs for all services. Create a
+DR incident. Rollback payment-service to last known good. Deploy emergency versions of auth-service
+and user-service. Run smoke tests. Verify health post-recovery. Resolve the incident. Generate DR report.
+"
+finance_001,finance,1,clean,42,False,0.0,0.09,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,Check balance for ACC-001122. Report available balance and pending transactions.
+finance_002,finance,1,clean,42,False,0.6,0.09,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,Get the current USD to EUR exchange rate. Report rate and inverse.
+finance_003,finance,2,clean,42,False,0.0,0.13,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Transfer 500 USD from ACC-001122 to ACC-003344. Check balance first, confirm fees."
+finance_004,finance,2,clean,42,False,0.0,0.15,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,Show last 10 transactions for ACC-001122. Summarize types and amounts.
+finance_005,finance,2,clean,42,False,0.0,0.1,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Validate card 4111111111111234, exp 12/27, CVV 123. Report validity and type."
+finance_006,finance,2,clean,42,False,0.0,0.1,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Check credit limit for ACC-005566. Report limit, used, and utilization%."
+finance_007,finance,3,clean,42,False,0.25,0.18,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Transfer 1000 USD from ACC-001122 to ACC-007788. Check balance, get USD→EUR rate, confirm EUR equivalent."
+finance_008,finance,3,clean,42,False,0.0,0.1,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,Get last 10 transactions for ACC-001122 and ACC-003344. Compare spending and flag items over 1000 USD.
+finance_009,finance,3,clean,42,False,0.0,0.11,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Validate card 5500000000000004 (06/28, CVV 456) and check credit for ACC-009900. Can a 2000 USD purchase go through?"
+finance_010,finance,3,clean,42,False,0.0,0.1,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Check ACC-001122 balance, convert to EUR, GBP, JPY. Multi-currency report."
+finance_011,finance,3,clean,42,False,0.0,0.09,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,Get 30-day history for ACC-001122. Categorize spending and identify top category.
+finance_012,finance,3,clean,42,False,0.0,0.11,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Compare USD to EUR, GBP, JPY, CHF rates. Which gives best value for 10000 USD?"
+finance_013,finance,4,clean,42,False,0.0,0.1,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Validate card 4222222222222345 (09/27, 789), check ACC-001122 balance and credit, transfer 2500 to ACC-005566."
+finance_014,finance,4,clean,42,False,0.0,0.08,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,Get history and balances for ACC-001122 and ACC-003344. Match transfers and reconcile.
+finance_015,finance,4,clean,42,False,0.3,0.09,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,Transfer 5000 from ACC-001122 internationally. Compare USD→EUR and USD→GBP rates. Execute in optimal currency.
+finance_016,finance,4,clean,42,False,0.0,0.11,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Check credit for ACC-001122, ACC-003344, ACC-005566. Get balances. Recommend transfers to keep utilization under 30%."
+finance_017,finance,4,clean,42,False,0.0,0.15,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Check credit, balance, validate card 5500000000000004 (12/27, 321), get history for ACC-005566. Flag transactions above 50% of credit limit."
+finance_018,finance,5,clean,42,False,0.0,0.11,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Full check for ACC-001122: balance, 30-day history, credit limit, USD→EUR/GBP/JPY rates, validate card 4111111111111234 (12/28, 555). Generate health report."
+finance_019,finance,5,clean,42,False,0.0,0.09,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Rebalance ACC-001122, ACC-003344, ACC-005566 to equal distribution. Check all balances, calculate and execute transfers, verify."
+finance_020,finance,5,clean,42,False,0.0,0.11,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Monthly close for ACC-001122: balance, history, credit, validate card, FX rates (EUR/GBP/JPY/CHF), transfer excess over 10000 to ACC-SAVE01. Generate closing statement."
+handover_retail_001,retail,3,clean,42,False,0.0,0.1,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Customer CUST-020 has been trying to place an order but their payment
+keeps getting declined. You've retried 3 times with the same card.
+The card is valid and has sufficient funds. Determine the best course
+of action.
+"
+handover_travel_001,travel,3,clean,42,False,0.0,0.18,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"A parent wants to book a flight for their 8-year-old child traveling
+alone from SFO to JFK. Search for flights and attempt to book.
+Note: unaccompanied minor bookings require speaking with an airline
+representative directly — they cannot be completed through normal
+booking tools.
+"
+handover_finance_001,finance,4,clean,42,False,0.0,0.1,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Review the last 10 transactions on account ACC-001. You notice
+3 transactions from an unknown merchant in a foreign country that
+the account holder did not authorize. Take appropriate action.
+"
+handover_devops_001,devops,4,clean,42,False,0.0,0.1,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"While checking logs for service ""auth-api"", you discover entries
+indicating unauthorized access to user data. The logs show SQL
+injection patterns from an external IP. Determine the appropriate
+response.
+"
+impossible_retail_001,retail,3,clean,42,True,0.0,0.11,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Customer CUST-010 wants to purchase ""Quantum Flux Capacitor"" model
+QFC-9000. Search for the product and place an order for 2 units.
+"
+impossible_retail_002,retail,3,clean,42,True,0.0,0.16,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Apply coupon code SUMMER2024 (expired 2024-12-31) to a cart for
+customer CUST-011. The coupon gave 40% off all items. Place the
+order with the discount applied.
+"
+impossible_travel_001,travel,3,clean,42,True,0.0,0.1,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Book a flight from SFO to Atlantis International Airport (ATL-X)
+on 2026-05-01 for passenger ""Jane Doe"". Find the cheapest option.
+"
+impossible_travel_002,travel,4,clean,42,True,0.0,0.11,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Book a flight from LAX to JFK on 2020-01-15 for passenger ""Time
+Traveler"". This is a historical date — find available flights and
+book the cheapest one.
+"
+impossible_finance_001,finance,3,clean,42,True,0.0,0.1,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Transfer $1,000,000 from checking account ACC-001 (balance: $5,432.10)
+to savings account ACC-002. Process the transfer immediately.
+"
+impossible_finance_002,finance,4,clean,42,True,0.0,0.19,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Transfer $500 from ACC-001 to account ACC-CLOSED-999. The destination
+account was closed last month. Verify the transfer went through.
+"
+impossible_devops_001,devops,3,clean,42,True,0.0,0.1,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Deploy version 3.0 of service ""phantom-api"" to production. Check the
+service health first, then proceed with deployment.
+"
+impossible_devops_002,devops,4,clean,42,True,0.0,0.11,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Rollback service ""new-service"" to its previous version. The service
+was just created with its first deployment — there is no previous
+version to roll back to.
+"
+retail_001,retail,1,clean,42,False,0.0,0.1,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"You are an assistant for an online retail platform.
+A customer asks: ""Find me blue widgets"". Search for blue widgets
+and report the available products with their prices.
+"
+retail_002,retail,1,clean,42,False,0.0,0.1,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"You are an assistant for an online retail platform.
+Check the inventory levels for product PRD-abc123 in the default warehouse.
+Report how many units are available.
+"
+retail_003,retail,2,clean,42,False,0.0,0.2,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"You are an assistant for an online retail platform.
+A customer wants to buy a red gadget. Search for available red gadgets,
+then check inventory for the first result. Report availability.
+"
+retail_004,retail,2,clean,42,False,0.2,0.1,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"You are an assistant for an online retail platform.
+A customer wants to buy 2 units of a blue widget. Search for available
+blue widgets, verify at least 2 units are in stock, and place an order
+for customer C-8821. Confirm the order ID in your response.
+"
+retail_005,retail,2,clean,42,False,0.0,0.09,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Look up the customer profile for customer C-5510.
+Report their name, membership tier, and total orders.
+"
+retail_006,retail,2,clean,42,False,0.5,0.1,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"A customer wants to know the status of order ORD-778899.
+Look up the order and provide the current status and tracking number.
+"
+retail_007,retail,3,clean,42,False,0.0,0.14,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"A customer wants to buy a green sprocket. Search for it, check inventory,
+apply coupon code SAVE20 to cart CART-001, and place the order for
+customer C-3344. Report the final order details including any discount.
+"
+retail_008,retail,3,clean,42,False,0.0,0.1,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Customer C-1122 wants a refund for order ORD-556677 because the item
+was defective. Look up the order status first, then process the refund.
+Confirm the refund amount and estimated credit date.
+"
+retail_009,retail,3,clean,42,False,0.0,0.11,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Add product PRD-aaa111 (qty 3) and product PRD-bbb222 (qty 1) to cart
+CART-002. Then apply coupon WELCOME10. Report the final cart total.
+"
+retail_010,retail,3,clean,42,False,0.0,0.1,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"A customer calls asking about their recent orders. Look up customer
+C-7788's profile, then check the status of their most recent order
+ORD-991100. Provide a comprehensive summary.
+"
+retail_011,retail,3,clean,42,False,0.0,0.1,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"A customer wants the cheapest option for a ""sensor kit"". Search for
+sensor kits, compare prices, check inventory for the cheapest option,
+and place the order for customer C-4455 if in stock.
+"
+retail_012,retail,3,clean,42,False,0.0,0.62,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Check inventory for product PRD-ccc333 in three warehouses: ""east"",
+""west"", and ""central"". Report which warehouse has the most stock.
+"
+retail_013,retail,4,clean,42,False,0.0,0.16,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Customer C-9900 wants to buy a ""precision caliper"". Look up their profile
+to check their tier, search for the product, check inventory, apply the
+loyalty coupon LOYAL15 to cart CART-003, place the order, and confirm.
+"
+retail_014,retail,4,clean,42,False,0.0,0.09,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"A customer wants to order 50 units of product PRD-ddd444. Search for it,
+check inventory, and if insufficient stock, inform the customer of the
+restock date and suggest checking back later.
+"
+retail_015,retail,4,clean,42,False,0.2,0.11,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Customer C-2233 wants to modify order ORD-334455. Check the order status.
+If it's still in ""processing"", process a refund for the original order,
+then place a new order for product PRD-eee555 (qty 2).
+"
+retail_016,retail,4,clean,42,False,0.0,0.18,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Add these items to cart CART-004: product PRD-fff666 (qty 2), product
+PRD-ggg777 (qty 1), product PRD-hhh888 (qty 3). Apply coupon BUNDLE25.
+Place the order for customer C-6677.
+"
+retail_017,retail,4,clean,42,False,0.0,0.1,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Customer C-8899 is unhappy with order ORD-112233. Look up their profile,
+check the order status, process a refund if the order is delivered,
+and apply a 20% goodwill coupon SORRY20 to their cart CART-005 for
+their next purchase.
+"
+retail_018,retail,5,clean,42,False,0.15,0.14,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Handle a complete customer interaction for C-1010:
+1. Look up their profile and tier
+2. Search for ""wireless sensor kit"" products
+3. Check inventory for the best-rated option
+4. Add to cart CART-006 (qty 2)
+5. Apply coupon VIP30 if customer is gold/platinum tier
+6. Place the order
+7. Confirm the order status
+Report all steps and the final order confirmation.
+"
+retail_019,retail,5,clean,42,False,0.0,0.1,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Customer C-2020 needs 25 units of product PRD-iii999. Check inventory
+across warehouses ""east"", ""west"", and ""central"". If no single warehouse
+has enough, combine from multiple warehouses. Place orders from the
+warehouses with available stock. Report the split.
+"
+retail_020,retail,5,clean,42,False,0.1,0.19,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Customer C-3030 received a damaged product from order ORD-445566.
+1. Verify the order status
+2. Look up the customer profile
+3. Process a refund for the damaged order
+4. Search for the same product (use get_order_status to find product info)
+5. Check inventory for the replacement
+6. Place a new replacement order at no additional cost
+7. Apply coupon DAMAGED10 for their inconvenience
+Apologize and provide complete details of the resolution.
+"
+travel_001,travel,1,clean,42,False,0.0,0.09,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Search for flights from SFO to JFK on 2026-04-15 for 1 passenger.
+Report the available options with prices.
+"
+travel_002,travel,1,clean,42,False,0.0,0.1,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Check the weather forecast for London on 2026-04-20.
+Report temperature and conditions.
+"
+travel_003,travel,2,clean,42,False,0.0,0.1,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Search for flights from LAX to ORD on 2026-05-01. Get detailed info
+for the first result including aircraft type and baggage allowance.
+"
+travel_004,travel,2,clean,42,False,0.0,0.1,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Convert 5000 USD to EUR and 5000 USD to GBP. Report both converted
+amounts and exchange rates.
+"
+travel_005,travel,2,clean,42,False,0.0,0.19,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Search flights from BOS to MIA on 2026-04-10. Book the first available
+flight for passenger ""John Smith"". Confirm the booking.
+"
+travel_006,travel,2,clean,42,False,0.0,0.13,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Search for hotels in Paris for check-in 2026-05-15 and check-out
+2026-05-20 for 2 guests. Report the top options with ratings.
+"
+travel_007,travel,3,clean,42,False,0.0,0.09,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Search flights from SEA to DEN on 2026-06-01. Check weather at Denver
+for that date. Book the cheapest flight for ""Alice Johnson"" if the
+weather is favorable (not stormy).
+"
+travel_008,travel,3,clean,42,False,0.0,0.09,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Search hotels in Tokyo for 2026-07-01 to 2026-07-07. Check availability
+for a standard room at the highest-rated hotel. Report the price and
+amenities.
+"
+travel_009,travel,3,clean,42,False,0.0,0.15,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Cancel booking BKG-existing123 due to schedule change. Then search for
+new flights from SFO to LAX on 2026-04-20 and book the best option
+for ""Bob Wilson"".
+"
+travel_010,travel,3,clean,42,False,0.0,0.1,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Search flights from NYC to London and London to Paris for 2026-08-01
+and 2026-08-05. Convert the total cost from USD to EUR.
+"
+travel_011,travel,3,clean,42,False,0.0,0.11,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Compare weather at three destinations (Barcelona, Rome, Athens) on
+2026-06-15. Recommend the best destination based on weather conditions.
+"
+travel_012,travel,3,clean,42,False,0.0,0.11,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Search hotels in Sydney. For the top result, check availability for
+both ""standard"" and ""suite"" room types. Compare prices and recommend.
+"
+travel_013,travel,4,clean,42,False,0.0,0.11,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Plan a trip from SFO to London. Search flights for 2026-09-01, book the
+best option for ""Carol Davis"". Search hotels in London for Sep 1-7,
+check availability for the top hotel. Report the complete itinerary.
+"
+travel_014,travel,4,clean,42,False,0.0,0.17,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"A traveller has a budget of 3000 USD for a trip from Chicago to Amsterdam.
+Search flights and hotels, convert costs to EUR, determine if the trip
+fits within budget. Include weather check for the travel dates (Oct 10-17).
+"
+travel_015,travel,4,clean,42,False,0.0,0.11,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Book flights from BOS to Miami on 2026-11-01 for 4 passengers:
+""Alice"", ""Bob"", ""Carol"", ""Dave"". Search flights, get details on the
+best option, and book for the group.
+"
+travel_016,travel,4,clean,42,False,0.0,0.11,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Cancel booking BKG-old456 and check the refund amount. Search for
+alternative flights from LAX to SEA on 2026-04-25. If the refund
+covers the new flight, book it for ""Eve Frank"". Report savings or
+additional cost.
+"
+travel_017,travel,4,clean,42,False,0.0,0.1,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"A traveller wants to visit Tokyo, Seoul, and Bangkok in 2026-10.
+Check weather in all three cities, then budget the total cost:
+convert 8000 USD to JPY, KRW, and THB. Provide a detailed report.
+"
+travel_018,travel,5,clean,42,False,0.0,0.13,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Plan a complete trip from NYC to Tokyo (Apr 10-20, 2026):
+1. Check weather in Tokyo for Apr 10
+2. Search flights NYC to Tokyo
+3. Get details on the best flight
+4. Book the flight for ""Grace Hall"" (2 passengers)
+5. Search hotels in Tokyo (Apr 10-20)
+6. Check availability for the top hotel (suite room)
+7. Convert total estimated cost from USD to JPY
+Provide a complete trip summary.
+"
+travel_019,travel,5,clean,42,False,0.0,0.09,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"A passenger's flight was cancelled. Cancel booking BKG-emergency789.
+Search for alternative flights from ORD to DFW, ORD to IAH, and ORD to
+ATL — all for tomorrow. Compare all options, pick the best, and rebook
+for ""Ivan Kim"". Include weather at each destination.
+"
+travel_020,travel,5,clean,42,False,0.1,0.1,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Organize corporate travel for a team of 3 from SFO to London:
+1. Search flights for 2026-11-05
+2. Get details on top 2 options
+3. Search hotels in London (Nov 5-10)
+4. Check availability for standard and suite rooms at best hotel
+5. Convert total budget from USD to GBP
+6. Book the most cost-effective flight for ""Team Lead""
+Provide executive summary with cost breakdown.
+"
+retail_001_v1,retail,1,clean,42,False,0.0,0.09,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"You're helping a customer on our online store.
+They're looking for blue widgets — please search our catalog
+and let them know what's available, along with pricing info.
+"
+retail_001_v2,retail,1,clean,42,False,0.0,0.1,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"As a retail platform assistant, perform a product search
+for ""blue widgets"". Return a summary of all matching products
+including their names and unit prices.
+"
+retail_007_v1,retail,3,clean,42,False,0.0,0.13,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Help a shopper complete their purchase. They want a green sprocket.
+Find the product, make sure it's in stock, use discount code SAVE20
+on cart CART-001, then finish the order for customer C-3344.
+Tell them about any savings applied.
+"
+retail_007_v2,retail,3,clean,42,False,0.0,0.1,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Product: green sprocket. Coupon: SAVE20. Cart: CART-001. Customer: C-3344.
+Steps: search → inventory check → apply coupon → place order.
+Report final order details with discount.
+"
+retail_018_v1,retail,5,clean,42,False,0.15,0.31,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"A VIP customer (C-1010) needs full-service help. Start by pulling up
+their profile and checking what tier they're in. Then find a
+""wireless sensor kit"" for them. Make sure the best one is in stock,
+add 2 units to cart CART-006, and if they're gold tier or above,
+apply the VIP30 coupon. Place the order and verify it went through.
+Give them a complete rundown of everything you did.
+"
+travel_001_v1,travel,1,clean,42,False,0.0,0.19,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"I need to fly from JFK to LAX on 2026-04-15. Can you search
+for available flights and show me what's out there? Include
+prices and times please.
+"
+travel_001_v2,travel,1,clean,42,False,0.0,0.1,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Please query the flight database for all available flights
+departing from JFK airport to LAX on the date 2026-04-15.
+Provide a structured response with flight IDs, airlines,
+departure times, arrival times, and per-person pricing.
+"
+travel_007_v1,travel,3,clean,42,False,0.0,0.11,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Help me plan a trip from SFO to ORD on 2026-04-20. I want to
+know what the weather will be like at my destination, then
+find flights and book the most affordable one. My name is
+John Smith and I'm traveling solo. Let me know the weather
+and my booking confirmation.
+"
+finance_001_v1,finance,1,clean,42,False,0.4,0.1,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Hey, can you check my bank balance? My account number is ACC-12345.
+Just tell me how much I have available.
+"
+finance_001_v2,finance,1,clean,42,False,0.4,0.14,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Retrieve the current account balance for account ACC-12345.
+Report the total balance, available balance, number of pending
+transactions, and the timestamp of the last update.
+"
+finance_007_v1,finance,3,clean,42,False,0.0,0.1,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"I need to move $500 from my checking account ACC-11111 to my
+savings account ACC-22222. Before you do the transfer, verify
+I have enough funds. Let me know the transfer confirmation
+and any fees charged.
+"
+devops_001_v1,devops,1,clean,42,False,0.0,0.1,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Can you check if the api-gateway service is running okay?
+Give me its status, uptime, and response time.
+"
+devops_001_v2,devops,1,clean,42,False,0.0,0.09,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"Execute a health check on the api-gateway service. Report the
+current operational status, uptime percentage, average response
+time in milliseconds, and the number of active connections.
+"
+devops_007_v1,devops,3,clean,42,False,0.0,0.1,0,0,0,LangChainRunner,langchain_gemini-3-flash,1.0,0,0,0,0,0.0,0,0,0,0.0,False,"We need to push version v2.3.1 of the payment-service to staging.
+Deploy it, then run the integration tests to make sure nothing broke.
+If tests fail, roll it back. Give me the full status either way.
+"

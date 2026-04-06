@@ -1,0 +1,85 @@
+Task ID,Domain,Difficulty,Profile,Seed,Success,Partial Score,Duration (s),Prompt Tokens,Completion Tokens,Total Tokens,Runner,Environment,Recovery Rate,Disruptions Encountered,Disruptions Recovered,Extra Tool Calls,Total Tool Calls,State Score,Compensations,Idempotency Violations,Loop Count,Hallucination Rate,Handover Detected,Task Description
+devops_001,devops,1,clean,42,False,0.6,0.0,0,0,0,SimpleRunner,simple_gpt-4o,1.0,0,0,0,1,0.0,0,0,0,0.0,False,Check the health status of api-gateway. Report uptime and response time.
+devops_002,devops,1,clean,42,False,0.6,0.0,0,0,0,SimpleRunner,simple_gpt-4o,1.0,0,0,0,1,0.0,0,0,0,0.0,False,Get the last 5 error logs for auth-service.
+devops_003,devops,2,clean,42,False,0.0,0.0,0,0,0,SimpleRunner,simple_gpt-4o,1.0,0,0,0,1,0.2,0,0,0,0.0,False,Deploy version v2.1.0 of payment-service to staging. Confirm deployment.
+devops_004,devops,2,clean,42,False,0.4,0.0,0,0,0,SimpleRunner,simple_gpt-4o,1.0,0,0,0,1,0.0,0,0,0,0.0,False,Get CPU metrics for user-service over the last 60 minutes. Report average and peak.
+devops_005,devops,2,clean,42,False,0.7,0.0,0,0,0,SimpleRunner,simple_gpt-4o,1.0,0,0,0,1,0.0,0,0,0,0.0,False,Run the unit test suite for api-gateway. Report pass/fail counts and coverage.
+devops_006,devops,2,clean,42,False,0.6,0.0,0,0,0,SimpleRunner,simple_gpt-4o,1.0,0,0,0,1,0.2,0,0,0,0.0,False,Create a P1 incident for payment-service: 'Payment processing timeout'. Report incident ID.
+finance_001,finance,1,clean,42,False,0.6,0.0,0,0,0,SimpleRunner,simple_gpt-4o,1.0,0,0,0,1,0.0,0,0,0,0.0,False,Check balance for ACC-001122. Report available balance and pending transactions.
+finance_002,finance,1,clean,42,True,1.0,0.0,0,0,0,SimpleRunner,simple_gpt-4o,1.0,0,0,0,1,0.0,0,0,0,0.0,False,Get the current USD to EUR exchange rate. Report rate and inverse.
+finance_003,finance,2,clean,42,False,0.3,0.0,0,0,0,SimpleRunner,simple_gpt-4o,1.0,0,0,0,2,0.2,0,0,0,0.0,False,"Transfer 500 USD from ACC-001122 to ACC-003344. Check balance first, confirm fees."
+finance_004,finance,2,clean,42,False,0.5,0.0,0,0,0,SimpleRunner,simple_gpt-4o,1.0,0,0,0,1,0.0,0,0,0,0.0,False,Show last 10 transactions for ACC-001122. Summarize types and amounts.
+finance_005,finance,2,clean,42,True,1.0,0.0,0,0,0,SimpleRunner,simple_gpt-4o,1.0,0,0,0,1,0.0,0,0,0,0.0,False,"Validate card 4111111111111234, exp 12/27, CVV 123. Report validity and type."
+finance_006,finance,2,clean,42,False,0.7,0.0,0,0,0,SimpleRunner,simple_gpt-4o,1.0,0,0,0,1,0.0,0,0,0,0.0,False,"Check credit limit for ACC-005566. Report limit, used, and utilization%."
+retail_001,retail,1,clean,42,False,0.5,0.0,0,0,0,SimpleRunner,simple_gpt-4o,1.0,0,0,0,1,0.0,0,0,0,0.0,False,"You are an assistant for an online retail platform.
+A customer asks: ""Find me blue widgets"". Search for blue widgets
+and report the available products with their prices.
+"
+retail_002,retail,1,clean,42,True,1.0,0.0,0,0,0,SimpleRunner,simple_gpt-4o,1.0,0,0,0,1,0.0,0,0,0,0.0,False,"You are an assistant for an online retail platform.
+Check the inventory levels for product PRD-abc123 in the default warehouse.
+Report how many units are available.
+"
+retail_003,retail,2,clean,42,True,0.8,0.0,0,0,0,SimpleRunner,simple_gpt-4o,1.0,0,0,0,2,0.0,0,0,0,0.0,False,"You are an assistant for an online retail platform.
+A customer wants to buy a red gadget. Search for available red gadgets,
+then check inventory for the first result. Report availability.
+"
+retail_004,retail,2,clean,42,False,0.75,0.0,0,0,0,SimpleRunner,simple_gpt-4o,1.0,0,0,0,3,0.2,0,0,0,0.0,False,"You are an assistant for an online retail platform.
+A customer wants to buy 2 units of a blue widget. Search for available
+blue widgets, verify at least 2 units are in stock, and place an order
+for customer C-8821. Confirm the order ID in your response.
+"
+retail_005,retail,2,clean,42,True,1.0,0.0,0,0,0,SimpleRunner,simple_gpt-4o,1.0,0,0,0,1,0.0,0,0,0,0.0,False,"Look up the customer profile for customer C-5510.
+Report their name, membership tier, and total orders.
+"
+retail_006,retail,2,clean,42,True,1.0,0.0,0,0,0,SimpleRunner,simple_gpt-4o,1.0,0,0,0,1,0.0,0,0,0,0.0,False,"A customer wants to know the status of order ORD-778899.
+Look up the order and provide the current status and tracking number.
+"
+travel_001,travel,1,clean,42,False,0.6,0.0,0,0,0,SimpleRunner,simple_gpt-4o,1.0,0,0,0,1,0.0,0,0,0,0.0,False,"Search for flights from SFO to JFK on 2026-04-15 for 1 passenger.
+Report the available options with prices.
+"
+travel_002,travel,1,clean,42,False,0.6,0.0,0,0,0,SimpleRunner,simple_gpt-4o,1.0,0,0,0,1,0.0,0,0,0,0.0,False,"Check the weather forecast for London on 2026-04-20.
+Report temperature and conditions.
+"
+travel_003,travel,2,clean,42,False,0.4,0.0,0,0,0,SimpleRunner,simple_gpt-4o,1.0,0,0,0,2,0.0,0,0,0,0.0,False,"Search for flights from LAX to ORD on 2026-05-01. Get detailed info
+for the first result including aircraft type and baggage allowance.
+"
+travel_004,travel,2,clean,42,True,0.8,0.0,0,0,0,SimpleRunner,simple_gpt-4o,1.0,0,0,0,1,0.0,0,0,0,0.0,False,"Convert 5000 USD to EUR and 5000 USD to GBP. Report both converted
+amounts and exchange rates.
+"
+travel_005,travel,2,clean,42,False,0.2,0.0,0,0,0,SimpleRunner,simple_gpt-4o,1.0,0,0,0,2,0.2,0,0,0,0.0,False,"Search flights from BOS to MIA on 2026-04-10. Book the first available
+flight for passenger ""John Smith"". Confirm the booking.
+"
+travel_006,travel,2,clean,42,False,0.6,0.0,0,0,0,SimpleRunner,simple_gpt-4o,1.0,0,0,0,1,0.0,0,0,0,0.0,False,"Search for hotels in Paris for check-in 2026-05-15 and check-out
+2026-05-20 for 2 guests. Report the top options with ratings.
+"
+retail_001_v1,retail,1,clean,42,False,0.5,0.0,0,0,0,SimpleRunner,simple_gpt-4o,1.0,0,0,0,1,0.0,0,0,0,0.0,False,"You're helping a customer on our online store.
+They're looking for blue widgets — please search our catalog
+and let them know what's available, along with pricing info.
+"
+retail_001_v2,retail,1,clean,42,False,0.5,0.0,0,0,0,SimpleRunner,simple_gpt-4o,1.0,0,0,0,1,0.0,0,0,0,0.0,False,"As a retail platform assistant, perform a product search
+for ""blue widgets"". Return a summary of all matching products
+including their names and unit prices.
+"
+travel_001_v1,travel,1,clean,42,False,0.5,0.0,0,0,0,SimpleRunner,simple_gpt-4o,1.0,0,0,0,1,0.0,0,0,0,0.0,False,"I need to fly from JFK to LAX on 2026-04-15. Can you search
+for available flights and show me what's out there? Include
+prices and times please.
+"
+travel_001_v2,travel,1,clean,42,False,0.5,0.0,0,0,0,SimpleRunner,simple_gpt-4o,1.0,0,0,0,1,0.0,0,0,0,0.0,False,"Please query the flight database for all available flights
+departing from JFK airport to LAX on the date 2026-04-15.
+Provide a structured response with flight IDs, airlines,
+departure times, arrival times, and per-person pricing.
+"
+finance_001_v1,finance,1,clean,42,True,1.0,0.0,0,0,0,SimpleRunner,simple_gpt-4o,1.0,0,0,0,1,0.0,0,0,0,0.0,False,"Hey, can you check my bank balance? My account number is ACC-12345.
+Just tell me how much I have available.
+"
+finance_001_v2,finance,1,clean,42,True,1.0,0.0,0,0,0,SimpleRunner,simple_gpt-4o,1.0,0,0,0,1,0.0,0,0,0,0.0,False,"Retrieve the current account balance for account ACC-12345.
+Report the total balance, available balance, number of pending
+transactions, and the timestamp of the last update.
+"
+devops_001_v1,devops,1,clean,42,False,0.5,0.0,0,0,0,SimpleRunner,simple_gpt-4o,1.0,0,0,0,1,0.0,0,0,0,0.0,False,"Can you check if the api-gateway service is running okay?
+Give me its status, uptime, and response time.
+"
+devops_001_v2,devops,1,clean,42,False,0.5,0.0,0,0,0,SimpleRunner,simple_gpt-4o,1.0,0,0,0,1,0.0,0,0,0,0.0,False,"Execute a health check on the api-gateway service. Report the
+current operational status, uptime percentage, average response
+time in milliseconds, and the number of active connections.
+"

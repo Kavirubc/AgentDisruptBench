@@ -32,16 +32,21 @@ htmlcov/
 .ruff_cache/
 
 # ----- Results / Outputs -----
-# Legacy scattered output dirs (now in legacy_traces/)
+# Legacy scattered output dirs (superseded by runs/)
 results/
 evaluation_results/
-
-# Ignore consolidated run outputs
-runs/
 legacy_traces/
 
-# Ignore loose log files but allow .jsonl inside runs/ and legacy_traces/
+# Track curated run outputs — runs/ is intentionally NOT ignored
+# Only commit the summary-level files: results.csv, results.json,
+# summary.json, report.md, and run logs. Exclude verbose traces.
+runs/*/task_logs/
+runs/*/run_log.jsonl
+
+# Ignore loose root-level log files only
 *.log
+# But allow log files inside runs/ directories
+!runs/**/*.log
 
 # ----- Environment -----
 .env

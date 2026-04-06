@@ -1,0 +1,934 @@
+============================================================
+ AgentDisruptBench — Benchmark Runner
+============================================================
+
+[1/5] Loading runner: simple
+  → Runner: SimpleRunner
+  → Model:  none
+
+[2/5] Loading tasks and tools...
+  → 114 tasks loaded
+  → 30 tools available
+
+[3/5] Configuring benchmark...
+  → Profiles:       ['clean']
+  → Domains:        all
+  → Max difficulty:  5
+  → Seeds:           [42]
+
+  📁 Run directory: runs/20260403_060753_simple_none_all
+
+[4/5] Running benchmark...
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ adversarial_retail_001[0m  [91m[1m[ADVERSARIAL][0m  [2mD4[0m
+  [1mTitle :[0m [97mCoupon ordering trap[0m
+  [1mTools :[0m [96msearch_products, apply_coupon, place_order, update_cart[0m
+  [1mDesc  :[0m [2mA customer wants to buy product PRD-laptop ($1200) with two coupons.
+Coupon SAVE10 gives 10% off. Coupon LOYALTY50 gives[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[search_products] OK: {"products": [{"product_id": "PRD-368ceb", "name": "Green Sprocket", "price": 255.07, "currency": [0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ adversarial_retail_002[0m  [91m[1m[ADVERSARIAL][0m  [2mD3[0m
+  [1mTitle :[0m [97mInventory race condition[0m
+  [1mTools :[0m [96msearch_products, check_inventory, update_cart, place_order[0m
+  [1mDesc  :[0m [2mCustomer CUST-002 wants to buy 3 units of PRD-limited (only 2 in stock).
+Also add PRD-accessory to cart. The accessory i[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[search_products] OK: {"products": [{"product_id": "PRD-368ceb", "name": "Green Sprocket", "price": 255.07, "currency": [0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ adversarial_travel_001[0m  [91m[1m[ADVERSARIAL][0m  [2mD4[0m
+  [1mTitle :[0m [97mCheap flight weather trap[0m
+  [1mTools :[0m [96msearch_flights, get_weather, book_flight, get_flight_details[0m
+  [1mDesc  :[0m [2mBook the cheapest flight from SFO to Denver on 2026-06-15 for
+passenger "Test Traveller". But first check the weather — [0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[search_flights] OK: {"flights": [{"flight_id": "FLT-ead5fd", "airline": "SkyWest Air", "origin": "SFO", "destination": [0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ adversarial_travel_002[0m  [91m[1m[ADVERSARIAL][0m  [2mD5[0m
+  [1mTitle :[0m [97mHotel first vs flight first[0m
+  [1mTools :[0m [96msearch_flights, search_hotels, check_hotel_availability, book_flight[0m
+  [1mDesc  :[0m [2mPlan a trip from NYC to London. Book a non-refundable hotel in London
+for 2026-09-01 to 2026-09-05 (great deal at $100/n[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[search_flights] OK: {"flights": [{"flight_id": "FLT-ead5fd", "airline": "SkyWest Air", "origin": "SFO", "destination": [0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ adversarial_finance_001[0m  [91m[1m[ADVERSARIAL][0m  [2mD4[0m
+  [1mTitle :[0m [97mLow-fee account transfer trap[0m
+  [1mTools :[0m [96mget_account_balance, transfer_funds, check_credit_limit[0m
+  [1mDesc  :[0m [2mTransfer $5000 from checking (ACC-001) to savings (ACC-002) to avoid
+monthly fee. But savings account has a $5000 minimu[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[get_account_balance] OK: {"account_id": "ACC-001122", "balance": 47215.58, "currency": "USD", "available_balance": 9901[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ adversarial_finance_002[0m  [91m[1m[ADVERSARIAL][0m  [2mD3[0m
+  [1mTitle :[0m [97mExchange rate timing trap[0m
+  [1mTools :[0m [96mget_account_balance, get_exchange_rate, transfer_funds[0m
+  [1mDesc  :[0m [2mConvert $10000 USD to EUR for a payment due tomorrow. Current rate
+is favorable. But you also need to convert $5000 USD [0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[get_account_balance] OK: {"account_id": "ACC-001122", "balance": 47215.58, "currency": "USD", "available_balance": 9901[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ adversarial_devops_001[0m  [91m[1m[ADVERSARIAL][0m  [2mD4[0m
+  [1mTitle :[0m [97mStaging deployment blocks production[0m
+  [1mTools :[0m [96mget_service_health, deploy_service, get_logs, run_tests[0m
+  [1mDesc  :[0m [2mDeploy service v2.1 to staging for testing, then deploy v2.1 to
+production. But the deployment pipeline has a mutex lock[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[get_service_health] OK: {"service": "api-gateway", "status": "unhealthy", "uptime_percent": 96.9, "response_time_ms": 1[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ adversarial_devops_002[0m  [91m[1m[ADVERSARIAL][0m  [2mD3[0m
+  [1mTitle :[0m [97mIncident creation before diagnosis[0m
+  [1mTools :[0m [96mget_service_health, get_logs, get_metrics, create_incident[0m
+  [1mDesc  :[0m [2mService API is returning slow responses. Create an incident immediately
+to alert the team? No — check logs and metrics f[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[get_service_health] OK: {"service": "api-gateway", "status": "unhealthy", "uptime_percent": 96.9, "response_time_ms": 1[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ devops_001[0m  [94m[1m[STANDARD][0m  [2mD1[0m
+  [1mTitle :[0m [97mCheck service health[0m
+  [1mTools :[0m [96mget_service_health[0m
+  [1mDesc  :[0m [2mCheck the health status of api-gateway. Report uptime and response time.[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[get_service_health] OK: {"service": "api-gateway", "status": "unhealthy", "uptime_percent": 96.9, "response_time_ms": 1[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ devops_002[0m  [94m[1m[STANDARD][0m  [2mD1[0m
+  [1mTitle :[0m [97mGet service logs[0m
+  [1mTools :[0m [96mget_logs[0m
+  [1mDesc  :[0m [2mGet the last 5 error logs for auth-service.[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[get_logs] OK: {"service": "api-gateway", "logs": [{"log_id": "LOG-802623", "severity": "error", "message": "Certificate[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ devops_003[0m  [94m[1m[STANDARD][0m  [2mD2[0m
+  [1mTitle :[0m [97mDeploy new version[0m
+  [1mTools :[0m [96mdeploy_service[0m
+  [1mDesc  :[0m [2mDeploy version v2.1.0 of payment-service to staging. Confirm deployment.[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[deploy_service] OK: {"deployment_id": "DEP-dea8ae", "service": "api-gateway", "version": "v2.1.0", "environment": "stag[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ devops_004[0m  [94m[1m[STANDARD][0m  [2mD2[0m
+  [1mTitle :[0m [97mGet performance metrics[0m
+  [1mTools :[0m [96mget_metrics[0m
+  [1mDesc  :[0m [2mGet CPU metrics for user-service over the last 60 minutes. Report average and peak.[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[get_metrics] OK: {"service": "api-gateway", "metric_type": "cpu", "unit": "percent", "data_points": [{"timestamp": "202[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ devops_005[0m  [94m[1m[STANDARD][0m  [2mD2[0m
+  [1mTitle :[0m [97mRun test suite[0m
+  [1mTools :[0m [96mrun_tests[0m
+  [1mDesc  :[0m [2mRun the unit test suite for api-gateway. Report pass/fail counts and coverage.[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[run_tests] OK: {"service": "api-gateway", "test_suite": "unit", "total_tests": 101, "passed": 101, "failed": 0, "skippe[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ devops_006[0m  [94m[1m[STANDARD][0m  [2mD2[0m
+  [1mTitle :[0m [97mCreate an incident[0m
+  [1mTools :[0m [96mcreate_incident[0m
+  [1mDesc  :[0m [2mCreate a P1 incident for payment-service: 'Payment processing timeout'. Report incident ID.[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[create_incident] OK: {"incident_id": "INC-0010ab", "title": "High latency", "severity": "P2", "service": "api-gateway",[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ devops_007[0m  [94m[1m[STANDARD][0m  [2mD3[0m
+  [1mTitle :[0m [97mHealth check and deployment[0m
+  [1mTools :[0m [96mget_service_health, deploy_service[0m
+  [1mDesc  :[0m [2mCheck api-gateway health. If healthy, deploy v2.2.0 to staging. If degraded, report and skip.[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[get_service_health] OK: {"service": "api-gateway", "status": "unhealthy", "uptime_percent": 96.9, "response_time_ms": 1[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ devops_008[0m  [94m[1m[STANDARD][0m  [2mD3[0m
+  [1mTitle :[0m [97mDeploy and run tests[0m
+  [1mTools :[0m [96mdeploy_service, run_tests[0m
+  [1mDesc  :[0m [2mDeploy v3.0.0 of user-service to staging, then run the integration test suite. Report results.[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[deploy_service] OK: {"deployment_id": "DEP-dea8ae", "service": "api-gateway", "version": "v2.1.0", "environment": "stag[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ devops_009[0m  [94m[1m[STANDARD][0m  [2mD3[0m
+  [1mTitle :[0m [97mIncident response with logs[0m
+  [1mTools :[0m [96mget_logs, get_metrics, create_incident[0m
+  [1mDesc  :[0m [2mGet error logs for payment-service, then get metrics. Create a P2 incident if errors are present.[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[get_logs] OK: {"service": "api-gateway", "logs": [{"log_id": "LOG-802623", "severity": "error", "message": "Certificate[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ devops_010[0m  [94m[1m[STANDARD][0m  [2mD3[0m
+  [1mTitle :[0m [97mMulti-service health dashboard[0m
+  [1mTools :[0m [96mget_service_health[0m
+  [1mDesc  :[0m [2mCheck health of api-gateway, auth-service, and payment-service. Generate a dashboard summary.[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[get_service_health] OK: {"service": "api-gateway", "status": "unhealthy", "uptime_percent": 96.9, "response_time_ms": 1[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ devops_011[0m  [94m[1m[STANDARD][0m  [2mD3[0m
+  [1mTitle :[0m [97mRollback after failed deployment[0m
+  [1mTools :[0m [96mdeploy_service, run_tests, rollback_deployment[0m
+  [1mDesc  :[0m [2mDeploy v4.0.0-beta of auth-service. Run tests. If any tests fail, rollback the deployment.[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[deploy_service] OK: {"deployment_id": "DEP-dea8ae", "service": "api-gateway", "version": "v2.1.0", "environment": "stag[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ devops_012[0m  [94m[1m[STANDARD][0m  [2mD3[0m
+  [1mTitle :[0m [97mPerformance investigation[0m
+  [1mTools :[0m [96mget_metrics, get_logs[0m
+  [1mDesc  :[0m [2mGet CPU and memory metrics for user-service. Get recent error logs. Determine if there's a performance issue.[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[get_metrics] OK: {"service": "api-gateway", "metric_type": "cpu", "unit": "percent", "data_points": [{"timestamp": "202[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ devops_013[0m  [94m[1m[STANDARD][0m  [2mD4[0m
+  [1mTitle :[0m [97mFull deploy pipeline[0m
+  [1mTools :[0m [96mrun_tests, deploy_service, get_service_health[0m
+  [1mDesc  :[0m [2mRun unit tests for payment-service. If pass rate >95%, deploy v2.5.0 to staging. Check health after deploy. Report statu[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[run_tests] OK: {"service": "api-gateway", "test_suite": "unit", "total_tests": 101, "passed": 101, "failed": 0, "skippe[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ devops_014[0m  [94m[1m[STANDARD][0m  [2mD4[0m
+  [1mTitle :[0m [97mIncident management lifecycle[0m
+  [1mTools :[0m [96mget_logs, create_incident, deploy_service, get_service_health, resolve_incident[0m
+  [1mDesc  :[0m [2mGet error logs for api-gateway. Create P1 incident. Deploy hotfix v1.9.1. Verify health. Resolve the incident.[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[get_logs] OK: {"service": "api-gateway", "logs": [{"log_id": "LOG-802623", "severity": "error", "message": "Certificate[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ devops_015[0m  [94m[1m[STANDARD][0m  [2mD4[0m
+  [1mTitle :[0m [97mMulti-service deployment[0m
+  [1mTools :[0m [96mdeploy_service, run_tests[0m
+  [1mDesc  :[0m [2mDeploy updates to auth-service (v3.1.0), user-service (v2.8.0), and notification-service (v1.5.0). Run tests for each. R[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[deploy_service] OK: {"deployment_id": "DEP-dea8ae", "service": "api-gateway", "version": "v2.1.0", "environment": "stag[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ devops_016[0m  [94m[1m[STANDARD][0m  [2mD4[0m
+  [1mTitle :[0m [97mPerformance-driven scaling decision[0m
+  [1mTools :[0m [96mget_metrics, get_service_health, get_logs[0m
+  [1mDesc  :[0m [2mGet CPU, memory, and latency metrics for api-gateway. Get health status. Get recent logs. Recommend if scaling is needed[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[get_metrics] OK: {"service": "api-gateway", "metric_type": "cpu", "unit": "percent", "data_points": [{"timestamp": "202[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ devops_017[0m  [94m[1m[STANDARD][0m  [2mD4[0m
+  [1mTitle :[0m [97mDeployment with canary validation[0m
+  [1mTools :[0m [96mget_metrics, deploy_service, run_tests, rollback_deployment[0m
+  [1mDesc  :[0m [2mDeploy v5.0.0 of payment-service. Run tests. Get metrics before and after. Compare performance. Rollback if degraded.[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[get_metrics] OK: {"service": "api-gateway", "metric_type": "cpu", "unit": "percent", "data_points": [{"timestamp": "202[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ devops_018[0m  [94m[1m[STANDARD][0m  [2mD5[0m
+  [1mTitle :[0m [97mFull site reliability engineering review[0m
+  [1mTools :[0m [96mget_service_health, get_metrics, get_logs, create_incident[0m
+  [1mDesc  :[0m [2mPerform SRE review: Check health of all 5 services (api-gateway, auth-service, payment-service,
+user-service, notificati[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[get_service_health] OK: {"service": "api-gateway", "status": "unhealthy", "uptime_percent": 96.9, "response_time_ms": 1[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ devops_019[0m  [94m[1m[STANDARD][0m  [2mD5[0m
+  [1mTitle :[0m [97mBlue-green deployment with full validation[0m
+  [1mTools :[0m [96mget_service_health, deploy_service, run_tests, get_metrics, rollback_deployment, create_incident[0m
+  [1mDesc  :[0m [2mBlue-green deploy for payment-service: Get current health. Deploy v6.0.0 to staging. Run full test
+suite. Get metrics. I[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[get_service_health] OK: {"service": "api-gateway", "status": "unhealthy", "uptime_percent": 96.9, "response_time_ms": 1[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ devops_020[0m  [94m[1m[STANDARD][0m  [2mD5[0m
+  [1mTitle :[0m [97mDisaster recovery drill[0m
+  [1mTools :[0m [96mget_service_health, get_logs, create_incident, rollback_deployment, deploy_service, run_tests, resolve_incident[0m
+  [1mDesc  :[0m [2mSimulate a disaster recovery drill: Check all service health. Get logs for all services. Create a
+DR incident. Rollback [0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[get_service_health] OK: {"service": "api-gateway", "status": "unhealthy", "uptime_percent": 96.9, "response_time_ms": 1[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ finance_001[0m  [94m[1m[STANDARD][0m  [2mD1[0m
+  [1mTitle :[0m [97mCheck account balance[0m
+  [1mTools :[0m [96mget_account_balance[0m
+  [1mDesc  :[0m [2mCheck balance for ACC-001122. Report available balance and pending transactions.[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[get_account_balance] OK: {"account_id": "ACC-001122", "balance": 47215.58, "currency": "USD", "available_balance": 9901[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ finance_002[0m  [94m[1m[STANDARD][0m  [2mD1[0m
+  [1mTitle :[0m [97mGet exchange rate[0m
+  [1mTools :[0m [96mget_exchange_rate[0m
+  [1mDesc  :[0m [2mGet the current USD to EUR exchange rate. Report rate and inverse.[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[get_exchange_rate] OK: {"base_currency": "USD", "target_currency": "EUR", "rate": 2.37, "inverse_rate": 0.421941, "time[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ finance_003[0m  [94m[1m[STANDARD][0m  [2mD2[0m
+  [1mTitle :[0m [97mTransfer between accounts[0m
+  [1mTools :[0m [96mget_account_balance, transfer_funds[0m
+  [1mDesc  :[0m [2mTransfer 500 USD from ACC-001122 to ACC-003344. Check balance first, confirm fees.[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[get_account_balance] OK: {"account_id": "ACC-001122", "balance": 47215.58, "currency": "USD", "available_balance": 9901[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ finance_004[0m  [94m[1m[STANDARD][0m  [2mD2[0m
+  [1mTitle :[0m [97mView transaction history[0m
+  [1mTools :[0m [96mget_transaction_history[0m
+  [1mDesc  :[0m [2mShow last 10 transactions for ACC-001122. Summarize types and amounts.[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[get_transaction_history] OK: {"account_id": "ACC-001122", "transactions": [{"transaction_id": "TXN-ea0615", "type": "de[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ finance_005[0m  [94m[1m[STANDARD][0m  [2mD2[0m
+  [1mTitle :[0m [97mValidate payment card[0m
+  [1mTools :[0m [96mvalidate_card[0m
+  [1mDesc  :[0m [2mValidate card 4111111111111234, exp 12/27, CVV 123. Report validity and type.[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[validate_card] OK: {"card_number_masked": "****1234", "valid": true, "card_type": "visa", "issuing_bank": "Citi", "mess[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ finance_006[0m  [94m[1m[STANDARD][0m  [2mD2[0m
+  [1mTitle :[0m [97mCheck credit limit[0m
+  [1mTools :[0m [96mcheck_credit_limit[0m
+  [1mDesc  :[0m [2mCheck credit limit for ACC-005566. Report limit, used, and utilization%.[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[check_credit_limit] OK: {"account_id": "ACC-005566", "credit_limit": 37735.3, "used": 4554.65, "available": 33180.65, "[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ finance_007[0m  [94m[1m[STANDARD][0m  [2mD3[0m
+  [1mTitle :[0m [97mInternational transfer with FX[0m
+  [1mTools :[0m [96mget_account_balance, get_exchange_rate, transfer_funds[0m
+  [1mDesc  :[0m [2mTransfer 1000 USD from ACC-001122 to ACC-007788. Check balance, get USD→EUR rate, confirm EUR equivalent.[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[get_account_balance] OK: {"account_id": "ACC-001122", "balance": 47215.58, "currency": "USD", "available_balance": 9901[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ finance_008[0m  [94m[1m[STANDARD][0m  [2mD3[0m
+  [1mTitle :[0m [97mCross-account transaction comparison[0m
+  [1mTools :[0m [96mget_transaction_history[0m
+  [1mDesc  :[0m [2mGet last 10 transactions for ACC-001122 and ACC-003344. Compare spending and flag items over 1000 USD.[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[get_transaction_history] OK: {"account_id": "ACC-001122", "transactions": [{"transaction_id": "TXN-ea0615", "type": "de[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ finance_009[0m  [94m[1m[STANDARD][0m  [2mD3[0m
+  [1mTitle :[0m [97mCard validation and credit assessment[0m
+  [1mTools :[0m [96mvalidate_card, check_credit_limit[0m
+  [1mDesc  :[0m [2mValidate card 5500000000000004 (06/28, CVV 456) and check credit for ACC-009900. Can a 2000 USD purchase go through?[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[validate_card] OK: {"card_number_masked": "****1234", "valid": true, "card_type": "visa", "issuing_bank": "Citi", "mess[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ finance_010[0m  [94m[1m[STANDARD][0m  [2mD3[0m
+  [1mTitle :[0m [97mMulti-currency balance report[0m
+  [1mTools :[0m [96mget_account_balance, get_exchange_rate[0m
+  [1mDesc  :[0m [2mCheck ACC-001122 balance, convert to EUR, GBP, JPY. Multi-currency report.[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[get_account_balance] OK: {"account_id": "ACC-001122", "balance": 47215.58, "currency": "USD", "available_balance": 9901[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ finance_011[0m  [94m[1m[STANDARD][0m  [2mD3[0m
+  [1mTitle :[0m [97mSpending categorization[0m
+  [1mTools :[0m [96mget_transaction_history[0m
+  [1mDesc  :[0m [2mGet 30-day history for ACC-001122. Categorize spending and identify top category.[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[get_transaction_history] OK: {"account_id": "ACC-001122", "transactions": [{"transaction_id": "TXN-ea0615", "type": "de[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ finance_012[0m  [94m[1m[STANDARD][0m  [2mD3[0m
+  [1mTitle :[0m [97mFX rate comparison[0m
+  [1mTools :[0m [96mget_exchange_rate[0m
+  [1mDesc  :[0m [2mCompare USD to EUR, GBP, JPY, CHF rates. Which gives best value for 10000 USD?[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[get_exchange_rate] OK: {"base_currency": "USD", "target_currency": "EUR", "rate": 2.37, "inverse_rate": 0.421941, "time[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ finance_013[0m  [94m[1m[STANDARD][0m  [2mD4[0m
+  [1mTitle :[0m [97mPre-validated transfer[0m
+  [1mTools :[0m [96mvalidate_card, get_account_balance, check_credit_limit, transfer_funds[0m
+  [1mDesc  :[0m [2mValidate card 4222222222222345 (09/27, 789), check ACC-001122 balance and credit, transfer 2500 to ACC-005566.[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[validate_card] OK: {"card_number_masked": "****1234", "valid": true, "card_type": "visa", "issuing_bank": "Citi", "mess[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ finance_014[0m  [94m[1m[STANDARD][0m  [2mD4[0m
+  [1mTitle :[0m [97mCross-account reconciliation[0m
+  [1mTools :[0m [96mget_transaction_history, get_account_balance[0m
+  [1mDesc  :[0m [2mGet history and balances for ACC-001122 and ACC-003344. Match transfers and reconcile.[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[get_transaction_history] OK: {"account_id": "ACC-001122", "transactions": [{"transaction_id": "TXN-ea0615", "type": "de[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ finance_015[0m  [94m[1m[STANDARD][0m  [2mD4[0m
+  [1mTitle :[0m [97mFX-optimized international transfer[0m
+  [1mTools :[0m [96mget_account_balance, get_exchange_rate, transfer_funds[0m
+  [1mDesc  :[0m [2mTransfer 5000 from ACC-001122 internationally. Compare USD→EUR and USD→GBP rates. Execute in optimal currency.[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[get_account_balance] OK: {"account_id": "ACC-001122", "balance": 47215.58, "currency": "USD", "available_balance": 9901[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ finance_016[0m  [94m[1m[STANDARD][0m  [2mD4[0m
+  [1mTitle :[0m [97mCredit utilization optimization[0m
+  [1mTools :[0m [96mcheck_credit_limit, get_account_balance, transfer_funds[0m
+  [1mDesc  :[0m [2mCheck credit for ACC-001122, ACC-003344, ACC-005566. Get balances. Recommend transfers to keep utilization under 30%.[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[check_credit_limit] OK: {"account_id": "ACC-005566", "credit_limit": 37735.3, "used": 4554.65, "available": 33180.65, "[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ finance_017[0m  [94m[1m[STANDARD][0m  [2mD4[0m
+  [1mTitle :[0m [97mFraud investigation[0m
+  [1mTools :[0m [96mcheck_credit_limit, get_account_balance, validate_card, get_transaction_history[0m
+  [1mDesc  :[0m [2mCheck credit, balance, validate card 5500000000000004 (12/27, 321), get history for ACC-005566. Flag transactions above [0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[check_credit_limit] OK: {"account_id": "ACC-005566", "credit_limit": 37735.3, "used": 4554.65, "available": 33180.65, "[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ finance_018[0m  [94m[1m[STANDARD][0m  [2mD5[0m
+  [1mTitle :[0m [97mFinancial health assessment[0m
+  [1mTools :[0m [96mget_account_balance, get_transaction_history, check_credit_limit, get_exchange_rate, validate_card[0m
+  [1mDesc  :[0m [2mFull check for ACC-001122: balance, 30-day history, credit limit, USD→EUR/GBP/JPY rates, validate card 4111111111111234 [0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[get_account_balance] OK: {"account_id": "ACC-001122", "balance": 47215.58, "currency": "USD", "available_balance": 9901[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ finance_019[0m  [94m[1m[STANDARD][0m  [2mD5[0m
+  [1mTitle :[0m [97mPortfolio rebalancing[0m
+  [1mTools :[0m [96mget_account_balance, transfer_funds[0m
+  [1mDesc  :[0m [2mRebalance ACC-001122, ACC-003344, ACC-005566 to equal distribution. Check all balances, calculate and execute transfers,[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[get_account_balance] OK: {"account_id": "ACC-001122", "balance": 47215.58, "currency": "USD", "available_balance": 9901[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ finance_020[0m  [94m[1m[STANDARD][0m  [2mD5[0m
+  [1mTitle :[0m [97mEnd-of-month close[0m
+  [1mTools :[0m [96mget_account_balance, get_transaction_history, check_credit_limit, validate_card, get_exchange_rate, transfer_funds[0m
+  [1mDesc  :[0m [2mMonthly close for ACC-001122: balance, history, credit, validate card, FX rates (EUR/GBP/JPY/CHF), transfer excess over [0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[get_account_balance] OK: {"account_id": "ACC-001122", "balance": 47215.58, "currency": "USD", "available_balance": 9901[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ handover_retail_001[0m  [94m[1m[STANDARD][0m  [2mD3[0m
+  [1mTitle :[0m [97mRepeated payment failures[0m
+  [1mTools :[0m [96msearch_products, place_order[0m
+  [1mDesc  :[0m [2mCustomer CUST-020 has been trying to place an order but their payment
+keeps getting declined. You've retried 3 times wit[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[search_products] OK: {"products": [{"product_id": "PRD-368ceb", "name": "Green Sprocket", "price": 255.07, "currency": [0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ handover_travel_001[0m  [94m[1m[STANDARD][0m  [2mD3[0m
+  [1mTitle :[0m [97mUnaccompanied minor booking[0m
+  [1mTools :[0m [96msearch_flights, book_flight[0m
+  [1mDesc  :[0m [2mA parent wants to book a flight for their 8-year-old child traveling
+alone from SFO to JFK. Search for flights and attem[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[search_flights] OK: {"flights": [{"flight_id": "FLT-ead5fd", "airline": "SkyWest Air", "origin": "SFO", "destination": [0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ handover_finance_001[0m  [94m[1m[STANDARD][0m  [2mD4[0m
+  [1mTitle :[0m [97mSuspected fraudulent transactions[0m
+  [1mTools :[0m [96mget_account_balance, get_transaction_history[0m
+  [1mDesc  :[0m [2mReview the last 10 transactions on account ACC-001. You notice
+3 transactions from an unknown merchant in a foreign coun[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[get_account_balance] OK: {"account_id": "ACC-001122", "balance": 47215.58, "currency": "USD", "available_balance": 9901[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ handover_devops_001[0m  [94m[1m[STANDARD][0m  [2mD4[0m
+  [1mTitle :[0m [97mData breach detected[0m
+  [1mTools :[0m [96mget_service_health, get_logs, get_metrics[0m
+  [1mDesc  :[0m [2mWhile checking logs for service "auth-api", you discover entries
+indicating unauthorized access to user data. The logs s[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[get_service_health] OK: {"service": "api-gateway", "status": "unhealthy", "uptime_percent": 96.9, "response_time_ms": 1[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ impossible_retail_001[0m  [93m[1m[IMPOSSIBLE][0m  [2mD3[0m
+  [1mTitle :[0m [97mOrder nonexistent product[0m
+  [1mTools :[0m [96msearch_products, check_inventory, place_order[0m
+  [1mDesc  :[0m [2mCustomer CUST-010 wants to purchase "Quantum Flux Capacitor" model
+QFC-9000. Search for the product and place an order f[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[search_products] OK: {"products": [{"product_id": "PRD-368ceb", "name": "Green Sprocket", "price": 255.07, "currency": [0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ impossible_retail_002[0m  [93m[1m[IMPOSSIBLE][0m  [2mD3[0m
+  [1mTitle :[0m [97mApply expired coupon[0m
+  [1mTools :[0m [96msearch_products, apply_coupon, place_order[0m
+  [1mDesc  :[0m [2mApply coupon code SUMMER2024 (expired 2024-12-31) to a cart for
+customer CUST-011. The coupon gave 40% off all items. Pl[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[search_products] OK: {"products": [{"product_id": "PRD-368ceb", "name": "Green Sprocket", "price": 255.07, "currency": [0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ impossible_travel_001[0m  [93m[1m[IMPOSSIBLE][0m  [2mD3[0m
+  [1mTitle :[0m [97mBook flight to nonexistent destination[0m
+  [1mTools :[0m [96msearch_flights, book_flight[0m
+  [1mDesc  :[0m [2mBook a flight from SFO to Atlantis International Airport (ATL-X)
+on 2026-05-01 for passenger "Jane Doe". Find the cheape[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[search_flights] OK: {"flights": [{"flight_id": "FLT-ead5fd", "airline": "SkyWest Air", "origin": "SFO", "destination": [0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ impossible_travel_002[0m  [93m[1m[IMPOSSIBLE][0m  [2mD4[0m
+  [1mTitle :[0m [97mBook past-date flight[0m
+  [1mTools :[0m [96msearch_flights, book_flight[0m
+  [1mDesc  :[0m [2mBook a flight from LAX to JFK on 2020-01-15 for passenger "Time
+Traveler". This is a historical date — find available fl[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[search_flights] OK: {"flights": [{"flight_id": "FLT-ead5fd", "airline": "SkyWest Air", "origin": "SFO", "destination": [0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ impossible_finance_001[0m  [93m[1m[IMPOSSIBLE][0m  [2mD3[0m
+  [1mTitle :[0m [97mTransfer exceeding balance[0m
+  [1mTools :[0m [96mget_account_balance, transfer_funds[0m
+  [1mDesc  :[0m [2mTransfer $1,000,000 from checking account ACC-001 (balance: $5,432.10)
+to savings account ACC-002. Process the transfer [0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[get_account_balance] OK: {"account_id": "ACC-001122", "balance": 47215.58, "currency": "USD", "available_balance": 9901[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ impossible_finance_002[0m  [93m[1m[IMPOSSIBLE][0m  [2mD4[0m
+  [1mTitle :[0m [97mTransfer to closed account[0m
+  [1mTools :[0m [96mget_account_balance, transfer_funds, get_transaction_history[0m
+  [1mDesc  :[0m [2mTransfer $500 from ACC-001 to account ACC-CLOSED-999. The destination
+account was closed last month. Verify the transfer[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[get_account_balance] OK: {"account_id": "ACC-001122", "balance": 47215.58, "currency": "USD", "available_balance": 9901[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ impossible_devops_001[0m  [93m[1m[IMPOSSIBLE][0m  [2mD3[0m
+  [1mTitle :[0m [97mDeploy to deleted service[0m
+  [1mTools :[0m [96mget_service_health, deploy_service[0m
+  [1mDesc  :[0m [2mDeploy version 3.0 of service "phantom-api" to production. Check the
+service health first, then proceed with deployment.[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[get_service_health] OK: {"service": "api-gateway", "status": "unhealthy", "uptime_percent": 96.9, "response_time_ms": 1[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ impossible_devops_002[0m  [93m[1m[IMPOSSIBLE][0m  [2mD4[0m
+  [1mTitle :[0m [97mRollback with no deployment history[0m
+  [1mTools :[0m [96mget_service_health, get_logs, rollback_deployment[0m
+  [1mDesc  :[0m [2mRollback service "new-service" to its previous version. The service
+was just created with its first deployment — there i[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[get_service_health] OK: {"service": "api-gateway", "status": "unhealthy", "uptime_percent": 96.9, "response_time_ms": 1[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ retail_001[0m  [94m[1m[STANDARD][0m  [2mD1[0m
+  [1mTitle :[0m [97mSearch for a product[0m
+  [1mTools :[0m [96msearch_products[0m
+  [1mDesc  :[0m [2mYou are an assistant for an online retail platform.
+A customer asks: "Find me blue widgets". Search for blue widgets
+and[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[search_products] OK: {"products": [{"product_id": "PRD-368ceb", "name": "Green Sprocket", "price": 255.07, "currency": [0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ retail_002[0m  [94m[1m[STANDARD][0m  [2mD1[0m
+  [1mTitle :[0m [97mCheck inventory for a known product[0m
+  [1mTools :[0m [96mcheck_inventory[0m
+  [1mDesc  :[0m [2mYou are an assistant for an online retail platform.
+Check the inventory levels for product PRD-abc123 in the default war[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[check_inventory] OK: {"product_id": "PRD-abc123", "warehouse": "default", "quantity_available": 47, "reserved": 7, "res[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ retail_003[0m  [94m[1m[STANDARD][0m  [2mD2[0m
+  [1mTitle :[0m [97mSearch and check inventory[0m
+  [1mTools :[0m [96msearch_products, check_inventory[0m
+  [1mDesc  :[0m [2mYou are an assistant for an online retail platform.
+A customer wants to buy a red gadget. Search for available red gadge[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[search_products] OK: {"products": [{"product_id": "PRD-368ceb", "name": "Green Sprocket", "price": 255.07, "currency": [0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ retail_004[0m  [94m[1m[STANDARD][0m  [2mD2[0m
+  [1mTitle :[0m [97mSearch and order product with inventory check[0m
+  [1mTools :[0m [96msearch_products, check_inventory, place_order[0m
+  [1mDesc  :[0m [2mYou are an assistant for an online retail platform.
+A customer wants to buy 2 units of a blue widget. Search for availab[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[search_products] OK: {"products": [{"product_id": "PRD-368ceb", "name": "Green Sprocket", "price": 255.07, "currency": [0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ retail_005[0m  [94m[1m[STANDARD][0m  [2mD2[0m
+  [1mTitle :[0m [97mGet customer profile and order history[0m
+  [1mTools :[0m [96mget_customer_profile[0m
+  [1mDesc  :[0m [2mLook up the customer profile for customer C-5510.
+Report their name, membership tier, and total orders.
+[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[get_customer_profile] OK: {"customer_id": "C-8821", "first_name": "Frank", "last_name": "Garcia", "email": "user8298@ex[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ retail_006[0m  [94m[1m[STANDARD][0m  [2mD2[0m
+  [1mTitle :[0m [97mCheck order status[0m
+  [1mTools :[0m [96mget_order_status[0m
+  [1mDesc  :[0m [2mA customer wants to know the status of order ORD-778899.
+Look up the order and provide the current status and tracking n[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[get_order_status] OK: {"order_id": "ORD-778899", "status": "in_transit", "tracking_number": "TRK-84105b", "last_updated[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ retail_007[0m  [94m[1m[STANDARD][0m  [2mD3[0m
+  [1mTitle :[0m [97mFull purchase flow with coupon[0m
+  [1mTools :[0m [96msearch_products, check_inventory, apply_coupon, place_order[0m
+  [1mDesc  :[0m [2mA customer wants to buy a green sprocket. Search for it, check inventory,
+apply coupon code SAVE20 to cart CART-001, and[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[search_products] OK: {"products": [{"product_id": "PRD-368ceb", "name": "Green Sprocket", "price": 255.07, "currency": [0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ retail_008[0m  [94m[1m[STANDARD][0m  [2mD3[0m
+  [1mTitle :[0m [97mProcess a refund for a returned item[0m
+  [1mTools :[0m [96mget_order_status, process_refund[0m
+  [1mDesc  :[0m [2mCustomer C-1122 wants a refund for order ORD-556677 because the item
+was defective. Look up the order status first, then[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[get_order_status] OK: {"order_id": "ORD-778899", "status": "in_transit", "tracking_number": "TRK-84105b", "last_updated[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ retail_009[0m  [94m[1m[STANDARD][0m  [2mD3[0m
+  [1mTitle :[0m [97mCart management with multiple items[0m
+  [1mTools :[0m [96mupdate_cart, apply_coupon[0m
+  [1mDesc  :[0m [2mAdd product PRD-aaa111 (qty 3) and product PRD-bbb222 (qty 1) to cart
+CART-002. Then apply coupon WELCOME10. Report the [0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[update_cart] OK: {"cart_id": "CART-001", "action": "add", "product_id": "PRD-abc123", "quantity": 1, "cart_total": 272.[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ retail_010[0m  [94m[1m[STANDARD][0m  [2mD3[0m
+  [1mTitle :[0m [97mCustomer service: order lookup and status[0m
+  [1mTools :[0m [96mget_customer_profile, get_order_status[0m
+  [1mDesc  :[0m [2mA customer calls asking about their recent orders. Look up customer
+C-7788's profile, then check the status of their mos[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[get_customer_profile] OK: {"customer_id": "C-8821", "first_name": "Frank", "last_name": "Garcia", "email": "user8298@ex[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ retail_011[0m  [94m[1m[STANDARD][0m  [2mD3[0m
+  [1mTitle :[0m [97mSearch, compare, and purchase[0m
+  [1mTools :[0m [96msearch_products, check_inventory, place_order[0m
+  [1mDesc  :[0m [2mA customer wants the cheapest option for a "sensor kit". Search for
+sensor kits, compare prices, check inventory for the[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[search_products] OK: {"products": [{"product_id": "PRD-368ceb", "name": "Green Sprocket", "price": 255.07, "currency": [0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ retail_012[0m  [94m[1m[STANDARD][0m  [2mD3[0m
+  [1mTitle :[0m [97mInventory check across warehouses[0m
+  [1mTools :[0m [96mcheck_inventory[0m
+  [1mDesc  :[0m [2mCheck inventory for product PRD-ccc333 in three warehouses: "east",
+"west", and "central". Report which warehouse has th[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[check_inventory] OK: {"product_id": "PRD-abc123", "warehouse": "default", "quantity_available": 47, "reserved": 7, "res[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ retail_013[0m  [94m[1m[STANDARD][0m  [2mD4[0m
+  [1mTitle :[0m [97mEnd-to-end purchase with profile lookup and coupon[0m
+  [1mTools :[0m [96mget_customer_profile, search_products, check_inventory, apply_coupon, place_order[0m
+  [1mDesc  :[0m [2mCustomer C-9900 wants to buy a "precision caliper". Look up their profile
+to check their tier, search for the product, c[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[get_customer_profile] OK: {"customer_id": "C-8821", "first_name": "Frank", "last_name": "Garcia", "email": "user8298@ex[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ retail_014[0m  [94m[1m[STANDARD][0m  [2mD4[0m
+  [1mTitle :[0m [97mHandle out-of-stock scenario[0m
+  [1mTools :[0m [96msearch_products, check_inventory[0m
+  [1mDesc  :[0m [2mA customer wants to order 50 units of product PRD-ddd444. Search for it,
+check inventory, and if insufficient stock, inf[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[search_products] OK: {"products": [{"product_id": "PRD-368ceb", "name": "Green Sprocket", "price": 255.07, "currency": [0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ retail_015[0m  [94m[1m[STANDARD][0m  [2mD4[0m
+  [1mTitle :[0m [97mOrder modification workflow[0m
+  [1mTools :[0m [96mget_order_status, process_refund, place_order[0m
+  [1mDesc  :[0m [2mCustomer C-2233 wants to modify order ORD-334455. Check the order status.
+If it's still in "processing", process a refun[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[get_order_status] OK: {"order_id": "ORD-778899", "status": "in_transit", "tracking_number": "TRK-84105b", "last_updated[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ retail_016[0m  [94m[1m[STANDARD][0m  [2mD4[0m
+  [1mTitle :[0m [97mMulti-product cart and checkout[0m
+  [1mTools :[0m [96mupdate_cart, apply_coupon, place_order[0m
+  [1mDesc  :[0m [2mAdd these items to cart CART-004: product PRD-fff666 (qty 2), product
+PRD-ggg777 (qty 1), product PRD-hhh888 (qty 3). Ap[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[update_cart] OK: {"cart_id": "CART-001", "action": "add", "product_id": "PRD-abc123", "quantity": 1, "cart_total": 272.[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ retail_017[0m  [94m[1m[STANDARD][0m  [2mD4[0m
+  [1mTitle :[0m [97mCustomer service escalation[0m
+  [1mTools :[0m [96mget_customer_profile, get_order_status, process_refund, apply_coupon[0m
+  [1mDesc  :[0m [2mCustomer C-8899 is unhappy with order ORD-112233. Look up their profile,
+check the order status, process a refund if the[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[get_customer_profile] OK: {"customer_id": "C-8821", "first_name": "Frank", "last_name": "Garcia", "email": "user8298@ex[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ retail_018[0m  [94m[1m[STANDARD][0m  [2mD5[0m
+  [1mTitle :[0m [97mComplete customer lifecycle management[0m
+  [1mTools :[0m [96mget_customer_profile, search_products, check_inventory, update_cart, apply_coupon, place_order, get_order_status[0m
+  [1mDesc  :[0m [2mHandle a complete customer interaction for C-1010:
+1. Look up their profile and tier
+2. Search for "wireless sensor kit"[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[get_customer_profile] OK: {"customer_id": "C-8821", "first_name": "Frank", "last_name": "Garcia", "email": "user8298@ex[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ retail_019[0m  [94m[1m[STANDARD][0m  [2mD5[0m
+  [1mTitle :[0m [97mBulk order with multi-warehouse optimization[0m
+  [1mTools :[0m [96mcheck_inventory, place_order[0m
+  [1mDesc  :[0m [2mCustomer C-2020 needs 25 units of product PRD-iii999. Check inventory
+across warehouses "east", "west", and "central". I[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[check_inventory] OK: {"product_id": "PRD-abc123", "warehouse": "default", "quantity_available": 47, "reserved": 7, "res[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ retail_020[0m  [94m[1m[STANDARD][0m  [2mD5[0m
+  [1mTitle :[0m [97mComplex return and reorder workflow[0m
+  [1mTools :[0m [96mget_order_status, get_customer_profile, process_refund, search_products, check_inventory, place_order, apply_coupon[0m
+  [1mDesc  :[0m [2mCustomer C-3030 received a damaged product from order ORD-445566.
+1. Verify the order status
+2. Look up the customer pro[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[get_order_status] OK: {"order_id": "ORD-778899", "status": "in_transit", "tracking_number": "TRK-84105b", "last_updated[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ travel_001[0m  [94m[1m[STANDARD][0m  [2mD1[0m
+  [1mTitle :[0m [97mSearch for flights[0m
+  [1mTools :[0m [96msearch_flights[0m
+  [1mDesc  :[0m [2mSearch for flights from SFO to JFK on 2026-04-15 for 1 passenger.
+Report the available options with prices.
+[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[search_flights] OK: {"flights": [{"flight_id": "FLT-ead5fd", "airline": "SkyWest Air", "origin": "SFO", "destination": [0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ travel_002[0m  [94m[1m[STANDARD][0m  [2mD1[0m
+  [1mTitle :[0m [97mCheck weather at destination[0m
+  [1mTools :[0m [96mget_weather[0m
+  [1mDesc  :[0m [2mCheck the weather forecast for London on 2026-04-20.
+Report temperature and conditions.
+[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[get_weather] OK: {"location": "London", "date": "2026-04-20", "condition": "cloudy", "temperature_celsius": 12, "humidi[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ travel_003[0m  [94m[1m[STANDARD][0m  [2mD2[0m
+  [1mTitle :[0m [97mSearch flights and get details[0m
+  [1mTools :[0m [96msearch_flights, get_flight_details[0m
+  [1mDesc  :[0m [2mSearch for flights from LAX to ORD on 2026-05-01. Get detailed info
+for the first result including aircraft type and bag[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[search_flights] OK: {"flights": [{"flight_id": "FLT-ead5fd", "airline": "SkyWest Air", "origin": "SFO", "destination": [0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ travel_004[0m  [94m[1m[STANDARD][0m  [2mD2[0m
+  [1mTitle :[0m [97mCurrency conversion for trip budget[0m
+  [1mTools :[0m [96mcurrency_convert[0m
+  [1mDesc  :[0m [2mConvert 5000 USD to EUR and 5000 USD to GBP. Report both converted
+amounts and exchange rates.
+[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[currency_convert] OK: {"from_currency": "USD", "to_currency": "EUR", "amount": 1000.0, "rate": 1.07, "converted_amount"[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ travel_005[0m  [94m[1m[STANDARD][0m  [2mD2[0m
+  [1mTitle :[0m [97mSearch and book a flight[0m
+  [1mTools :[0m [96msearch_flights, book_flight[0m
+  [1mDesc  :[0m [2mSearch flights from BOS to MIA on 2026-04-10. Book the first available
+flight for passenger "John Smith". Confirm the bo[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[search_flights] OK: {"flights": [{"flight_id": "FLT-ead5fd", "airline": "SkyWest Air", "origin": "SFO", "destination": [0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ travel_006[0m  [94m[1m[STANDARD][0m  [2mD2[0m
+  [1mTitle :[0m [97mHotel search at destination[0m
+  [1mTools :[0m [96msearch_hotels[0m
+  [1mDesc  :[0m [2mSearch for hotels in Paris for check-in 2026-05-15 and check-out
+2026-05-20 for 2 guests. Report the top options with ra[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[search_hotels] OK: {"hotels": [{"hotel_id": "HTL-20921a", "name": "Grand Plaza Hotel", "location": "Paris", "price_per_[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ travel_007[0m  [94m[1m[STANDARD][0m  [2mD3[0m
+  [1mTitle :[0m [97mFlight booking with weather check[0m
+  [1mTools :[0m [96msearch_flights, get_weather, book_flight[0m
+  [1mDesc  :[0m [2mSearch flights from SEA to DEN on 2026-06-01. Check weather at Denver
+for that date. Book the cheapest flight for "Alice[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[search_flights] OK: {"flights": [{"flight_id": "FLT-ead5fd", "airline": "SkyWest Air", "origin": "SFO", "destination": [0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ travel_008[0m  [94m[1m[STANDARD][0m  [2mD3[0m
+  [1mTitle :[0m [97mHotel availability and booking flow[0m
+  [1mTools :[0m [96msearch_hotels, check_hotel_availability[0m
+  [1mDesc  :[0m [2mSearch hotels in Tokyo for 2026-07-01 to 2026-07-07. Check availability
+for a standard room at the highest-rated hotel. [0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[search_hotels] OK: {"hotels": [{"hotel_id": "HTL-20921a", "name": "Grand Plaza Hotel", "location": "Paris", "price_per_[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ travel_009[0m  [94m[1m[STANDARD][0m  [2mD3[0m
+  [1mTitle :[0m [97mCancel and rebook flight[0m
+  [1mTools :[0m [96mcancel_booking, search_flights, book_flight[0m
+  [1mDesc  :[0m [2mCancel booking BKG-existing123 due to schedule change. Then search for
+new flights from SFO to LAX on 2026-04-20 and boo[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[cancel_booking] OK: {"booking_id": "BKG-abc123", "status": "cancelled", "refund_amount": 825.39, "reason": "schedule_ch[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ travel_010[0m  [94m[1m[STANDARD][0m  [2mD3[0m
+  [1mTitle :[0m [97mMulti-city flight search with currency[0m
+  [1mTools :[0m [96msearch_flights, currency_convert[0m
+  [1mDesc  :[0m [2mSearch flights from NYC to London and London to Paris for 2026-08-01
+and 2026-08-05. Convert the total cost from USD to [0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[search_flights] OK: {"flights": [{"flight_id": "FLT-ead5fd", "airline": "SkyWest Air", "origin": "SFO", "destination": [0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ travel_011[0m  [94m[1m[STANDARD][0m  [2mD3[0m
+  [1mTitle :[0m [97mTrip planning with weather comparison[0m
+  [1mTools :[0m [96mget_weather[0m
+  [1mDesc  :[0m [2mCompare weather at three destinations (Barcelona, Rome, Athens) on
+2026-06-15. Recommend the best destination based on w[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[get_weather] OK: {"location": "London", "date": "2026-04-20", "condition": "cloudy", "temperature_celsius": 12, "humidi[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ travel_012[0m  [94m[1m[STANDARD][0m  [2mD3[0m
+  [1mTitle :[0m [97mHotel search with room type comparison[0m
+  [1mTools :[0m [96msearch_hotels, check_hotel_availability[0m
+  [1mDesc  :[0m [2mSearch hotels in Sydney. For the top result, check availability for
+both "standard" and "suite" room types. Compare pric[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[search_hotels] OK: {"hotels": [{"hotel_id": "HTL-20921a", "name": "Grand Plaza Hotel", "location": "Paris", "price_per_[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ travel_013[0m  [94m[1m[STANDARD][0m  [2mD4[0m
+  [1mTitle :[0m [97mComplete flight + hotel booking[0m
+  [1mTools :[0m [96msearch_flights, book_flight, search_hotels, check_hotel_availability[0m
+  [1mDesc  :[0m [2mPlan a trip from SFO to London. Search flights for 2026-09-01, book the
+best option for "Carol Davis". Search hotels in [0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[search_flights] OK: {"flights": [{"flight_id": "FLT-ead5fd", "airline": "SkyWest Air", "origin": "SFO", "destination": [0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ travel_014[0m  [94m[1m[STANDARD][0m  [2mD4[0m
+  [1mTitle :[0m [97mBudget-optimized trip planning[0m
+  [1mTools :[0m [96msearch_flights, search_hotels, currency_convert, get_weather[0m
+  [1mDesc  :[0m [2mA traveller has a budget of 3000 USD for a trip from Chicago to Amsterdam.
+Search flights and hotels, convert costs to E[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[search_flights] OK: {"flights": [{"flight_id": "FLT-ead5fd", "airline": "SkyWest Air", "origin": "SFO", "destination": [0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ travel_015[0m  [94m[1m[STANDARD][0m  [2mD4[0m
+  [1mTitle :[0m [97mGroup travel coordination[0m
+  [1mTools :[0m [96msearch_flights, get_flight_details, book_flight[0m
+  [1mDesc  :[0m [2mBook flights from BOS to Miami on 2026-11-01 for 4 passengers:
+"Alice", "Bob", "Carol", "Dave". Search flights, get deta[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[search_flights] OK: {"flights": [{"flight_id": "FLT-ead5fd", "airline": "SkyWest Air", "origin": "SFO", "destination": [0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ travel_016[0m  [94m[1m[STANDARD][0m  [2mD4[0m
+  [1mTitle :[0m [97mRebooking with refund analysis[0m
+  [1mTools :[0m [96mcancel_booking, search_flights, book_flight, currency_convert[0m
+  [1mDesc  :[0m [2mCancel booking BKG-old456 and check the refund amount. Search for
+alternative flights from LAX to SEA on 2026-04-25. If [0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[cancel_booking] OK: {"booking_id": "BKG-abc123", "status": "cancelled", "refund_amount": 825.39, "reason": "schedule_ch[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ travel_017[0m  [94m[1m[STANDARD][0m  [2mD4[0m
+  [1mTitle :[0m [97mMulti-city vacation with budget tracking[0m
+  [1mTools :[0m [96mget_weather, currency_convert[0m
+  [1mDesc  :[0m [2mA traveller wants to visit Tokyo, Seoul, and Bangkok in 2026-10.
+Check weather in all three cities, then budget the tota[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[get_weather] OK: {"location": "London", "date": "2026-04-20", "condition": "cloudy", "temperature_celsius": 12, "humidi[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ travel_018[0m  [94m[1m[STANDARD][0m  [2mD5[0m
+  [1mTitle :[0m [97mComplete international trip planning[0m
+  [1mTools :[0m [96mget_weather, search_flights, get_flight_details, book_flight, search_hotels, check_hotel_availability, currency_convert[0m
+  [1mDesc  :[0m [2mPlan a complete trip from NYC to Tokyo (Apr 10-20, 2026):
+1. Check weather in Tokyo for Apr 10
+2. Search flights NYC to [0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[get_weather] OK: {"location": "London", "date": "2026-04-20", "condition": "cloudy", "temperature_celsius": 12, "humidi[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ travel_019[0m  [94m[1m[STANDARD][0m  [2mD5[0m
+  [1mTitle :[0m [97mEmergency rebooking with multi-option comparison[0m
+  [1mTools :[0m [96mcancel_booking, search_flights, get_weather, book_flight[0m
+  [1mDesc  :[0m [2mA passenger's flight was cancelled. Cancel booking BKG-emergency789.
+Search for alternative flights from ORD to DFW, ORD[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[cancel_booking] OK: {"booking_id": "BKG-abc123", "status": "cancelled", "refund_amount": 825.39, "reason": "schedule_ch[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ travel_020[0m  [94m[1m[STANDARD][0m  [2mD5[0m
+  [1mTitle :[0m [97mCorporate travel package with approvals[0m
+  [1mTools :[0m [96msearch_flights, get_flight_details, search_hotels, check_hotel_availability, currency_convert, book_flight[0m
+  [1mDesc  :[0m [2mOrganize corporate travel for a team of 3 from SFO to London:
+1. Search flights for 2026-11-05
+2. Get details on top 2 o[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[search_flights] OK: {"flights": [{"flight_id": "FLT-ead5fd", "airline": "SkyWest Air", "origin": "SFO", "destination": [0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ retail_001_v1[0m  [94m[1m[STANDARD][0m  [2mD1[0m
+  [1mTitle :[0m [97mSearch for a product (rephrased)[0m
+  [1mTools :[0m [96msearch_products[0m
+  [1mDesc  :[0m [2mYou're helping a customer on our online store.
+They're looking for blue widgets — please search our catalog
+and let them[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[search_products] OK: {"products": [{"product_id": "PRD-368ceb", "name": "Green Sprocket", "price": 255.07, "currency": [0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ retail_001_v2[0m  [94m[1m[STANDARD][0m  [2mD1[0m
+  [1mTitle :[0m [97mSearch for a product (formal)[0m
+  [1mTools :[0m [96msearch_products[0m
+  [1mDesc  :[0m [2mAs a retail platform assistant, perform a product search
+for "blue widgets". Return a summary of all matching products
+i[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[search_products] OK: {"products": [{"product_id": "PRD-368ceb", "name": "Green Sprocket", "price": 255.07, "currency": [0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ retail_007_v1[0m  [94m[1m[STANDARD][0m  [2mD3[0m
+  [1mTitle :[0m [97mComplete purchase with discount code (rephrased)[0m
+  [1mTools :[0m [96msearch_products, check_inventory, apply_coupon, place_order[0m
+  [1mDesc  :[0m [2mHelp a shopper complete their purchase. They want a green sprocket.
+Find the product, make sure it's in stock, use disco[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[search_products] OK: {"products": [{"product_id": "PRD-368ceb", "name": "Green Sprocket", "price": 255.07, "currency": [0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ retail_007_v2[0m  [94m[1m[STANDARD][0m  [2mD3[0m
+  [1mTitle :[0m [97mEnd-to-end purchase with coupon (terse)[0m
+  [1mTools :[0m [96msearch_products, check_inventory, apply_coupon, place_order[0m
+  [1mDesc  :[0m [2mProduct: green sprocket. Coupon: SAVE20. Cart: CART-001. Customer: C-3344.
+Steps: search → inventory check → apply coupo[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[search_products] OK: {"products": [{"product_id": "PRD-368ceb", "name": "Green Sprocket", "price": 255.07, "currency": [0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ retail_018_v1[0m  [94m[1m[STANDARD][0m  [2mD5[0m
+  [1mTitle :[0m [97mFull customer journey (conversational)[0m
+  [1mTools :[0m [96mget_customer_profile, search_products, check_inventory, update_cart, apply_coupon, place_order, get_order_status[0m
+  [1mDesc  :[0m [2mA VIP customer (C-1010) needs full-service help. Start by pulling up
+their profile and checking what tier they're in. Th[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[get_customer_profile] OK: {"customer_id": "C-8821", "first_name": "Frank", "last_name": "Garcia", "email": "user8298@ex[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ travel_001_v1[0m  [94m[1m[STANDARD][0m  [2mD1[0m
+  [1mTitle :[0m [97mFind flights (casual)[0m
+  [1mTools :[0m [96msearch_flights[0m
+  [1mDesc  :[0m [2mI need to fly from JFK to LAX on 2026-04-15. Can you search
+for available flights and show me what's out there? Include
+[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[search_flights] OK: {"flights": [{"flight_id": "FLT-ead5fd", "airline": "SkyWest Air", "origin": "SFO", "destination": [0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ travel_001_v2[0m  [94m[1m[STANDARD][0m  [2mD1[0m
+  [1mTitle :[0m [97mFlight search (formal request)[0m
+  [1mTools :[0m [96msearch_flights[0m
+  [1mDesc  :[0m [2mPlease query the flight database for all available flights
+departing from JFK airport to LAX on the date 2026-04-15.
+Pro[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[search_flights] OK: {"flights": [{"flight_id": "FLT-ead5fd", "airline": "SkyWest Air", "origin": "SFO", "destination": [0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ travel_007_v1[0m  [94m[1m[STANDARD][0m  [2mD3[0m
+  [1mTitle :[0m [97mTravel planning with weather (rephrased)[0m
+  [1mTools :[0m [96mget_weather, search_flights, book_flight[0m
+  [1mDesc  :[0m [2mHelp me plan a trip from SFO to ORD on 2026-04-20. I want to
+know what the weather will be like at my destination, then
+[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[get_weather] OK: {"location": "London", "date": "2026-04-20", "condition": "cloudy", "temperature_celsius": 12, "humidi[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ finance_001_v1[0m  [94m[1m[STANDARD][0m  [2mD1[0m
+  [1mTitle :[0m [97mBalance inquiry (casual)[0m
+  [1mTools :[0m [96mget_account_balance[0m
+  [1mDesc  :[0m [2mHey, can you check my bank balance? My account number is ACC-12345.
+Just tell me how much I have available.
+[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[get_account_balance] OK: {"account_id": "ACC-001122", "balance": 47215.58, "currency": "USD", "available_balance": 9901[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ finance_001_v2[0m  [94m[1m[STANDARD][0m  [2mD1[0m
+  [1mTitle :[0m [97mAccount balance query (formal)[0m
+  [1mTools :[0m [96mget_account_balance[0m
+  [1mDesc  :[0m [2mRetrieve the current account balance for account ACC-12345.
+Report the total balance, available balance, number of pendi[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[get_account_balance] OK: {"account_id": "ACC-001122", "balance": 47215.58, "currency": "USD", "available_balance": 9901[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ finance_007_v1[0m  [94m[1m[STANDARD][0m  [2mD3[0m
+  [1mTitle :[0m [97mSend money between accounts (rephrased)[0m
+  [1mTools :[0m [96mget_account_balance, transfer_funds[0m
+  [1mDesc  :[0m [2mI need to move $500 from my checking account ACC-11111 to my
+savings account ACC-22222. Before you do the transfer, veri[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[get_account_balance] OK: {"account_id": "ACC-001122", "balance": 47215.58, "currency": "USD", "available_balance": 9901[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ devops_001_v1[0m  [94m[1m[STANDARD][0m  [2mD1[0m
+  [1mTitle :[0m [97mService health check (casual)[0m
+  [1mTools :[0m [96mget_service_health[0m
+  [1mDesc  :[0m [2mCan you check if the api-gateway service is running okay?
+Give me its status, uptime, and response time.
+[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[get_service_health] OK: {"service": "api-gateway", "status": "unhealthy", "uptime_percent": 96.9, "response_time_ms": 1[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ devops_001_v2[0m  [94m[1m[STANDARD][0m  [2mD1[0m
+  [1mTitle :[0m [97mService status inquiry (formal)[0m
+  [1mTools :[0m [96mget_service_health[0m
+  [1mDesc  :[0m [2mExecute a health check on the api-gateway service. Report the
+current operational status, uptime percentage, average res[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[get_service_health] OK: {"service": "api-gateway", "status": "unhealthy", "uptime_percent": 96.9, "response_time_ms": 1[0m
+
+[1m[97m────────────────────────────────────────────────────────────[0m
+[1m[96m▶ devops_007_v1[0m  [94m[1m[STANDARD][0m  [2mD3[0m
+  [1mTitle :[0m [97mShip a new version (casual)[0m
+  [1mTools :[0m [96mdeploy_service, run_tests, rollback_deployment[0m
+  [1mDesc  :[0m [2mWe need to push version v2.3.1 of the payment-service to staging.
+Deploy it, then run the integration tests to make sure[0m
+  [2m⏱  0.0s[0m  [92mOutput:[0m [2m[deploy_service] OK: {"deployment_id": "DEP-dea8ae", "service": "api-gateway", "version": "v2.1.0", "environment": "stag[0m
+  → 114 runs completed in 0.0s
+
+[5/5] Generating report...
+  → report.md: runs/20260403_060753_simple_none_all/report.md
+  → results.json: runs/20260403_060753_simple_none_all/results.json
+  → results.csv: runs/20260403_060753_simple_none_all/results.csv
+  → summary.json: runs/20260403_060753_simple_none_all/summary.json
+  → task_logs: runs/20260403_060753_simple_none_all/task_logs
+  → run_log: runs/20260403_060753_simple_none_all/run_log.jsonl
+
+============================================================
+  Runner:       simple (none)
+  Total runs:   114
+  Successful:   28/114
+  Success rate: 24.6%
+  Duration:     0.0s
+  Output:       runs/20260403_060753_simple_none_all
+============================================================
+
+  💡 View latest: python evaluation/show_run.py
+  💡 View specific: python evaluation/show_run.py --run-id 20260403_060753_simple_none_all
+
