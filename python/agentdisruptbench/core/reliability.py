@@ -99,6 +99,7 @@ def _base_task_id(task_id: str) -> str:
         "retail_001_v2" → "retail_001"
     """
     import re
+
     return re.sub(r"_v\d+$", "", task_id)
 
 
@@ -111,17 +112,22 @@ def _compute_epsilon(results: list[BenchmarkResult]) -> float:
     Returns 1.0 if no variant families exist (backwards compatible), otherwise
     returns the average intra-family pass-rate consistency.
     """
-    # Group results by (base_task_id, profile) → list of successes
-    family_groups: dict[tuple[str, str], list[bool]] = defaultdict(list)
+    # Group results by (base_task_id, profile, variant_task_id) → list of successes
+    variant_groups: dict[tuple[str, str, str], list[bool]] = defaultdict(list)
     for r in results:
         base = _base_task_id(r.task_id)
-        family_groups[(base, r.profile_name)].append(r.success)
+        variant_groups[(base, r.profile_name, r.task_id)].append(r.success)
 
-    # Only consider families with multiple variants (i.e., base + at least 1 _vN)
+    # Compute average pass rate per explicit variant
+    variant_rates: dict[tuple[str, str], list[float]] = defaultdict(list)
+    for (base, profile, _), successes in variant_groups.items():
+        variant_rates[(base, profile)].append(sum(successes) / len(successes))
+
+    # Only consider families with multiple explicit variants (base + at least 1 _vN)
     multi_variant_rates: list[float] = []
-    for (base, _), successes in family_groups.items():
-        if len(successes) > 1:
-            multi_variant_rates.append(sum(successes) / len(successes))
+    for rates in variant_rates.values():
+        if len(rates) > 1:
+            multi_variant_rates.append(sum(rates) / len(rates))
 
     if not multi_variant_rates:
         return 1.0  # No variants → placeholder (backward compatible)

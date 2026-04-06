@@ -65,9 +65,11 @@ AgentDisruptBench provides a systematic methodology, backed by **100 base tasks 
 
 ## Usage
 
-```python
+```bash
 pip install agentdisruptbench
+```
 
+```python
 from agentdisruptbench import TaskRegistry, DisruptionEngine
 registry = TaskRegistry.from_builtin()
 tasks = registry.filter(domain="retail", max_difficulty=3)

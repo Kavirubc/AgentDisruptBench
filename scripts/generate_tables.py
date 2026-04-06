@@ -97,6 +97,7 @@ def table_per_domain(results: list[dict]) -> str:
     ]
 
     for domain in domains:
+        display_domain = "DevOps" if domain.lower() == "devops" else domain.capitalize()
         cells = []
         for profile in profiles:
             successes = groups[domain][profile]
@@ -105,7 +106,7 @@ def table_per_domain(results: list[dict]) -> str:
                 cells.append(f"{rate:.1f}")
             else:
                 cells.append("—")
-        lines.append(f"{domain.capitalize()} & " + " & ".join(cells) + r" \\")
+        lines.append(f"{display_domain} & " + " & ".join(cells) + r" \\")
 
     lines.extend([
         r"\bottomrule",
@@ -135,10 +136,12 @@ def table_recovery_metrics(results: list[dict]) -> str:
         r"\midrule",
     ]
 
+    has_rows = False
     for model in models:
         rs = [r for r in groups[model] if r.get("profile_name") != "clean"]
         if not rs:
             continue
+        has_rows = True
         avg_recovery = sum(r.get("recovery_rate", 0) for r in rs) / len(rs)
         avg_retry = sum(r.get("retry_efficiency", 0) for r in rs) / len(rs)
         avg_steps = sum(r.get("mean_steps_to_recovery", 0) for r in rs) / len(rs)
@@ -156,6 +159,9 @@ def table_recovery_metrics(results: list[dict]) -> str:
             f"{model} & {avg_recovery:.2f} & {avg_retry:.2f} & {avg_steps:.1f} & "
             f"{avg_side:.2f} & {avg_comp:.1f} & {dominant} \\\\"
         )
+        
+    if not has_rows:
+        lines.append(r"\multicolumn{7}{c}{No data} \\")
 
     lines.extend([
         r"\bottomrule",

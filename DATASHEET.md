@@ -27,7 +27,7 @@ AgentDisruptBench Contributors, as part of academic research into AI agent robus
 
 Each instance is a **benchmark task** defined in YAML with:
 - A natural language task description (the prompt given to the agent)
-- Required tools (from a set of 30 deterministic mock tools)
+- Required tools (from a set of 30 deterministic mock tools, 6-8 per domain)
 - Ground truth: expected outcome, required tool calls, evaluation rubric with weighted criteria
 - Metadata: domain, difficulty (1-5), task type
 
@@ -101,7 +101,7 @@ All tasks were authored manually by the benchmark contributors. They are synthet
 
 Task design followed a structured process:
 1. Define 4 domains based on common LLM agent use cases
-2. Design 8 mock tools per domain (30 total)
+2. Design 6-8 mock tools per domain (30 total)
 3. Author 20 standard tasks per domain with increasing difficulty
 4. Author adversarial tasks with designed trap patterns
 5. Author impossible tasks with clear impossibility reasons

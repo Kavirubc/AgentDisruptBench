@@ -11,11 +11,9 @@ Usage:
 
 Produces:
     - fig_heatmap_model_disruption.pdf    : Heatmap of success rate by model × disruption type
-    - fig_radar_model_dimensions.pdf      : Radar chart of model performance across metric dimensions
     - fig_boxplot_domain_scores.pdf       : Box plots of score distributions per domain
     - fig_difficulty_degradation.pdf      : Line plot showing score degradation by difficulty level
     - fig_recovery_strategy_dist.pdf      : Stacked bar chart of recovery strategy distribution
-    - fig_reliability_surface.pdf         : 3D surface or contour plot of R(k,ε,λ)
 """
 
 from __future__ import annotations
@@ -118,7 +116,8 @@ def fig_boxplot_domains(results: list[dict], output_dir: Path):
 
     fig, ax = plt.subplots(figsize=(8, 5))
     bp = ax.boxplot(data, labels=[d.capitalize() for d in domains], patch_artist=True)
-    for patch, color in zip(bp["boxes"], MODEL_COLORS):
+    for i, patch in enumerate(bp["boxes"]):
+        color = MODEL_COLORS[i % len(MODEL_COLORS)]
         patch.set_facecolor(color)
         patch.set_alpha(0.7)
 

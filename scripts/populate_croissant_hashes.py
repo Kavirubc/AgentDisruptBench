@@ -12,6 +12,7 @@ Usage:
 
 import hashlib
 import json
+import sys
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
@@ -27,6 +28,7 @@ def sha256_file(path: Path) -> str:
 
 
 def main():
+    missing_files = []
     with open(CROISSANT_PATH) as f:
         croissant = json.load(f)
 
@@ -39,12 +41,17 @@ def main():
             print(f"  ✅ {dist['name']}: {sha[:16]}...")
         else:
             print(f"  ⚠️  {dist['name']}: file not found at {file_path}")
+            missing_files.append(dist['name'])
 
     with open(CROISSANT_PATH, "w") as f:
         json.dump(croissant, f, indent=2)
         f.write("\n")
 
-    print(f"\n✅ Updated {CROISSANT_PATH}")
+    if missing_files:
+        print(f"\n❌ {len(missing_files)} file(s) not found: {', '.join(missing_files)}")
+        sys.exit(1)
+    else:
+        print(f"\n✅ Updated {CROISSANT_PATH}")
 
 
 if __name__ == "__main__":

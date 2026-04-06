@@ -12,7 +12,7 @@
 # Usage:
 #   ./scripts/run_baselines.sh              # Run all baselines
 #   ./scripts/run_baselines.sh --quick      # Quick smoke test
-#   ./scripts/run_baselines.sh --model gpt  # GPT-4o only
+#   ./scripts/run_baselines.sh --model gpt-5-mini  # GPT-5 Mini only
 #
 # Prerequisites:
 #   - Set API keys in .env file
@@ -51,6 +51,10 @@ while [[ $# -gt 0 ]]; do
             shift
             ;;
         --model)
+            if [[ $# -lt 2 || "$2" == --* ]]; then
+                echo "Error: --model requires a value"
+                exit 2
+            fi
             MODEL_FILTER="$2"
             shift 2
             ;;

@@ -6,8 +6,7 @@
 # Each task preserves the same ground truth and required tools but uses
 # different natural-language phrasing for the description.
 #
-# Coverage: 5 base tasks per domain (one per difficulty 1,3,5) × 2 variants each
-# = 18 variant tasks referencing 9 base tasks.
+# Coverage: 14 variant tasks referencing 9 base tasks across 4 domains.
 
 domain: variants
 version: "1.0"

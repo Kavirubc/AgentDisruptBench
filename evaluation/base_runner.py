@@ -194,7 +194,7 @@ class BaseAgentRunner(abc.ABC):
 
     @property
     def stats(self) -> dict[str, Any]:
-        """Runner statistics (task-specific)."""
+        """Runner statistics (task-specific counts, cumulative time)."""
         return {
             "runner": type(self).__name__,
             "model": self.config.model,

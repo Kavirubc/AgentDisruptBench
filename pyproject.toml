@@ -35,7 +35,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-langchain = ["langchain-core>=0.1"]
+langchain = ["langchain>=0.1", "langchain-core>=0.1"]
 openai = ["openai>=1.0"]
 autogen = ["pyautogen>=0.2"]
 crewai = ["crewai>=0.1"]
@@ -48,6 +48,7 @@ server = [
     "mcp>=0.1.0"
 ]
 all = [
+    "langchain>=0.1",
     "langchain-core>=0.1",
     "openai>=1.0",
     "pyautogen>=0.2",
@@ -60,6 +61,7 @@ dev = [
     "pytest-asyncio>=0.21",
     "ruff>=0.1",
     "mypy>=1.0",
+    "mlcroissant>=1.0",
 ]
 
 [project.urls]

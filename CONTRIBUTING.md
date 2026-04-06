@@ -90,27 +90,27 @@ Each task must include:
 
 ### Adding New Disruption Types
 
-1. Add the type to `DisruptionType` enum in `core/engine.py`
+1. Add the type to `DisruptionType` enum in `python/agentdisruptbench/core/engine.py`
 2. Create a handler function `_h_<name>()` following the existing pattern
 3. Register it in the `_HANDLERS` dispatch table
-4. Add it to the failure taxonomy in `core/metrics.py`
-5. Update relevant disruption profiles in `core/profiles.py`
+4. Add it to the failure taxonomy in `python/agentdisruptbench/core/metrics.py`
+5. Update relevant disruption profiles in `python/agentdisruptbench/core/profiles.py`
 6. Write tests in `tests/test_engine.py`
 
 ### Adding New Domains
 
-1. Create a new tool class in `tools/mock_tools.py` (e.g., `HealthcareTools`)
+1. Create a new tool class in `python/agentdisruptbench/tools/mock_tools.py` (e.g., `HealthcareTools`)
 2. Register the tools in `get_all_tools()`
-3. Create a YAML task file in `tasks/builtin/<domain>.yaml`
-4. Add the domain to the compensation pairs in `core/state.py` (if applicable)
+3. Create a YAML task file in `python/agentdisruptbench/tasks/builtin/<domain>.yaml`
+4. Add the domain to the compensation pairs in `python/agentdisruptbench/core/state.py` (if applicable)
 5. Update `DATASHEET.md` with the new domain information
 
 ### Adding New Framework Adapters
 
-1. Create a new adapter in `adapters/<framework>.py`
-2. Extend `BaseAdapter` from `adapters/base.py`
-3. Create a runner in `evaluation/runners/<framework>_runner.py`
-4. Register the runner in `evaluation/run_benchmark.py`
+1. Create a new adapter in `python/agentdisruptbench/adapters/<framework>.py`
+2. Extend `BaseAdapter` from `python/agentdisruptbench/adapters/base.py`
+3. Create a runner in `python/agentdisruptbench/evaluation/runners/<framework>_runner.py`
+4. Register the runner in `python/agentdisruptbench/evaluation/run_benchmark.py`
 5. Add the framework to optional dependencies in `pyproject.toml`
 
 ### Improving Metrics
