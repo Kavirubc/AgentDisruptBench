@@ -25,7 +25,7 @@ from __future__ import annotations
 import logging
 from typing import Callable
 
-from agentdisruptbench.tools.mock_tools import get_all_tools
+from agentdisruptbench.tools.simulated_tools import get_all_tools
 
 logger = logging.getLogger("agentdisruptbench.tool_registry")
 
@@ -35,7 +35,7 @@ class ToolRegistry:
 
     Usage::
 
-        registry = ToolRegistry.from_mock_tools()
+        registry = ToolRegistry.from_simulated_tools()
         fn = registry.get("search_products")
         result = fn(query="blue widget")
 
@@ -82,13 +82,13 @@ class ToolRegistry:
         return len(self._tools)
 
     @classmethod
-    def from_mock_tools(cls) -> ToolRegistry:
-        """Create a registry pre-populated with all built-in mock tools.
+    def from_simulated_tools(cls) -> ToolRegistry:
+        """Create a registry pre-populated with all built-in simulated tools.
 
         Includes tools from: RetailTools, TravelTools, FinanceTools, DevopsTools.
         """
         registry = cls()
         for name, fn in get_all_tools().items():
             registry.register(name, fn)
-        logger.info("mock_tool_registry_created tool_count=%d", len(registry))
+        logger.info("simulated_tool_registry_created tool_count=%d", len(registry))
         return registry

@@ -3,7 +3,7 @@ AgentDisruptBench — Stateful Tool Wrapper
 ==========================================
 
 File:        stateful.py
-Purpose:     Wraps side-effect mock tools so their results are also
+Purpose:     Wraps side-effect simulated tools so their results are also
              recorded in the StateManager. Non-side-effect tools pass
              through unchanged. Fully backwards compatible — if no
              StateManager is provided, the wrapper is a no-op passthrough.

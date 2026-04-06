@@ -27,7 +27,7 @@ AgentDisruptBench Contributors, as part of academic research into AI agent robus
 
 Each instance is a **benchmark task** defined in YAML with:
 - A natural language task description (the prompt given to the agent)
-- Required tools (from a set of 30 deterministic mock tools, 6-8 per domain)
+- Required tools (from a set of 30 deterministic simulated tools, 6-8 per domain)
 - Ground truth: expected outcome, required tool calls, evaluation rubric with weighted criteria
 - Metadata: domain, difficulty (1-5), task type
 
@@ -75,7 +75,7 @@ No. All fields are populated for every task instance.
 
 ### Are relationships between individual instances made explicit?
 
-Tasks within the same domain share tools and mock data (e.g., retail tasks all use the same product catalog and customer database via deterministic mock tools). Cross-domain relationships do not exist.
+Tasks within the same domain share tools and simulated data (e.g., retail tasks all use the same product catalog and customer database via deterministic simulated tools). Cross-domain relationships do not exist.
 
 ### Are there recommended data splits?
 
@@ -101,12 +101,12 @@ All tasks were authored manually by the benchmark contributors. They are synthet
 
 Task design followed a structured process:
 1. Define 4 domains based on common LLM agent use cases
-2. Design 6-8 mock tools per domain (30 total)
+2. Design 6-8 simulated tools per domain (30 total)
 3. Author 20 standard tasks per domain with increasing difficulty
 4. Author adversarial tasks with designed trap patterns
 5. Author impossible tasks with clear impossibility reasons
 6. Author handover tasks requiring human escalation
-7. Validate all ground truth against mock tool outputs
+7. Validate all ground truth against simulated tool outputs
 
 ### Who was involved in the data collection process?
 
@@ -134,13 +134,13 @@ March-April 2026.
 ### What are some tasks/uses that the dataset should not be used for?
 
 - **Not for training**: The benchmark should be used for evaluation only. Training on the tasks would compromise benchmark validity.
-- **Not for real tool testing**: Mock tools are deterministic simulations, not real API integrations.
+- **Not for real tool testing**: Simulated tools are deterministic simulations, not real API integrations.
 - **Not for safety/security evaluation**: The disruptions model reliability failures, not adversarial attacks.
 
 ### Is there anything about the composition of the dataset or the way it was collected that might impact future uses?
 
 - Tasks are in English only
-- Mock tools simulate US-centric services (USD currency, US dates, etc.)
+- Simulated tools simulate US-centric services (USD currency, US dates, etc.)
 - Ground truth rubrics use string-matching heuristics which may not capture all valid agent responses
 
 ---
@@ -182,7 +182,6 @@ Via GitHub Issues at the repository.
 Yes. Planned updates include:
 - Additional task variants for ε-robustness testing
 - New domains
-- Track B: Network-layer disruption injection via Envoy proxy
 
 ### If the dataset relates to people, are there applicable limits on the retention of the data?
 

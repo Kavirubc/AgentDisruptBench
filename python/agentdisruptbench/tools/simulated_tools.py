@@ -1,9 +1,9 @@
 """
-AgentDisruptBench — Deterministic Mock Tools
+AgentDisruptBench — Deterministic Simulated Tools
 =============================================
 
-File:        mock_tools.py
-Purpose:     Complete, deterministic mock tool implementations for all four
+File:        simulated_tools.py
+Purpose:     Complete, deterministic simulated tool implementations for all four
              benchmark domains: Retail, Travel, Finance, and DevOps.
              Same inputs always produce the same outputs.  Uses seeded Faker
              for realistic-looking data.  Tools reference each other
@@ -39,7 +39,7 @@ import hashlib
 import logging
 from typing import Any
 
-logger = logging.getLogger("agentdisruptbench.mock_tools")
+logger = logging.getLogger("agentdisruptbench.simulated_tools")
 
 
 # ---------------------------------------------------------------------------
@@ -93,7 +93,7 @@ _PRODUCT_NAMES = [
 
 
 class RetailTools:
-    """Deterministic mock tools for the Retail domain.
+    """Deterministic simulated tools for the Retail domain.
 
     All methods are stateless — same inputs always produce the same outputs.
     Product IDs, customer IDs, and order IDs are internally consistent.
@@ -225,7 +225,7 @@ _HOTELS = ["Grand Plaza Hotel", "Seaside Resort", "Mountain Lodge", "City Centra
 
 
 class TravelTools:
-    """Deterministic mock tools for the Travel domain."""
+    """Deterministic simulated tools for the Travel domain."""
 
     @staticmethod
     def search_flights(*, origin: str, destination: str, date: str, passengers: int = 1) -> dict:
@@ -355,7 +355,7 @@ class TravelTools:
 
 
 class FinanceTools:
-    """Deterministic mock tools for the Finance domain."""
+    """Deterministic simulated tools for the Finance domain."""
 
     @staticmethod
     def get_account_balance(*, account_id: str) -> dict:
@@ -463,7 +463,7 @@ _SERVICE_NAMES = ["api-gateway", "auth-service", "payment-service", "user-servic
 
 
 class DevopsTools:
-    """Deterministic mock tools for the DevOps domain."""
+    """Deterministic simulated tools for the DevOps domain."""
 
     @staticmethod
     def get_service_health(*, service_name: str) -> dict:

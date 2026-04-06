@@ -23,7 +23,7 @@ from typing import Any
 from agentdisruptbench.core.metrics import MetricsCalculator
 from agentdisruptbench.core.state import StateManager
 from agentdisruptbench.core.trace import ToolCallTrace
-from agentdisruptbench.tools.mock_tools import RetailTools
+from agentdisruptbench.tools.simulated_tools import RetailTools
 from agentdisruptbench.tools.stateful import SIDE_EFFECT_TOOLS, wrap_tool_with_state
 
 # ===================================================================
@@ -170,7 +170,7 @@ class TestStatefulWrapper:
     """Tests for the stateful tool wrapper."""
 
     def test_backwards_compat_no_state(self):
-        """Mock tools without state_manager still work identically."""
+        """Simulated tools without state_manager still work identically."""
         # No state manager → original function returned unchanged
         wrapped = wrap_tool_with_state("search_products", RetailTools.search_products, None)
         assert wrapped is RetailTools.search_products
@@ -484,7 +484,7 @@ class TestEvaluatorWithState:
 
             return " | ".join(results)
 
-        tool_registry = ToolRegistry.from_mock_tools()
+        tool_registry = ToolRegistry.from_simulated_tools()
         evaluator = Evaluator(agent_fn=booking_agent, tool_registry=tool_registry)
 
         # Create a minimal task that uses travel tools

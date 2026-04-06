@@ -23,8 +23,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Pydantic v2 schemas for Task, ToolSchema, and GroundTruth
   - YAML-based task registry
 
-- **Mock Tools**
-  - 30 deterministic mock tools across 4 domains
+- **Simulated Tools**
+  - 30 deterministic simulated tools across 4 domains
   - Hash-based reproducibility (same inputs → same outputs)
   - Internally consistent data (product IDs, customer IDs, order IDs)
 

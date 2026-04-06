@@ -32,7 +32,7 @@ from evaluation.base_runner import BaseAgentRunner, RunnerConfig
 
 logger = logging.getLogger("agentdisruptbench.evaluation.runners.simple")
 
-# Default kwargs per tool — matches mock tool signatures
+# Default kwargs per tool — matches simulated tool signatures
 _TOOL_DEFAULTS: dict[str, dict[str, Any]] = {
     "search_products": {"query": "blue widget", "max_results": 3},
     "check_inventory": {"product_id": "PRD-abc123"},

@@ -33,11 +33,11 @@ from agentdisruptbench.core.proxy import ToolProxy
 from agentdisruptbench.core.trace import TraceCollector
 from agentdisruptbench.harness.reporter import Reporter
 from agentdisruptbench.tasks.schemas import Task
-from agentdisruptbench.tools.mock_tools import DevopsTools, FinanceTools, RetailTools, TravelTools
+from agentdisruptbench.tools.simulated_tools import DevopsTools, FinanceTools, RetailTools, TravelTools
 
 
-class TestMockTools:
-    """Tests for deterministic mock tools."""
+class TestSimulatedTools:
+    """Tests for deterministic simulated tools."""
 
     def test_search_products_deterministic(self):
         r1 = RetailTools.search_products(query="widget", max_results=3)
@@ -64,8 +64,8 @@ class TestMockTools:
 class TestToolRegistry:
     """Tests for ToolRegistry."""
 
-    def test_from_mock_tools(self):
-        registry = ToolRegistry.from_mock_tools()
+    def test_from_simulated_tools(self):
+        registry = ToolRegistry.from_simulated_tools()
         assert len(registry) > 20
         assert "search_products" in registry
         assert "search_flights" in registry
@@ -184,7 +184,7 @@ class TestEndToEnd:
             return " | ".join(results)
 
         task_registry = TaskRegistry.from_builtin()
-        tool_registry = ToolRegistry.from_mock_tools()
+        tool_registry = ToolRegistry.from_simulated_tools()
 
         config = BenchmarkConfig(
             profiles=["clean", "mild_production"],

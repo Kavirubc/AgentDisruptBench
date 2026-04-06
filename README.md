@@ -196,7 +196,7 @@ def my_agent(task, tools):
 runner = BenchmarkRunner(
     agent_fn=my_agent,
     task_registry=TaskRegistry.from_builtin(),
-    tool_registry=ToolRegistry.from_mock_tools(),
+    tool_registry=ToolRegistry.from_simulated_tools(),
     config=BenchmarkConfig(
         profiles=["clean", "moderate_production", "hostile_environment"],
         seeds=[42, 123],
@@ -446,7 +446,7 @@ AgentDisruptBench/
 │   │       ├── impossible.yaml  # 8 impossible tasks
 │   │       └── handover.yaml    # 4 handover tasks
 │   ├── tools/
-│   │   ├── mock_tools.py        # 30 deterministic mock tools
+│   │   ├── simulated_tools.py        # 30 deterministic simulated tools
 │   │   ├── stateful.py          # Stateful wrapper (side-effect tracking)
 │   │   └── registry.py          # ToolRegistry
 │   ├── adapters/
@@ -472,25 +472,11 @@ AgentDisruptBench/
 │       ├── rac_runner.py        # RAC (React-Agent-Compensation) runner
 │       ├── autogen_runner.py    # AutoGen two-agent
 │       └── crewai_runner.py     # CrewAI Crew + Agent
-├── network/                     # Track B: Go + Envoy (coming soon)
 ├── examples/
 │   └── quickstart.py            # Getting started example
 ├── tests/                       # Unit tests (87 tests)
 ├── pyproject.toml               # Build configuration
 └── README.md                    # This file
-```
-
----
-
-## Track B: Network Layer (Coming Soon)
-
-Track B provides a **Docker Compose environment** where an Envoy sidecar proxy intercepts all agent HTTP traffic transparently via a Go gRPC external processor. No changes to agent code are required.
-
-```mermaid
-graph LR
-    A["Agent Container"] --> E["Envoy Proxy"]
-    E --> G["Go ext_proc<br>(disruption injection)"]
-    G --> U["Upstream APIs"]
 ```
 
 ---
