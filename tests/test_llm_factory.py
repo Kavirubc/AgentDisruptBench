@@ -18,7 +18,7 @@ Convention:
 
 from __future__ import annotations
 
-from unittest.simulated import patch
+from unittest.mock import patch
 
 import pytest
 

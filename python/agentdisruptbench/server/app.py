@@ -35,7 +35,7 @@ logger = logging.getLogger("agentdisruptbench.server.app")
 
 app = FastAPI(
     title="AgentDisrupt-Bench API",
-    description="Standardized REST Sandbox for Agent Disruption Benchmarking. Exposes mocked tools as HTTP endpoints and injects disruptions at runtime.",
+    description="Standardized REST Sandbox for Agent Disruption Benchmarking. Exposes simulated tools as HTTP endpoints and injects disruptions at runtime.",
     version="1.0.0",
 )
 
