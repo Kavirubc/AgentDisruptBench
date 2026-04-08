@@ -72,3 +72,6 @@ paper/*.toc
 # ----- OS -----
 Thumbs.db
 .DS_Store
+
+# ----- Temporary benchmarking -----
+temp/
