@@ -17,9 +17,6 @@ Convention:
 """
 
 from agentdisruptbench.core.metrics import BenchmarkResult, MetricsCalculator
-from agentdisruptbench.core.reliability import (
-    compute_reliability_surface,
-)
 from agentdisruptbench.core.trace import ToolCallTrace
 from agentdisruptbench.tasks.registry import TaskRegistry
 from agentdisruptbench.tasks.schemas import GroundTruth, Task
@@ -238,67 +235,6 @@ class TestRecoveryClassification:
             duration_seconds=1.0,
         )
         assert result.dominant_strategy == "RETRY"
-
-
-# ===================================================================
-# P1-8: Reliability Surface
-# ===================================================================
-
-
-class TestReliabilitySurface:
-    """Tests for R(k,ε,λ) computation."""
-
-    @staticmethod
-    def _make_result(task_id: str, profile: str, seed: int, success: bool):
-        return BenchmarkResult(
-            task_id=task_id,
-            agent_id="a",
-            profile_name=profile,
-            seed=seed,
-            success=success,
-            partial_score=1.0 if success else 0.0,
-            agent_output="",
-            resilience_ratio=None,
-            recovery_rate=1.0,
-            mean_steps_to_recovery=0.0,
-            retry_efficiency=1.0,
-            acknowledged_failure=False,
-            attempted_alternative=False,
-            total_tool_calls=1,
-            extra_tool_calls=None,
-            total_latency_ms=10.0,
-            extra_latency_ms=None,
-            disruptions_encountered=0,
-            disruptions_recovered=0,
-            disruption_types_seen=[],
-            max_cascade_depth=0,
-        )
-
-    def test_empty_results(self):
-        surface = compute_reliability_surface([])
-        assert surface.num_results == 0
-        assert surface.composite_score == 0.0
-
-    def test_perfect_results(self):
-        results = [
-            self._make_result("retail_001", "clean", 1, True),
-            self._make_result("retail_001", "clean", 2, True),
-            self._make_result("retail_001", "hostile", 1, True),
-        ]
-        surface = compute_reliability_surface(results)
-        assert surface.k_consistency == 1.0
-        assert surface.lambda_fault_tolerance == 1.0
-        assert surface.composite_score == 1.0
-
-    def test_mixed_results(self):
-        results = [
-            self._make_result("retail_001", "clean", 1, True),
-            self._make_result("retail_001", "clean", 2, False),
-            self._make_result("retail_001", "hostile", 1, False),
-        ]
-        surface = compute_reliability_surface(results)
-        assert 0.0 < surface.k_consistency < 1.0
-        assert surface.num_results == 3
 
 
 # ===================================================================

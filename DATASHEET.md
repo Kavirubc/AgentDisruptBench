@@ -8,7 +8,7 @@ _Following the [Datasheets for Datasets](https://arxiv.org/abs/1803.09010) frame
 
 ### For what purpose was the dataset created?
 
-AgentDisruptBench was created to study **evaluation as a scientific object** in the context of AI agent resilience under runtime tool-call disruptions. Existing benchmarks measure *whether* agents can use tools correctly, but assume tools behave perfectly — an unrealistic assumption in production environments. This project provides an evaluation methodology, consisting of structured tasks paired with a Disruption Engine, to rigorously measure how we assess agent reliability, recovery strategies, and graceful degradation using the $R(k, \epsilon, \lambda)$ surface.
+AgentDisruptBench was created to study **evaluation as a scientific object** in the context of AI agent resilience under runtime tool-call disruptions. Existing benchmarks measure *whether* agents can use tools correctly, but assume tools behave perfectly — an unrealistic assumption in production environments. This project provides an evaluation methodology, consisting of structured tasks paired with a Disruption Engine, to rigorously measure how we assess agent reliability, recovery strategies, and graceful degradation by evaluating each framework across 8 disruption profiles and reporting a Production Readiness Score (PRS) — a weighted composite of recovery quality, side effect cleanliness, task success, and token efficiency under each profile.
 
 ### Who created the dataset and on behalf of which entity?
 

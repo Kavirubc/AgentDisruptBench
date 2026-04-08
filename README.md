@@ -30,7 +30,7 @@ Large language model (LLM) agents increasingly rely on external tool calls to co
 
 3. **Stateful Sandbox** with mutable in-memory state, compensation detection (entity-level pairing), idempotency violation detection, and side-effect scoring.
 
-4. **R(k,ε,λ) Reliability Surface** — multi-seed, multi-profile evaluation producing a mathematically rigorous composite reliability score.
+4. **Production Readiness Score (PRS)** — We evaluate each framework across 8 disruption profiles and report a Production Readiness Score (PRS) — a weighted composite of recovery quality, side effect cleanliness, task success, and token efficiency under each profile.
 
 5. **Recovery Strategy Classification** — categorizes *how* agents recover (RETRY, ALTERNATIVE, ESCALATION, GIVEUP, LUCKY), not just *whether* they recover.
 
@@ -281,14 +281,15 @@ Reporter("results").generate(results)
 | **Recovery Strategies** | Classification: RETRY, ALTERNATIVE, ESCALATION, GIVEUP, LUCKY |
 | **Dominant Strategy** | Most common recovery strategy used |
 
-### Reliability Surface
+### Production Readiness Score (PRS)
 
-| Axis | Definition |
-|------|-----------|
-| **k-consistency** | Pass rate over repeated seeds for same (task, profile) |
-| **ε-robustness** | Pass rate across task-wording variants (placeholder) |
-| **λ-fault-tolerance** | Pass rate across disruption profiles |
-| **R(k,ε,λ)** | Composite = k × ε × λ |
+We evaluate each framework across 8 disruption profiles and report a Production Readiness Score (PRS) — a weighted composite of recovery quality, side effect cleanliness, task success, and token efficiency under each profile.
+
+| **Metric** | **Calculation** |
+| :--- | :--- |
+| **Run Stability** | Multi-seed runs measuring variance across seeds (score variance across seeds). |
+| **Disruption Degradation Curve** | Production readiness profile measuring degradation across disruption profiles. |
+| **Pareto Efficiency** | Pareto curve of accuracy vs token cost across profiles. |
 
 ### P2 Metrics
 
@@ -432,7 +433,7 @@ AgentDisruptBench/
 │   │   ├── profiles.py          # 9 built-in profiles + YAML loader
 │   │   ├── metrics.py           # MetricsCalculator + BenchmarkResult
 │   │   ├── state.py             # StateManager (mutable sandbox)
-│   │   └── reliability.py       # R(k,ε,λ) reliability surface
+│   │   └── trace.py             # TraceCollector and trace structures
 │   ├── tasks/
 │   │   ├── schemas.py           # Task, ToolSchema, GroundTruth
 │   │   ├── registry.py          # TaskRegistry (YAML loading)
@@ -489,7 +490,7 @@ AgentDisruptBench builds on and complements several existing benchmarks:
 - **REALM-Bench** — Evaluates multi-agent disruption handling at planning time. AgentDisruptBench focuses on _runtime_ disruptions during tool execution.
 - **ToolBench / API-Bank** — Catalog-driven benchmarks that test API selection. AgentDisruptBench assumes correct tool selection and tests _execution resilience_.
 - **SWE-bench** — Code generation benchmark. Complementary; AgentDisruptBench targets tool-calling agents.
-- **ReliabilityBench** — Multi-seed robustness testing. AgentDisruptBench extends with R(k,ε,λ) surface.
+- **ReliabilityBench** — measures whether an agent is reliable across reruns and paraphrases. AgentDisruptBench instead measures whether an agent is resilient under specific, named, runtime failure conditions.
 - **AgentRx** — Root-cause failure analysis. AgentDisruptBench integrates 9-category failure taxonomy.
 
 ---

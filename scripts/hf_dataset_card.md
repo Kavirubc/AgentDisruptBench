@@ -45,11 +45,11 @@ AgentDisruptBench provides a systematic methodology, backed by **100 base tasks 
 | Response Content | malformed_json, truncated, null_response, missing_fields, type_mismatch, schema_drift, wrong_data |
 | Behavioral | intermittent, flapping, quota_exhausted, auth_expiry, cascading |
 
-## Key Metric: R(k, ε, λ) Reliability Surface
+## Key Metric: Production Readiness Score (PRS)
 
-- **k-consistency**: Pass rate across repeated seeds (same task, same profile)
-- **ε-robustness**: Pass rate across task-wording variants
-- **λ-fault-tolerance**: Pass rate across disruption profiles
+- **Run Stability**: Multi-seed runs measuring variance across seeds (score variance).
+- **Disruption Degradation Curve**: Production readiness profile measuring degradation across disruption profiles.
+- **Pareto Efficiency**: Pareto curve of accuracy vs token cost across profiles.
 
 ## Files
 
@@ -60,7 +60,6 @@ AgentDisruptBench provides a systematic methodology, backed by **100 base tasks 
 - `tasks/adversarial.yaml` — 8 adversarial trap tasks
 - `tasks/impossible.yaml` — 8 impossible tasks
 - `tasks/handover.yaml` — 4 handover tasks
-- `tasks/variants.yaml` — 18 ε-robustness task variants
 - `profiles/` — 9 disruption profile definitions
 
 ## Usage
