@@ -41,7 +41,7 @@ logger = logging.getLogger("agentdisruptbench.evaluation.config_loader")
 # Maps LLM provider names → default runner names.
 # When a user specifies only an LLM config, we can infer the runner.
 PROVIDER_RUNNER_MAP: dict[str, str] = {
-    "openai": "openai",
+    "openai": "langchain",
     "gemini": "langchain",
 }
 
@@ -87,9 +87,9 @@ class LLMConfig:
         """Infer the best runner name from the provider.
 
         Returns:
-            Runner name string (e.g. ``"openai"``, ``"langchain"``).
+            Runner name string (e.g. ``"langchain"``).
         """
-        return PROVIDER_RUNNER_MAP.get(self.provider, "openai")
+        return PROVIDER_RUNNER_MAP.get(self.provider, "langchain")
 
 
 @dataclass
@@ -99,7 +99,7 @@ class BenchmarkYAMLConfig:
     Loaded from a YAML file (e.g. ``config/benchmark.yaml``).
 
     Attributes:
-        runner:         Runner name (``"simple"``, ``"openai"``, ``"langchain"``, ``"rac"``).
+        runner:         Runner name (``"simple"``, ``"langchain"``, ``"rac"``).
         profiles:       Disruption profiles to evaluate.
         domains:        Restrict to these domains (None = all).
         max_difficulty: Max task difficulty (1–5).

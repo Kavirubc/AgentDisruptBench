@@ -3,7 +3,7 @@ AgentDisruptBench — FastAPI Server
 ==================================
 
 File:        app.py
-Purpose:     Provides a REST interface to all mock tools, injecting disruptions
+Purpose:     Provides a REST interface to all simulated tools, injecting disruptions
              via middleware and managing state in SQLite. This enables
              language-agnostic agents to interact with the environment map.
 """
@@ -35,7 +35,7 @@ logger = logging.getLogger("agentdisruptbench.server.app")
 
 app = FastAPI(
     title="AgentDisrupt-Bench API",
-    description="Standardized REST Sandbox for Agent Disruption Benchmarking. Exposes mocked tools as HTTP endpoints and injects disruptions at runtime.",
+    description="Standardized REST Sandbox for Agent Disruption Benchmarking. Exposes simulated tools as HTTP endpoints and injects disruptions at runtime.",
     version="1.0.0",
 )
 
@@ -63,7 +63,7 @@ class ServerState:
 
 
 server_state = ServerState()
-registry = ToolRegistry.from_mock_tools()
+registry = ToolRegistry.from_simulated_tools()
 
 # --- Admin Endpoints ---
 
@@ -163,6 +163,6 @@ for tool_name, tool_fn in registry.as_dict().items():
         endpoint=endpoint_func,
         methods=["POST"],
         summary=f"Tool: {tool_name}",
-        description=tool_fn.__doc__ or f"Mock endpoint for {tool_name}",
+        description=tool_fn.__doc__ or f"Simulated endpoint for {tool_name}",
         tags=["Tools"],
     )

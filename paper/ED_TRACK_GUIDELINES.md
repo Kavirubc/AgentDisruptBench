@@ -20,5 +20,10 @@ Our paper should focus heavily on the figures that compare **Recovery Strategies
 - Avoid saying: "AgentDisruptBench is a benchmark..."
 - Instead say: "AgentDisruptBench is an evaluation framework/methodology..."
 
-### 4. Code & Metadata Updates
+### 4. Justifying the Simulated Sandbox
+It is critical to defend why a simulated wrapper (instead of live endpoints or WebArena-style full-stack deployments) is scientifically valid and necessary:
+- **Perfect Determinism**: Live endpoints experience network drift and uncontrolled variability, making comparative robustness research impossible to reproduce. Simulated tools allow us to isolate the agent's behavior.
+- **Reproducible Chaos Engineering**: By using a `ToolProxy`, we can inject mathematically exact percentages of failures (e.g., exactly 12% timeout rate on `book_flight`). This rigorous, controlled injection is what bridges academics and actual site reliability engineering (SRE).
+
+### 5. Code & Metadata Updates
 The `AgentDisruptBench` repository metadata (README, Datasheets, HuggingFace Cards, and Croissant metadata) have all been automatically updated to reflect this new naming convention and focus. When referring to the repository in the paper, refer to it as an "evaluation framework" rather than just a "dataset".

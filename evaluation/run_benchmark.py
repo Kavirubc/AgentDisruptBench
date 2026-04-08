@@ -17,8 +17,8 @@ Usage:
     # Simple baseline (no LLM needed)
     python -m evaluation.run_benchmark --runner simple --profiles clean mild_production
 
-    # OpenAI GPT-4o
-    python -m evaluation.run_benchmark --runner openai --model gpt-4o --profiles clean hostile_environment
+    # LangChain GPT-4o
+    python -m evaluation.run_benchmark --runner langchain --model gpt-4o --profiles clean hostile_environment
 
     # LangChain with a specific model
     python -m evaluation.run_benchmark --runner langchain --model gpt-4o-mini --max-difficulty 3
@@ -69,10 +69,7 @@ from evaluation.run_logger import RunLogger
 # Registry of available runners
 RUNNER_REGISTRY = {
     "simple": "evaluation.runners.simple_runner:SimpleRunner",
-    "openai": "evaluation.runners.openai_runner:OpenAIRunner",
     "langchain": "evaluation.runners.langchain_runner:LangChainRunner",
-    "autogen": "evaluation.runners.autogen_runner:AutoGenRunner",
-    "crewai": "evaluation.runners.crewai_runner:CrewAIRunner",
     "rac": "evaluation.runners.rac_runner:RACRunner",
 }
 
@@ -296,8 +293,8 @@ Examples:
   # Simple baseline (no LLM needed)
   python -m evaluation.run_benchmark --runner simple
 
-  # OpenAI GPT-4o on retail tasks
-  python -m evaluation.run_benchmark --runner openai --model gpt-4o --domains retail
+  # LangChain GPT-4o on retail tasks
+  python -m evaluation.run_benchmark --runner langchain --model gpt-4o --domains retail
 
   # Only run specific tasks
   python -m evaluation.run_benchmark -t adversarial_retail_001,adversarial_retail_002 --runner rac
@@ -502,7 +499,7 @@ Examples:
         task_registry = TaskRegistry.from_directory(args.task_dir)
     else:
         task_registry = TaskRegistry.from_builtin()
-    tool_registry = ToolRegistry.from_mock_tools()
+    tool_registry = ToolRegistry.from_simulated_tools()
     print(f"  → {len(task_registry)} tasks loaded")
     print(f"  → {len(tool_registry)} tools available")
 

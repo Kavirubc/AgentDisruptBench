@@ -4,7 +4,7 @@ AgentDisruptBench — MCP Server
 
 File:        mcp_server.py
 Purpose:     Provides a Model Context Protocol (MCP) server interface to the
-             mock tools, allowing seamless integration with Claude Desktop, Cursor,
+             simulated tools, allowing seamless integration with Claude Desktop, Cursor,
              and next-gen agentic frameworks.
 """
 
@@ -35,7 +35,7 @@ class MCPBenchmarkServer:
         self.engine = None
         self.state_manager = StateManager()
         self.trace_collector = TraceCollector()
-        self.registry = ToolRegistry.from_mock_tools()
+        self.registry = ToolRegistry.from_simulated_tools()
 
         self.setup_run("clean", 42)
         self._register_tools()

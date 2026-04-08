@@ -70,7 +70,7 @@ class BenchmarkRunner:
         runner = BenchmarkRunner(
             agent_fn=my_agent,
             task_registry=TaskRegistry.from_builtin(),
-            tool_registry=ToolRegistry.from_mock_tools(),
+            tool_registry=ToolRegistry.from_simulated_tools(),
             config=BenchmarkConfig(profiles=["clean", "hostile_environment"]),
         )
         results = runner.run_all()

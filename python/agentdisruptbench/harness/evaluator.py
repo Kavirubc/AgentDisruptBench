@@ -50,7 +50,7 @@ class Evaluator:
         agent_fn:   A callable ``(task, tools) → str`` that runs the agent.
                     ``tools`` is a dict of ``name → ToolProxy``.
                     Must return the agent's final textual output.
-        tool_registry: Pre-populated tool registry (mock or real).
+        tool_registry: Pre-populated tool registry (simulated or real).
         metrics:    MetricsCalculator instance.
     """
 

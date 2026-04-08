@@ -84,9 +84,9 @@ Each task must include:
 
 **Guidelines:**
 - Rubric weights must sum to approximately 1.0
-- Use existing mock tools from `tools/mock_tools.py`
+- Use existing simulated tools from `tools/simulated_tools.py`
 - Test that the task is solvable under `clean` profile
-- Verify ground truth against actual mock tool outputs
+- Verify ground truth against actual simulated tool outputs
 
 ### Adding New Disruption Types
 
@@ -99,7 +99,7 @@ Each task must include:
 
 ### Adding New Domains
 
-1. Create a new tool class in `python/agentdisruptbench/tools/mock_tools.py` (e.g., `HealthcareTools`)
+1. Create a new tool class in `python/agentdisruptbench/tools/simulated_tools.py` (e.g., `HealthcareTools`)
 2. Register the tools in `get_all_tools()`
 3. Create a YAML task file in `python/agentdisruptbench/tasks/builtin/<domain>.yaml`
 4. Add the domain to the compensation pairs in `python/agentdisruptbench/core/state.py` (if applicable)

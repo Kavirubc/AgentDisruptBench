@@ -4,7 +4,7 @@ AgentDisruptBench — Task Schemas
 
 File:        schemas.py
 Purpose:     Pydantic v2 data models for the task system:  Task, ToolSchema,
-             and GroundTruth.  Used by both Track A and Track B.
+             and GroundTruth.
 
 Author:      AgentDisruptBench Contributors
 License:     MIT

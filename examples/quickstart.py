@@ -78,7 +78,7 @@ def simple_agent(task: Task, tools: dict[str, Any]) -> str:
 
 
 def _default_kwargs(tool_name: str) -> dict[str, Any]:
-    """Generate sensible default kwargs for each mock tool."""
+    """Generate sensible default kwargs for each simulated tool."""
     defaults: dict[str, dict] = {
         "search_products": {"query": "blue widget", "max_results": 3},
         "check_inventory": {"product_id": "PRD-abc123"},
@@ -123,7 +123,7 @@ def main():
     # 1. Load built-in resources
     print("\n[1/4] Loading tasks and tools...")
     task_registry = TaskRegistry.from_builtin()
-    tool_registry = ToolRegistry.from_mock_tools()
+    tool_registry = ToolRegistry.from_simulated_tools()
     print(f"  → {len(task_registry)} tasks loaded")
     print(f"  → {len(tool_registry)} tools available")
     print(f"  → Domains: {task_registry.domains()}")
